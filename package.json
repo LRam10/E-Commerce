@@ -1,0 +1,24 @@
+{
+  "name": "senior-project",
+  "version": "1.0.0",
+  "description": "Senior design project",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js",
+    "server": "nodemon serve.js"
+  },
+  "author": "Luis Ramirez",
+  "license": "ISC",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "cloudinary": "^1.15.0",
+    "config": "^3.2.2",
+    "dotenv": "^8.1.0",
+    "express": "^4.17.1",
+    "express-fileupload": "^1.1.6-alpha.5",
+    "express-validator": "^6.2.0",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^5.6.13"
+  }
+}
