@@ -1,4 +1,5 @@
-import React,{useState} from 'react'
+import React,{useState,useContext} from 'react'
+import AuthContext from '../../context/auth/authContext';
 const Sidebar = (props) => {
     const {toggle} = props;
     const [show,setShow] = useState(false);
@@ -7,6 +8,10 @@ const Sidebar = (props) => {
     const changeToCreate = (e)=>{
         setShow(false)
         toggle(true,e.target.dataset.cat);
+    }
+    const authContext = useContext(AuthContext)
+    const onLogout = ()=>{
+        authContext.logout();
     }
     return (
         <nav className='nav sidenav flex-column bg-dark text-white'>
@@ -21,7 +26,7 @@ const Sidebar = (props) => {
                     <li data-cat='Oranaments' onClick={changeToEdit}>Ornaments</li>
                 </ul>
                 </li>
-                <li className='nav-link'>Log out <i className="fas fa-sign-out-alt"></i></li>
+                <li className='nav-link' onClick={onLogout}>Log out <i className="fas fa-sign-out-alt"></i></li>
             </ul>
 
         </nav>

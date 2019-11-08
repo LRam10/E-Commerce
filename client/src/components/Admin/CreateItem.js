@@ -13,9 +13,8 @@ const CreateItem = () => {
         
     });
     // const {sku,description,category,price,img_url,qty} = item;
-    const onChange = e =>{
-        setItem({...item,[e.target.name]:e.target.value});
-    }
+    const onChange = e => setItem({...item,[e.target.name]:e.target.value});
+    const onChangeFile = (e) => setItem({...item,img_url:e.target.files[0]});
     const createItem = e =>{
         e.preventDefault();
         itemContext.addItem(item);
@@ -44,7 +43,7 @@ const CreateItem = () => {
             <label htmlFor='Description'>Price</label>
             <input className='form-control' type='number' step='0.01' name='price' onChange={onChange}></input>
             <label htmlFor='img-upload'>Upload Image</label>
-            <input className='form-control-file' type='file' name='img_url' onChange={onChange}></input>
+            <input className='form-control-file' type='file' name='img_url' onChange={onChangeFile}></input>
             <label htmlFor='Description'>Qty</label>
             <input className='form-control' type='number' name='qty' onChange={onChange}></input>
             <input type='submit' className='btn btn-md btn-dark text-white mt-1' value='Add Item'/>

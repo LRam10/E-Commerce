@@ -1,22 +1,28 @@
-import React,{useState,useContext} from 'react'
+import React,{useState,useContext,useEffect} from 'react'
 import CreateItem from '../Admin/CreateItem';
 import DeleteEditItems from '../Admin/DeleteEditItem';
 import Sidebar from '../Admin/Sidebar';
 
 import ItemContext from '../../context/item/itemContext';
+import AuthContext from '../../context/auth/authContext';
 const Admin = () => {
     const [active,setActive] = useState(true);
     const itemContext = useContext(ItemContext);
     const {items} = itemContext;
-
+    //switch between components
     const toggle = (section,data)=>{
-        if(data == ' '){
+        if(data === ' '){
             setActive(section);
             return;
         }
         setActive(section);
         console.log(data);
     }
+    const authContext = useContext(AuthContext);
+    useEffect(()=>{
+        authContext.loadUser();
+        //eslint-disable-next-line
+    }, []);
      
     return (
         <div className='container-fluid'>

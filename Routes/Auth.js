@@ -12,7 +12,6 @@ dotenv.config();
 //@Access  Private
 router.get("/",auth,async (req,res)=>{
     try {
-        //mongoose returns a promise
         const user = await userModel.findById(req.user.id).select('-passwordObject');
         res.json(user)
     } catch (err) {
@@ -37,6 +36,37 @@ check('password','Please input a password').not().isEmpty()]
     let user = await userModel.findOne({email});
     //if user is not available
     if(!user) return res.json({msg:"Email doesn't exists"});
+    const isMatch = await bcrypt.compare(password,user.passwordObject.password);
+    if(!isMatch) {
+        user.passwordObject.numberOfTries--;
+        await user.save()
+        return res.status(400).json({msg:"Invalid password"});
+    }
+    const payload = {
+        user:{id:user.id,access:user.accessType}
+    }
+    jsonToken.sign(payload,process.env.jwtSecret,{
+        expiresIn:3600,
+
+    },(err,token)=>{
+        if (err) throw err;
+        res.json({token});
+    });
+    } catch (error) {
+        console.log(error.message);
+        res.status(500).send('Server Error');
+    }
+    
+
+});
+router.post("/admin",async (req,res)=>{
+    try {
+    //destructuring from the request body
+    const {password,email} = req.body;
+    let user = await userModel.findOne({email});
+    //if user is not available
+    if(!user) return res.json({msg:"Email doesn't exists"});
+    if(user.accessType !== 1) return res.status(400).json({msg:'Unauthorized User'});
     const isMatch = await bcrypt.compare(password,user.passwordObject.password);
     if(!isMatch) {
         user.passwordObject.numberOfTries--;

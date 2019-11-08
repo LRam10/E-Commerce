@@ -7,9 +7,9 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server.js",
     "server": "nodemon server.js",
-    "client":"npm start --prefix client",
-    "clientinstall":"npm install --prefix client",
-    "dev":"concurrently \"npm run server\" \"npm run client\""
+    "client": "npm start --prefix client",
+    "clientinstall": "npm install --prefix client",
+    "dev": "concurrently \"npm run server\" \"npm run client\""
   },
   "author": "Luis Ramirez",
   "license": "ISC",
@@ -17,12 +17,14 @@
     "bcryptjs": "^2.4.3",
     "cloudinary": "^1.15.0",
     "config": "^3.2.2",
+    "cors": "^2.8.5",
     "dotenv": "^8.1.0",
     "express": "^4.17.1",
     "express-fileupload": "^1.1.6-alpha.5",
     "express-validator": "^6.2.0",
     "jsonwebtoken": "^8.5.1",
-    "mongoose": "^5.6.13"
+    "mongoose": "^5.6.13",
+    "uuid": "^3.3.3"
   },
   "devDependencies": {
     "concurrently": "^5.0.0"

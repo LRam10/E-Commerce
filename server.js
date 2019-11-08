@@ -1,5 +1,6 @@
 const express = require('express');
 const app = express();
+const cors = require('cors');
 const dotenv = require('dotenv');
 dotenv.config();
 //Routes
@@ -18,6 +19,7 @@ app.use(express.json({extended:false}));
 app.get('/',(req,res)=>{
 res.send("Okay");
 });
+app.use(cors());
 app.use('/register',user);
 app.use('/items',items);
 app.use('/cart',cart);

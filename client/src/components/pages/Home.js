@@ -1,11 +1,17 @@
-import React from 'react'
-import {Fragment} from 'react';
+import React,{Fragment,useEffect,useContext} from 'react'
+import { Link } from 'react-router-dom';
 import woodenImg from '../../images/wooden.JPG';
 import friendImg from '../../images/friendship.jpg'
 import Paracord from '../../images/Paracord.png'
 import RedStrings from '../../images/Red_Strings.png'
+import AuthContext from '../../context/auth/authContext';
 
 const Home = ()=> {
+    const authContext = useContext(AuthContext);
+    useEffect(()=>{
+        authContext.loadUser();
+        //eslint-disable-next-line
+    }, []);
     return (
         <Fragment>
         <div className="container-fluid img-cont pt-1">
@@ -23,7 +29,7 @@ const Home = ()=> {
                     <div className='card-body bg-light'>
                         <div className='card-text'>
                             <h5>Wooden</h5>
-                            <a className='btn btn-small btn-dark text-white' href='#'>Shop</a>
+                            <Link className='btn btn-small btn-dark text-white' to={'/category/wooden'}>Shop</Link>
                         </div>
                     </div>
                 </div>
@@ -34,7 +40,7 @@ const Home = ()=> {
                     <div className='card-body bg-light'>
                         <div className='card-text'>
                         <h5>Red Strings</h5>
-                        <a className='btn btn-small btn-dark text-white' href='#'>Shop</a>
+                        <Link className='btn btn-small btn-dark text-white' to={'/category/red_strings'}>Shop</Link>
                         </div>
                     </div>
                 </div>
@@ -45,7 +51,7 @@ const Home = ()=> {
                     <div className='card-body bg-light'>
                         <div className='card-text'>
                         <h5>Paracord</h5>
-                        <a className='btn btn-small btn-dark text-white' href='#'>Shop</a>
+                        <Link className='btn btn-small btn-dark text-white' to={'/category/paracord'}>Shop</Link>
                         </div>
                     </div>
                 </div>
@@ -57,7 +63,7 @@ const Home = ()=> {
             <div className='body-desc text-white'>
                 <h1><b>Friendship Bracelets</b></h1>
                 <h3>Simple gifts that mean more</h3>
-                <a href='#' className='sub-btn'>Explore Now</a>
+                <Link to={'/category/friendship'} className='sub-btn'>Explore Now</Link>
             </div>
         </div>
         <div className='fluid-container body-content bg-dark mb-5' style={{marginTop:'4rem'}}>
@@ -65,7 +71,7 @@ const Home = ()=> {
             <div className='body-desc-2 text-white'>
                 <h1><b>Family Tradition</b></h1>
                 <h3>What started <b>Warrior Bracelets</b></h3>
-                <a href='#' className='sub-btn'>Learn More</a>
+                <a href='/about' className='sub-btn'>Learn More</a>
             </div>
         </div>
         </Fragment>

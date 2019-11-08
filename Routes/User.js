@@ -27,7 +27,7 @@ router.post("/",[
         let user = await userModel.findOne({email});
         //checks if user already exists
         if(user){
-            return res.json({msg:'user already exists'});
+            return res.status(400).json({msg:'User already exists'});
         }
         user = new userModel({
             firstName,lastName,passwordObject:{password:password},email

@@ -1,10 +1,11 @@
-import React,{useState,useRef,useEffect} from 'react'
+import React,{useState,useRef,useEffect,useContext} from 'react'
 import {Fragment} from 'react'
 import {Link} from 'react-router-dom';
+import AuthContext from '../context/auth/authContext';
 
 const Navbar= ()=> {
     let size = window.location.origin.length
-    let adminUrl  = window.location.href.substring(size,size+13);
+    let adminUrl  = window.location.href.substring(size,size+12);
     const [visibility,setVisbility] = useState(false);
     // Dropdown sublist
     const node = useRef();
@@ -22,9 +23,13 @@ const Navbar= ()=> {
         return ()=>{
             document.removeEventListener('mousedown',handleClick)
         }
-    },[])
+    },[]);
+    //AuthContext
+    const authContext = useContext(AuthContext);
+    const { isAuthenticated,logout,user } = authContext;
 
-    if(adminUrl !== `/admin-login/`){
+    const onLogout =()=> logout();
+    if(adminUrl !== `/admin-login`){
     return (
         <Fragment>
 
@@ -33,8 +38,16 @@ const Navbar= ()=> {
             <span className="navbar-brand text-white mx-auto" >WARRIOR BRACELETS</span>
             <ul className="nav justify-content-end" id='top-menu'>
                 <li className="nav-item">
-                    <a className="nav-link text-white" href='#' >Account</a>
+                    {isAuthenticated ?
+                    <p className='nav-link text-white'>Hello, {user && user.firstName}</p>:
+                    <Link className="nav-link text-white"to={'/login'} >Account</Link>
+                    }
                 </li>
+                {isAuthenticated &&(
+                    <li className="nav-item">
+                        <a className='nav-link text-white' href='#!' onClick={onLogout}><i className="fas fa-sign-out-alt">Logout</i></a>
+                    </li>
+                )}
                 <li className="nav-link mx-0" style={dBlue}>
                 <i className="fas fa-shopping-cart"></i>
                 </li>

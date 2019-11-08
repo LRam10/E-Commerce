@@ -49,7 +49,7 @@ const ItemState = props =>{
                 qty:4
                 }
             ],
-        item:{}
+        currentItem:null,
     };
     const [state,dispatch] = useReducer(ItemReducer,initialState);
 
@@ -58,18 +58,25 @@ const ItemState = props =>{
         item.id = Math.random()*100;
         item.price = parseFloat(item.price);
         item.qty = parseInt(item.qty);
-        console.log(item);
         dispatch({type:ADD_ITEM,payload:item});
     }
-
-    //Delet Item
+    //Delete Item
+    const deleteItem = id =>{
+        dispatch({type:DELETE_ITEM,payload:id});
+    }
     
     //Update Item
-
+    const updateItem = (item) =>{
+        dispatch({type:UPDATE_ITEM,payload:item});
+    }
     //Set Current Item
-
+    const setCurrentItem = item =>{
+        dispatch({type:SET_CURRENT,payload:item});
+    }
     //Clear Current Item
-
+    const clearCurrentItem = () =>{
+        dispatch({type:CLEAR_CURRENT});
+    }
     //Filter Items
 
     //Clear Filter
@@ -78,8 +85,12 @@ const ItemState = props =>{
     value = {
         {
         items:state.items,
-        item:state.item,
+        currentItem:state.currentItem,
         addItem,
+        deleteItem,
+        setCurrentItem,
+        clearCurrentItem,
+        updateItem
         }
     }>
     {props.children}
