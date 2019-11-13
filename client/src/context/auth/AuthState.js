@@ -62,7 +62,7 @@ const loginUser = async user =>{
         headers:{'Content-Type':'application/json'},
     };
     try {
-        const response = await axios.post('http://localhost:5000/auth',user,config);
+        const response = await axios.post('/auth',user,config);
          dispatch({type:LOGIN_SUCCESSFUl,payload:response.data});
         await loadUser();
     } catch (error) {

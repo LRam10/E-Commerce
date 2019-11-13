@@ -27,7 +27,7 @@ const ItemState = props =>{
     //Get contacts
     const getItems = async (category)=>{
         try {
-            const response = await axios.get(`http://localhost:5000/items/${category}`);
+            const response = await axios.get(`/items/${category}`);
             dispatch({type:GET_ITEMS,payload:response.data});
         } catch (error) {
             console.log(error.response);
