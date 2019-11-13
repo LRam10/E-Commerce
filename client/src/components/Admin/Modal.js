@@ -27,7 +27,7 @@ const Modal = ({toggleModal}) => {
                   <label htmlFor='SKU'>SKU</label>
                     <input className='form-control' type='text' name='sku' defaultValue={sku} onChange={onChange}/>
                     <label htmlFor='Description'>Description</label>
-                    <input className='form-control' type='text' name='description' defaultValue={description} onChange={onChange}/>
+                    <textarea className='form-control' type='text' name='description' defaultValue={description} onChange={onChange}></textarea>
                     <label htmlFor='Description'>Category</label>
                     <select className='form-control'name='category' defaultValue={category} onChange={onChange}>
                         <option value='Red_strings'>Red Strings</option>
