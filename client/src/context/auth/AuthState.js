@@ -31,7 +31,7 @@ const loadUser = async () =>{
         setAuthToken(localStorage.token);
     }
   try {
-    const response = await axios.get('http://localhost:5000/auth');
+    const response = await axios.get('/auth');
     dispatch({type:USER_LOADED,payload:response.data});
   } catch (error) {
       dispatch({type:AUTH_ERROR});
@@ -43,8 +43,7 @@ const registerUser = async (userData) =>{
         let config = {
             headers:{'Content-Type':'application/json'},
         };
-        const response = await axios.post('http://localhost:5000/register',userData,config);
-        // const data = await response.json();
+        const response = await axios.post('/register',userData,config);
         dispatch({type:REGISTER_SUCCESS,payload:response.data});
         loadUser();
     } catch (error) {
@@ -79,7 +78,7 @@ const loginAdmin = async user=>{
         headers:{'Content-Type':'application/json'},
     };
     try {
-        const response = await axios.post('http://localhost:5000/auth/admin',user,config);
+        const response = await axios.post('/auth/admin',user,config);
          dispatch({type:LOGIN_ADMIN_SUCCESSFUL,payload:response.data});
          loadUser();
     } catch (error) {

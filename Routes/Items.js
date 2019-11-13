@@ -41,7 +41,7 @@ router.post("/",[auth,[
         cloudinary.uploader.upload(img_url.tempFilePath,{folder:'/Bracelet'}, async function(error, result){
             if(!error){
                 try {
-                    item = new Item({sku,category,description,price,img_url:result.url,qty});
+                    item = new Item({sku,category,description,price,img_url:result.secure_url,qty});
                     await item.save();
                     return res.status(200).json({msg:'Item Successfully Created'});
                 } catch (error) {

@@ -39,7 +39,7 @@ const ItemState = props =>{
         item.price = parseFloat(item.price);
         item.qty = parseInt(item.qty);
         try {
-            let response =await axios.post(`http://localhost:5000/items/`,item);
+            let response =await axios.post(`/items`,item);
             dispatch({type:ADD_ITEM,payload:response.data.msg});
         } catch (error) {
             dispatch({ITEM_ERROR,payload:error.response.data.msg});
@@ -48,7 +48,7 @@ const ItemState = props =>{
     //Delete Item
     const deleteItem = async id =>{
         try {
-             await axios.delete(`http://localhost:5000/items/${id}`);
+             await axios.delete(`/items/${id}`);
             dispatch({type:DELETE_ITEM,payload:id});
         } catch (error) {
             dispatch({type:ITEM_ERROR,payload:error.response.data.msg});
@@ -63,7 +63,7 @@ const ItemState = props =>{
             }
         };
         try {
-            const response = await axios.put(`http://localhost:5000/items/${item._id}`,item,config);
+            const response = await axios.put(`/items/${item._id}`,item,config);
             console.log(response.data);
             dispatch({type:UPDATE_ITEM,payload:response.data});
         } catch (error) {
