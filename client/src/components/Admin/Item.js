@@ -1,17 +1,30 @@
-import React,{useContext} from 'react'
+import React,{useContext,useEffect} from 'react'
 import ItemContext from '../../context/item/itemContext';
+import AlertContext from '../../context/alerts/alertContext';
 //Destructuring same as props.item
 const Item= ({item,toggleModal})=> {
-    const {img_url,category,price,description,sku,id} = item
+    const {img_url,category,price,description,sku,_id} = item
+    //Item context init
     const itemContext = useContext(ItemContext);
+    const {deleteItem,clearCurrentItem,error,setCurrentItem} = itemContext;
+    //Alert context
+    const alertContext = useContext(AlertContext);
     const onDelete = ()=>{
-        itemContext.deleteItem(id);
-        itemContext.clearCurrentItem();
+        if(window.confirm("Are you sure you want to delete this item") == true){
+            deleteItem(_id);
+            clearCurrentItem();
+        }
+        else return;
     }
     const onEdit = ()=>{
-        itemContext.setCurrentItem(item);
+        setCurrentItem(item);
         toggleModal();
     }
+    useEffect(()=>{
+        if(error){
+            alertContext.setAlert(error,"danger");
+        }
+    },[error]);
     return (
             <div className='card'>
                 <img src={img_url} className='card-img-top' alt={`${category}-pic`}/>

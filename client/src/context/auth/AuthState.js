@@ -11,7 +11,8 @@ import  {
     USER_LOADED,
     AUTH_ERROR,
     LOGOUT,
-    CLEAR_ERRORS
+    CLEAR_ERRORS,
+    LOGIN_ADMIN_SUCCESSFUL
 } from '../types';
 const AuthState = props =>{
     const initialState = {
@@ -20,7 +21,7 @@ const AuthState = props =>{
     isAuthenticated:null,
     loading:true,
     error:null,
-    accessType:null,
+    isAdmin:null,
     };
     const [state,dispatch] = useReducer(AuthReducer,initialState);
 
@@ -79,8 +80,8 @@ const loginAdmin = async user=>{
     };
     try {
         const response = await axios.post('http://localhost:5000/auth/admin',user,config);
-         dispatch({type:LOGIN_SUCCESSFUl,payload:response.data});
-        await loadUser();
+         dispatch({type:LOGIN_ADMIN_SUCCESSFUL,payload:response.data});
+         loadUser();
     } catch (error) {
         console.log(error)
         dispatch({type:LOGIN_FAILURE,payload:error.response.data.msg})
@@ -95,7 +96,7 @@ const loginAdmin = async user=>{
         isAuthenticated:state.isAuthenticated,
         error:state.error,
         loading:state.loading,
-        accessType:state.accessType,
+        isAdmin:state.isAdmin,
         registerUser,
         loadUser,
         clearErrors,

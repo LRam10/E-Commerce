@@ -5,7 +5,7 @@ import AlertContext from '../../context/alerts/alertContext';
 const AdminLogin = (props) => {
     //AutContext init
     const authContext = useContext(AuthContext);
-    const {isAuthenticated,loginAdmin,error,clearErrors,accessType} = authContext;
+    const {loginAdmin,error,clearErrors,isAdmin} = authContext;
     //AlertContext inti
     const alertContext = useContext(AlertContext);
     const { setAlert } = alertContext;
@@ -17,13 +17,8 @@ const AdminLogin = (props) => {
     //form inputs
     const onChange =(e)=>setUser({...user,[e.target.name]:e.target.value});
     const {email,password} = user;
-    //SubmitForm
-    const onLogin = (e)=>{
-        e.preventDefault();
-        loginAdmin({email,password});
-    }
     useEffect(()=>{
-        if(accessType === 1 && localStorage.token){
+        if(isAdmin){
             props.history.push('/admin-login/home');
         }
         if(error){
@@ -31,7 +26,12 @@ const AdminLogin = (props) => {
             clearErrors();
         }
         //eslint-disable-next-line
-    },[accessType,error,props.history]);
+    },[isAdmin,error,props.history]);
+    //SubmitForm
+    const onLogin = (e)=>{
+        e.preventDefault();
+        loginAdmin({email,password});
+    }
     return (
         <div className='container'>
             <form className='mx-auto form-group mt-4 shadow-sm py-5' onSubmit={onLogin}>

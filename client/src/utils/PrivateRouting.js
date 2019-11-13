@@ -4,9 +4,9 @@ import AuthContext from '../context/auth/authContext';
 
 const PrivateRoute = ({component:Component, ...rest})=>{
     const authContext = useContext(AuthContext);
-    const { isAuthenticated,accessType } = authContext;
+    const { isAuthenticated,isAdmin } = authContext;
     return(
-        <Route {...rest} render={props => !isAuthenticated && accessType !== 1 ? (
+        <Route {...rest} render={props =>  !isAuthenticated && !isAdmin ? (
             <Redirect to='/admin-login'/>
         ):
         (<Component {...props}/>)}/>

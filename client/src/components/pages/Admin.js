@@ -8,7 +8,12 @@ import AuthContext from '../../context/auth/authContext';
 const Admin = () => {
     const [active,setActive] = useState(true);
     const itemContext = useContext(ItemContext);
-    const {items} = itemContext;
+    const {items,getItems} = itemContext;
+    const authContext = useContext(AuthContext);
+    useEffect(()=>{
+        authContext.loadUser();
+        //eslint-disable-next-line
+    }, []);
     //switch between components
     const toggle = (section,data)=>{
         if(data === ' '){
@@ -16,14 +21,8 @@ const Admin = () => {
             return;
         }
         setActive(section);
-        console.log(data);
+        getItems(data);
     }
-    const authContext = useContext(AuthContext);
-    useEffect(()=>{
-        authContext.loadUser();
-        //eslint-disable-next-line
-    }, []);
-     
     return (
         <div className='container-fluid'>
             <div className='row' style={{padding:'0'}}>

@@ -1,6 +1,7 @@
 import React,{useReducer} from 'react';
 import ItemContext from './itemContext';
 import ItemReducer from './itemReducer';
+import axios from 'axios';
 import  {
 ADD_ITEM,
 DELETE_ITEM,
@@ -8,66 +9,67 @@ UPDATE_ITEM,
 FILTER_ITEMS,
 SET_CURRENT,
 CLEAR_CURRENT,
-CLEAR_FILTER
+CLEAR_FILTER,
+ITEM_ERROR,
+CLEAR_ERRORS,
+GET_ITEMS,
+CLEAR_ITEMS,
 } from '../types';
 
 const ItemState = props =>{
     const initialState = {
-        items:[{
-            id:1,
-            sku:'WB0001',
-            description:'Red Strings,simple or with ornament',
-            category:'Red_Strings',
-            price:4.99,
-            img_url:'http://res.cloudinary.com/doei459zd/image/upload/v1570636906/fevbvzsl4zeqeywzthks.png',
-            qty:4
-              },{
-            id:2,
-            sku:'WB0002',
-            description:'Wooden,simple or with ornament',
-            category:'Red_Strings',
-            price:4.99,
-            img_url:'http://res.cloudinary.com/doei459zd/image/upload/v1570636906/fevbvzsl4zeqeywzthks.png',
-            qty:6
-            },
-            {
-            id:3,
-            sku:'RS0001',
-            description:'Red Strings,simple or with ornament',
-            category:'Wooden',
-            price:4.99,
-            img_url:'http://res.cloudinary.com/doei459zd/image/upload/v1570636906/fevbvzsl4zeqeywzthks.png',
-            qty:4
-            },
-            {
-                id:4,
-                sku:'RS0003',
-                description:'Paracord Red and blue',
-                category:'Paracord',
-                price:4.99,
-                img_url:'http://res.cloudinary.com/doei459zd/image/upload/v1570636906/fevbvzsl4zeqeywzthks.png',
-                qty:4
-                }
-            ],
+        items:[],
         currentItem:null,
+        error:null,
+        success:null
     };
     const [state,dispatch] = useReducer(ItemReducer,initialState);
+    //Get contacts
+    const getItems = async (category)=>{
+        try {
+            const response = await axios.get(`http://localhost:5000/items/${category}`);
+            dispatch({type:GET_ITEMS,payload:response.data});
+        } catch (error) {
+            console.log(error.response);
+        }
+    };
 
     //Add Item
-    const addItem = item =>{
-        item.id = Math.random()*100;
+    const addItem = async item =>{
         item.price = parseFloat(item.price);
         item.qty = parseInt(item.qty);
-        dispatch({type:ADD_ITEM,payload:item});
+        try {
+            let response =await axios.post(`http://localhost:5000/items/`,item);
+            dispatch({type:ADD_ITEM,payload:response.data.msg});
+        } catch (error) {
+            dispatch({ITEM_ERROR,payload:error.response.data.msg});
+        }
     }
     //Delete Item
-    const deleteItem = id =>{
-        dispatch({type:DELETE_ITEM,payload:id});
+    const deleteItem = async id =>{
+        try {
+             await axios.delete(`http://localhost:5000/items/${id}`);
+            dispatch({type:DELETE_ITEM,payload:id});
+        } catch (error) {
+            dispatch({type:ITEM_ERROR,payload:error.response.data.msg});
+        }
     }
     
     //Update Item
-    const updateItem = (item) =>{
-        dispatch({type:UPDATE_ITEM,payload:item});
+    const updateItem = async (item) =>{
+        const config ={
+            headers:{
+                'Content-Type':'Application/json'
+            }
+        };
+        try {
+            const response = await axios.put(`http://localhost:5000/items/${item._id}`,item,config);
+            console.log(response.data);
+            dispatch({type:UPDATE_ITEM,payload:response.data});
+        } catch (error) {
+            dispatch({type:ITEM_ERROR,payload:error.response.data.msg});
+        }
+
     }
     //Set Current Item
     const setCurrentItem = item =>{
@@ -81,16 +83,22 @@ const ItemState = props =>{
 
     //Clear Filter
 
+    //Clear Errors
+    const clearErrors = ()=> dispatch({type:CLEAR_ERRORS});
     return <ItemContext.Provider
     value = {
         {
         items:state.items,
         currentItem:state.currentItem,
+        error:state.error,
+        success:state.success,
         addItem,
         deleteItem,
         setCurrentItem,
         clearCurrentItem,
-        updateItem
+        updateItem,
+        clearErrors,
+        getItems
         }
     }>
     {props.children}

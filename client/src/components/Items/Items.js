@@ -7,7 +7,7 @@ const Items = (props)=> {
         <div className='container-fluid mt-4'>
             <div className='row'>
              {items.map(item =>(
-            <div className='col-lg-3' key={item.id}>
+            <div className='col-lg-3' key={item._id}>
                <Item item={item}></Item>
            </div>
             ))}

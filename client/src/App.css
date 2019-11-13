@@ -175,3 +175,20 @@ footer ul p{
   font-size: 2.5rem;
   cursor: pointer;
 }
+.slidein{
+  animation-name: slidein;
+  animation-duration:6s;
+  transition: transform 4s;
+  top:20%;
+  left:25%;
+  z-index: 1000;
+}
+/* KeyFrames */
+@keyframes slidein{
+  from{
+      display: none;
+  }
+  to{
+      display: block;
+  }
+}

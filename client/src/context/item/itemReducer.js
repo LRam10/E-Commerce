@@ -6,18 +6,25 @@ import  {
     SET_CURRENT,
     CLEAR_CURRENT,
     CLEAR_FILTER,
-    GET_ITEMS
+    GET_ITEMS,
+    ITEM_ERROR,
+    CLEAR_ERRORS,
     } from '../types';
 export default (state,action)=>{
     switch(action.type){
-        case ADD_ITEM:return {...state,};
+        case GET_ITEMS:return{
+            ...state,
+            items:action.payload
+        }
+        case ADD_ITEM:return {...state,success:action.payload};
         case DELETE_ITEM:return{
             ...state,
-            items:state.items.filter(item=>item.id !== action.payload)
+            items:state.items.filter(item=>item._id !== action.payload)
         };
         case UPDATE_ITEM: return{
-            ...state,items:state.items.map(item => item.id === action.payload.id?
-                action.payload:item)
+            ...state,
+            items:state.items.map(item => item._id === action.payload._id ?
+                action.payload : item)
         };
         case SET_CURRENT: return{
             ...state,
@@ -27,6 +34,14 @@ export default (state,action)=>{
             ...state,
             currentItem:null
         };
+        case ITEM_ERROR:return{
+            ...state,
+            error:action.payload
+        }
+        case CLEAR_ERRORS:return{
+            ...state,
+            success:null
+        }
         default:return state;
     }
 }

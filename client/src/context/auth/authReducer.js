@@ -6,7 +6,8 @@ REGISTER_FAILURE,
 USER_LOADED,
 AUTH_ERROR,
 LOGOUT,
-CLEAR_ERRORS
+CLEAR_ERRORS,
+LOGIN_ADMIN_SUCCESSFUL
 } from '../types';
 
 export default (state,action)=>{
@@ -44,6 +45,15 @@ export default (state,action)=>{
                     isAuthenticated:true,
                     loading:false
                 };
+            case LOGIN_ADMIN_SUCCESSFUL: 
+            localStorage.setItem('token',action.payload.token);
+            return{
+                    ...state,
+                    ...action.payload,
+                    isAuthenticated:true,
+                    loading:false,
+                    isAdmin:true,
+            };
             case LOGIN_FAILURE:
                 localStorage.removeItem('token');
                 return{
@@ -66,7 +76,7 @@ export default (state,action)=>{
                     loading:false,
                     error:action.payload,
                     user:null,
-                    accessType:null 
+                    isAdmin:false 
                 }
      default: return{...state};
     };

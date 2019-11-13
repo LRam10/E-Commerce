@@ -59,10 +59,10 @@ const Navbar= ()=> {
                 <li className="nav-item ">
                     <a className="nav-link text-white"  onClick={e =>setVisbility(!visibility)}>Styles</a>
                     <ul className={'list-group position-absolute '+ (visibility?'d-inline-block':'d-none')}>
-                        <li className='list-group-item' ><Link className='text-white' to={'/category/red_strings'}>Red Strings</Link></li>
-                        <li className='list-group-item' ><Link className='text-white' to={'/category/wooden'}>Wooden</Link></li>
-                        <li className='list-group-item' ><Link className='text-white' to={'/category/paracord'}>Paracord</Link></li>
-                        <li className='list-group-item' ><Link className='text-white' to={'/category/friendship'}>Friendship</Link></li>
+                        <li className='list-group-item' ><Link className='text-white' to={'/category/Red_Strings'}>Red Strings</Link></li>
+                        <li className='list-group-item' ><Link className='text-white' to={'/category/Wooden'}>Wooden</Link></li>
+                        <li className='list-group-item' ><Link className='text-white' to={'/category/Paracord'}>Paracord</Link></li>
+                        <li className='list-group-item' ><Link className='text-white' to={'/category/Friendship'}>Friendship</Link></li>
                     </ul>
                 </li>
                 <li className="nav-item">

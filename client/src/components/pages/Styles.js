@@ -1,14 +1,24 @@
-import React,{Fragment,useContext} from 'react'
+import React,{Fragment,useContext,useEffect} from 'react'
 import Items from '../Items/Items'
 import ItemContext from '../../context/item/itemContext';
+import AuthContext from '../../context/auth/authContext'
 import {useParams} from 'react-router-dom'
 const Styles = ()=> {
     let{style} = useParams()
     const itemContext = useContext(ItemContext);
-    const {items} = itemContext;
+    const {items,getItems} = itemContext;
+    const authContext = useContext(AuthContext);
+    const {loadUser} = authContext;
+    useEffect(()=>{
+        getItems(style);
+        if(localStorage.token){
+        loadUser();
+        };
+        //eslint-disable-next-line
+    },[style])
     return (
         <Fragment>
-            <h4>{style}</h4> 
+            <h4 className='text-center'>{style}</h4> 
            <div className="container-fluid">
            <Items items={items}/>
             </div> 

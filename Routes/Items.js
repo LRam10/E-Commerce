@@ -33,19 +33,20 @@ router.post("/",[auth,[
     let {sku,description,category,price,qty} = req.body;
     const img_url = req.files.img_url;
     try {
-        let item = await Item.findOne({sku})
+        let item = await Item.findOne({sku});
           if(item){
-             return res.json({msg:'Item has laready been created'});
+             return res.status(400).json({msg:'Item has laready been created'});
           }
         //Upload the picture and saves item in the database  
-        cloudinary.uploader.upload(img_url.tempFilePath, async function(error, result){
+        cloudinary.uploader.upload(img_url.tempFilePath,{folder:'/Bracelet'}, async function(error, result){
             if(!error){
                 try {
                     item = new Item({sku,category,description,price,img_url:result.url,qty});
                     await item.save();
-                    res.status(200);
+                    return res.status(200).json({msg:'Item Successfully Created'});
                 } catch (error) {
                     console.log(error);
+                    return res.status(400).json({msg:'Error Ulpoading Img'})
                 }
             } 
             });    
@@ -78,7 +79,6 @@ router.put("/:id",auth,async (req,res)=>{
     if(category) itemFields.category = category;
     if(price) itemFields.price = price;
     if(qty) itemFields.qty = qty;
-    console.log(typeof req.user.id);
     try {
         let item = await Item.findOne({_id:new mongoose.Types.ObjectId(req.params.id)});
         // the item is no longer available
@@ -87,7 +87,8 @@ router.put("/:id",auth,async (req,res)=>{
             return res.status(400).json({msg:'Not Authorized'})
         }
          item = await Item.findOneAndUpdate({_id:new mongoose.Types.ObjectId(req.params.id)},
-            {$set:itemFields});
+            {$set:itemFields},
+            {new:true});
             res.json(item);
     } catch (error) {
         console.log(error);
@@ -108,7 +109,7 @@ router.delete("/:id",auth,async (req,res)=>{
             return res.status(400).json({msg:'Not Authorized'})
         }
          await Item.findOneAndRemove({_id:new mongoose.Types.ObjectId(req.params.id)});
-         res.json({msg:'Contact Remove'});
+         res.json({msg:'Item has been Remove'});
     } catch (error) {
         console.log(error);
         res.status(500).json({msg:'Server Error'});
