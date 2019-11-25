@@ -4,6 +4,10 @@ const ItemSchema = mongoose.Schema({
     sku:{
         type:String,
     },
+    name:{
+        type:String,
+        require:true
+    },
     category:{
         type:String,
         require:true

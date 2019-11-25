@@ -9,6 +9,8 @@ const user = require('./Routes/User');
 const items =require('./Routes/Items');
 const cart =require('./Routes/Cart');
 const auth =require('./Routes/Auth');
+const checkout = require('./Routes/Checkout')
+const orders = require('./Routes/Order');
 //Database
 const connectDB = require('./config/db');
 
@@ -25,6 +27,8 @@ app.use('/register',user);
 app.use('/items',items);
 app.use('/cart',cart);
 app.use('/auth',auth);
+app.use('/checkout',checkout);
+app.use('/orders',orders);
 if(process.env.NODE_ENV === 'production'){
     //set static folder
     app.use(express.static('client/build'));

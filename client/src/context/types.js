@@ -20,3 +20,16 @@ export const ITEM_ERROR = 'ITEM_ERROR';
 export const PERCENTAGE = 'PERCENTAGE';
 export const CLEAR_ITEMS = 'CLEAR_ITEMS';
 export const LOGIN_ADMIN_SUCCESSFUL = 'LOGIN_ADMIN_SUCCESSFUl';
+//Cart Types
+export const GET_CART = 'GET_CART';
+export const ADD_ITEM_INCART = 'ADD_ITEM_INCART';
+export const REMOVE_ITEM = 'REMOVE_ITEM';
+export const EDIT_ITEM_INCART = 'EDIT_ITEM_INCART';
+export const POST_CART = 'POST_CART';
+export const CART_ERROR = 'CART_ERROR';
+export const CHECKOUT_CART = 'CHECKOUT_CART';
+export const CHECKOUT_AUTH = 'CHECKOUT_AUTH';
+export const EDIT_DB_CART_LOGOUT = 'EDIT_DB_CART';
+export const UPDATE_CART = 'UPDATE_CART';
+//Order Type
+export const GET_ORDERS = 'GET_ORDERS';

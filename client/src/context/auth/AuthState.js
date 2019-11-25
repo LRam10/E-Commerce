@@ -63,7 +63,7 @@ const loginUser = async user =>{
     try {
         const response = await axios.post('/auth',user,config);
          dispatch({type:LOGIN_SUCCESSFUl,payload:response.data});
-        await loadUser();
+        loadUser();
     } catch (error) {
         console.log(error)
         dispatch({type:LOGIN_FAILURE,payload:error.response.data.msg})

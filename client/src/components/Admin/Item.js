@@ -3,14 +3,14 @@ import ItemContext from '../../context/item/itemContext';
 import AlertContext from '../../context/alerts/alertContext';
 //Destructuring same as props.item
 const Item= ({item,toggleModal})=> {
-    const {img_url,category,price,description,sku,_id} = item
+    const {img_url,category,price,description,sku,_id,name} = item
     //Item context init
     const itemContext = useContext(ItemContext);
     const {deleteItem,clearCurrentItem,error,setCurrentItem} = itemContext;
     //Alert context
     const alertContext = useContext(AlertContext);
     const onDelete = ()=>{
-        if(window.confirm("Are you sure you want to delete this item") == true){
+        if(window.confirm("Are you sure you want to delete this item") === true){
             deleteItem(_id);
             clearCurrentItem();
         }
@@ -24,6 +24,7 @@ const Item= ({item,toggleModal})=> {
         if(error){
             alertContext.setAlert(error,"danger");
         }
+        // eslint-disable-next-line
     },[error]);
     return (
             <div className='card'>
@@ -33,7 +34,8 @@ const Item= ({item,toggleModal})=> {
                     <h4>{category}</h4>
                     <h5>${price}</h5>
                     <div className='card-text'>
-                        <p>{description}</p>
+                        <p>{name}</p>
+                        <p><small>{description}</small></p>
                     </div>
                     <div className='text-center'>
                         <button className='btn btn-md btn-danger' onClick={onDelete}>Delete</button>

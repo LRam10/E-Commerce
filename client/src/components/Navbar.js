@@ -2,6 +2,8 @@ import React,{useState,useRef,useEffect,useContext} from 'react'
 import {Fragment} from 'react'
 import {Link} from 'react-router-dom';
 import AuthContext from '../context/auth/authContext';
+import CartContext from '../context/cart/cartContext';
+import UserSublist from '../components/helpers/Usersublist';
 
 const Navbar= ()=> {
     let size = window.location.origin.length
@@ -27,8 +29,18 @@ const Navbar= ()=> {
     //AuthContext
     const authContext = useContext(AuthContext);
     const { isAuthenticated,logout,user } = authContext;
+    //ProductsContext 
+    const cartContext = useContext(CartContext);
+    const { products,createCart,inDB,editCart } = cartContext;
 
-    const onLogout =()=> logout();
+    const onLogout =()=> {
+        if(!inDB)
+            createCart(products);
+        else
+            editCart(products);
+
+        logout();
+    }
     if(adminUrl !== `/admin-login`){
     return (
         <Fragment>
@@ -38,38 +50,39 @@ const Navbar= ()=> {
             <span className="navbar-brand text-white mx-auto" >WARRIOR BRACELETS</span>
             <ul className="nav justify-content-end" id='top-menu'>
                 <li className="nav-item">
-                    {isAuthenticated ?
-                    <p className='nav-link text-white'>Hello, {user && user.firstName}</p>:
-                    <Link className="nav-link text-white"to={'/login'} >Account</Link>
+                    {isAuthenticated ? <UserSublist user={user}/>:
+                    <Link className="nav-link text-white" to={'/login'} >Account</Link>
                     }
                 </li>
                 {isAuthenticated &&(
                     <li className="nav-item">
-                        <a className='nav-link text-white' href='#!' onClick={onLogout}><i className="fas fa-sign-out-alt">Logout</i></a>
+                        <span className='nav-link text-white' onClick={onLogout}><i className="fas fa-sign-out-alt">Logout</i></span>
                     </li>
                 )}
                 <li className="nav-link mx-0" style={dBlue}>
-                <i className="fas fa-shopping-cart"></i>
+                <Link to={'/cart'} className='text-dark'><i className="fas fa-shopping-cart">{products.length > 0 &&(
+                    <span id='inCart' className='position-absolute'>{products.length}</span>
+                )}</i></Link>
                 </li>
             </ul>
         </div>
         <div style={dBlue} className="navbar justify-content-center">
-            <Link className="logo" to={'/'}>W</Link>
+            <a className="logo" href='/'>W</a>
             <ul className="nav py-2">
                 <li className="nav-item ">
-                    <a className="nav-link text-white"  onClick={e =>setVisbility(!visibility)}>Styles</a>
+                    <span className="nav-link text-white"  onClick={e =>setVisbility(!visibility)}>Styles</span>
                     <ul className={'list-group position-absolute '+ (visibility?'d-inline-block':'d-none')}>
-                        <li className='list-group-item' ><Link className='text-white' to={'/category/Red_Strings'}>Red Strings</Link></li>
-                        <li className='list-group-item' ><Link className='text-white' to={'/category/Wooden'}>Wooden</Link></li>
-                        <li className='list-group-item' ><Link className='text-white' to={'/category/Paracord'}>Paracord</Link></li>
-                        <li className='list-group-item' ><Link className='text-white' to={'/category/Friendship'}>Friendship</Link></li>
+                        <li className='list-group-item' ><Link className='text-white' to={'/category/red_Strings'}>Red Strings</Link></li>
+                        <li className='list-group-item' ><Link className='text-white' to={'/category/wooden'}>Wooden</Link></li>
+                        <li className='list-group-item' ><Link className='text-white' to={'/category/paracord'}>Paracord</Link></li>
+                        <li className='list-group-item' ><Link className='text-white' to={'/category/friendship'}>Friendship</Link></li>
                     </ul>
                 </li>
                 <li className="nav-item">
-                    <a className="nav-link text-white" href='/about'>About Us</a>
+                    <Link className="nav-link text-white" to={'/about'}>About Us</Link>
                 </li>
                 <li className="nav-item">
-                    <a className="nav-link text-white" href='/customize'>Customize</a>
+                    <Link className="nav-link text-white" to={'/customize'}>Customize</Link>
                 </li>
             </ul>
         </div>

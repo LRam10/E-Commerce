@@ -2,6 +2,7 @@ import React,{useState,useContext,useEffect} from 'react';
 import { Link } from 'react-router-dom';
 import AuthContext from '../../context/auth/authContext';
 import Alert from '../../context/alerts/alertContext';
+import CartContext from '../../context/cart/cartContext';
 
 const Login = (props) => {
     //UserContext init
@@ -10,6 +11,9 @@ const Login = (props) => {
     //AlertContext
     const alertContext = useContext(Alert);
     const { setAlert } = alertContext;
+    //CartContext
+    const cartContext = useContext(CartContext);
+    const { getCart } = cartContext;
     //Component state
     const[user,setUser] = useState({
         email:'',
@@ -17,6 +21,7 @@ const Login = (props) => {
     });
     useEffect(()=>{
         if(isAuthenticated || localStorage.token){
+            getCart();
             props.history.push('/');
         }
         if(error){

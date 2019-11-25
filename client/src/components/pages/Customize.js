@@ -1,6 +1,8 @@
-import React from 'react'
+import React from 'react';
+import {useExpiration} from '../../utils/useExpiration';
 
 const Customize= ()=> {
+    useExpiration();
     return (
         <div>
             <h1>customize</h1>

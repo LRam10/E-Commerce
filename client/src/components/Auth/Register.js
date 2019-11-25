@@ -18,7 +18,7 @@ const Register = (props) => {
             clearErrors();
         }
         //eslint-disable-next-line
-    },[error,isAuthenticated,props.hostory]);
+    },[error,isAuthenticated,props.history]);
     //Component State
     const[user,setUser] = useState({
         firsName:'',

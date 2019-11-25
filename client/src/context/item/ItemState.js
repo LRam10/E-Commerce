@@ -24,8 +24,9 @@ const ItemState = props =>{
         success:null
     };
     const [state,dispatch] = useReducer(ItemReducer,initialState);
-    //Get contacts
+    //Get items
     const getItems = async (category)=>{
+        category = category.charAt(0).toUpperCase() + category.slice(1)
         try {
             const response = await axios.get(`/items/${category}`);
             dispatch({type:GET_ITEMS,payload:response.data});

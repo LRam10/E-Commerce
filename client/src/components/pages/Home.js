@@ -5,6 +5,7 @@ import friendImg from '../../images/friendship.jpg'
 import Paracord from '../../images/Paracord.png'
 import RedStrings from '../../images/Red_Strings.png'
 import AuthContext from '../../context/auth/authContext';
+import {useExpiration} from '../../utils/useExpiration';
 
 const Home = ()=> {
     const authContext = useContext(AuthContext);
@@ -12,6 +13,7 @@ const Home = ()=> {
         authContext.loadUser();
         //eslint-disable-next-line
     }, []);
+    useExpiration();
     return (
         <Fragment>
         <div className="container-fluid img-cont pt-1">
@@ -40,7 +42,7 @@ const Home = ()=> {
                     <div className='card-body bg-light'>
                         <div className='card-text'>
                         <h5>Red Strings</h5>
-                        <Link className='btn btn-small btn-dark text-white' to={'/category/red_strings'}>Shop</Link>
+                        <Link className='btn btn-small btn-dark text-white' to={'/category/red_Strings'}>Shop</Link>
                         </div>
                     </div>
                 </div>

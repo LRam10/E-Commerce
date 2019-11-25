@@ -9,6 +9,7 @@ const CreateItem = () => {
     const alertContext = useContext(AlertContext);
     const [item,setItem] = useState({
         sku:'',
+        name:'',
         description:'',
         category:'Red_Strings',
         price:0,
@@ -26,7 +27,7 @@ const CreateItem = () => {
         }
         //eslint-disable-next-line
     }, [error,success]);
-    const {sku,description,category,price,img_url,qty} = item;
+    const {sku,description,category,price,img_url,qty,name} = item;
     const onChange = e => setItem({...item,[e.target.name]:e.target.value});
     const onChangeFile = (e) =>{
         setItem({...item,img_url:e.target.files[0]});
@@ -34,6 +35,7 @@ const CreateItem = () => {
     const createItem = e =>{
         e.preventDefault();
         const data = new FormData();
+        data.append('name',name);
         data.append('sku',sku);
         data.append('description',description);
         data.append('category',category);
@@ -45,6 +47,7 @@ const CreateItem = () => {
         sku:'',
         description:'',
         category:'',
+        name:'',
         price:0,
         img_url:'',
         qty:0
@@ -52,6 +55,8 @@ const CreateItem = () => {
     }
     return (
         <form className='form-group mx-auto mt-4' onSubmit={createItem}>
+            <label htmlFor='name'>Product Name</label>
+            <input className='form-control' type='text' name='name' value={name} onChange={onChange} />
             <label htmlFor='SKU'>SKU</label>
             <input className='form-control' type='text' name='sku' value={sku} onChange={onChange}></input>
             <label htmlFor='Description'>Description</label>

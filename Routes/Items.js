@@ -30,7 +30,7 @@ router.post("/",[auth,[
     if(!errors.isEmpty()){
         return res.status(400).json({errors:errors.array()});
     }
-    let {sku,description,category,price,qty} = req.body;
+    let {sku,description,category,price,qty,name} = req.body;
     const img_url = req.files.img_url;
     try {
         let item = await Item.findOne({sku});
@@ -41,7 +41,7 @@ router.post("/",[auth,[
         cloudinary.uploader.upload(img_url.tempFilePath,{folder:'/Bracelet'}, async function(error, result){
             if(!error){
                 try {
-                    item = new Item({sku,category,description,price,img_url:result.secure_url,qty});
+                    item = new Item({sku,name,category,description,price,img_url:result.secure_url,qty});
                     await item.save();
                     return res.status(200).json({msg:'Item Successfully Created'});
                 } catch (error) {
@@ -71,7 +71,7 @@ router.get("/:category",async (req,res)=>{
 //@Desc   Edit items from admin page
 //@Access  Private
 router.put("/:id",auth,async (req,res)=>{
-    const {sku,description,category,price,qty} = req.body;
+    const {sku,description,category,price,qty,name} = req.body;
     //build contact object
     const itemFields={}
     if(sku) itemFields.sku = sku;
@@ -79,6 +79,7 @@ router.put("/:id",auth,async (req,res)=>{
     if(category) itemFields.category = category;
     if(price) itemFields.price = price;
     if(qty) itemFields.qty = qty;
+    if(name) itemFields.name = name;
     try {
         let item = await Item.findOne({_id:new mongoose.Types.ObjectId(req.params.id)});
         // the item is no longer available
@@ -111,7 +112,6 @@ router.delete("/:id",auth,async (req,res)=>{
          await Item.findOneAndRemove({_id:new mongoose.Types.ObjectId(req.params.id)});
          res.json({msg:'Item has been Remove'});
     } catch (error) {
-        console.log(error);
         res.status(500).json({msg:'Server Error'});
     }
    });
