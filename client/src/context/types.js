@@ -18,7 +18,7 @@ export const LOGOUT= 'LOGOUT';
 export const CLEAR_ERRORS = 'CLEAR_ERROR';
 export const ITEM_ERROR = 'ITEM_ERROR';
 export const PERCENTAGE = 'PERCENTAGE';
-export const CLEAR_ITEMS = 'CLEAR_ITEMS';
+export const GET_LOADING = 'CLEAR_ITEMS';
 export const LOGIN_ADMIN_SUCCESSFUL = 'LOGIN_ADMIN_SUCCESSFUl';
 //Cart Types
 export const GET_CART = 'GET_CART';

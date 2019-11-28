@@ -13,7 +13,7 @@ CLEAR_FILTER,
 ITEM_ERROR,
 CLEAR_ERRORS,
 GET_ITEMS,
-CLEAR_ITEMS,
+GET_LOADING,
 } from '../types';
 
 const ItemState = props =>{
@@ -21,11 +21,13 @@ const ItemState = props =>{
         items:[],
         currentItem:null,
         error:null,
-        success:null
+        success:null,
+        loading:null,
     };
     const [state,dispatch] = useReducer(ItemReducer,initialState);
     //Get items
     const getItems = async (category)=>{
+        setLoading();
         category = category.charAt(0).toUpperCase() + category.slice(1)
         try {
             const response = await axios.get(`/items/${category}`);
@@ -80,6 +82,10 @@ const ItemState = props =>{
     const clearCurrentItem = () =>{
         dispatch({type:CLEAR_CURRENT});
     }
+    //Set Loading
+    const setLoading = ()=>{
+        dispatch({type:GET_LOADING})
+    }
     //Filter Items
 
     //Clear Filter
@@ -93,6 +99,7 @@ const ItemState = props =>{
         currentItem:state.currentItem,
         error:state.error,
         success:state.success,
+        loading:state.loading,
         addItem,
         deleteItem,
         setCurrentItem,

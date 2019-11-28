@@ -14,12 +14,9 @@ const Item= ({item})=> {
             <div className='card'>
                 <Link to={`/item/${item.name}`} onClick={onSetItem}>
                 <img src={img_url} className='card-img-top' alt={`${category}-pic`}/></Link>
-                <div className='card-body card-container'>
-                    <h4>{name}</h4>
-                    <h5>${price}</h5>
-                    <div className='card-text'>
-                        <p>{description}</p>
-                    </div>
+                <div className='card-body card-container bg-light'>
+                    <p className='text-center m-0'><small>{name}</small></p>
+                    <p className='text-center m-0'><b>${price}</b></p>
                 </div>
             </div>
     )

@@ -8,8 +8,9 @@ import {useExpiration} from '../../utils/useExpiration';
 const Styles = ()=> {
     let{style} = useParams();
     //ItemContext 
+    const cat_text = style.replace('_',' ');
     const itemContext = useContext(ItemContext);
-    const {items,getItems} = itemContext;
+    const {items,getItems,loading} = itemContext;
     //AuthContext
     const authContext = useContext(AuthContext);
     const {loadUser} = authContext;
@@ -24,9 +25,17 @@ const Styles = ()=> {
         useExpiration()
     return (
         <Fragment>
-            <h4 className='text-center'>{style}</h4> 
+            <div className='jumbotron'>
+                <h2 className='text-center text-uppercase'><u>{cat_text}</u></h2> 
+            </div>
            <div className="container-fluid">
-           <Items items={items}/>
+            {loading === true ?
+            <div className='d-flex justify-content-center'>
+                <div className="spinner-border text-primary" role="status">
+                    <span className="sr-only">Loading...</span>
+                </div>
+            </div>:<Items items={items}/>} 
+           
             </div> 
         </Fragment>
     )

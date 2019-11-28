@@ -9,17 +9,24 @@ import  {
     GET_ITEMS,
     ITEM_ERROR,
     CLEAR_ERRORS,
+    GET_LOADING
     } from '../types';
 export default (state,action)=>{
     switch(action.type){
         case GET_ITEMS:return{
             ...state,
-            items:action.payload
+            items:action.payload,
+            loading:false,
         }
-        case ADD_ITEM:return {...state,success:action.payload};
+        case ADD_ITEM:return {
+            ...state,
+            success:action.payload,
+            loading:false
+        };
         case DELETE_ITEM:return{
             ...state,
-            items:state.items.filter(item=>item._id !== action.payload)
+            items:state.items.filter(item=>item._id !== action.payload),
+            loading:false,
         };
         case UPDATE_ITEM: return{
             ...state,
@@ -41,6 +48,10 @@ export default (state,action)=>{
         case CLEAR_ERRORS:return{
             ...state,
             success:null
+        }
+        case GET_LOADING:return{
+            ...state,
+            loading:true
         }
         default:return state;
     }

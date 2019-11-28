@@ -2,6 +2,8 @@ html,body{
   padding:0;
   margin:0;
   font-family: 'Poppins', sans-serif;
+  height: 100%;
+  width: 100%;
 }
 label{
   margin: .5rem 0 0 0;
@@ -58,7 +60,6 @@ border-bottom: 11px solid #fff;
 .form-group {
   margin-bottom: 1rem;
   width: 422px;
-  background: #f2f2f2;
   padding: 1rem;
 }
 .active{
@@ -165,6 +166,10 @@ color:black;
   color:#fff;
   transform: scale(1.1);
 }
+footer{
+  position:relative;
+  bottom: 0;
+}
 footer ul{
   display: inline-grid;
   padding: 0 2rem;
@@ -177,17 +182,6 @@ footer ul{
 footer ul p{
   margin:0;
   border-bottom: 1px solid #fff;
-}
-.card-container::before{
-  content: "\f055";
-  font-family: "Font Awesome\ 5 Free";
-  position: absolute;
-  color:#DB4437;
-  right: 5px;
-  top: 60%;
-  font-weight: 900;
-  font-size: 2.5rem;
-  cursor: pointer;
 }
 .card-container:hover::before{
   color:black;
