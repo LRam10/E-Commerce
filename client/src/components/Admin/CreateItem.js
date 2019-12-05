@@ -46,7 +46,7 @@ const CreateItem = () => {
         setItem({
         sku:'',
         description:'',
-        category:'',
+        category:'Red_Strings',
         name:'',
         price:0,
         img_url:'',
@@ -91,7 +91,7 @@ const CreateItem = () => {
             </div>
                 {loading === true ?
                 <div className='spinner-border text-primary' role='status'>
-                        <span class="sr-only">Loading...</span>
+                        <span className="sr-only">Loading...</span>
                 </div>:<input type='submit' className='btn btn-md btn-dark text-white mt-1' value='Add Item'/>}
               </div>  
         </form>

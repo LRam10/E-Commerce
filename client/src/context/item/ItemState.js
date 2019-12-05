@@ -39,6 +39,7 @@ const ItemState = props =>{
 
     //Add Item
     const addItem = async item =>{
+        setLoading();
         item.price = parseFloat(item.price);
         item.qty = parseInt(item.qty);
         try {

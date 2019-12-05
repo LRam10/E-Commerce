@@ -1,11 +1,14 @@
 import React,{useContext,useState,useEffect} from 'react';
 import ItemContext from '../../context/item/itemContext';
 import CartContext from '../../context/cart/cartContext';
+import AlertContext from '../../context/alerts/alertContext';
 
 const ItemInfo = () => {
     const itemContext = useContext(ItemContext);
     const { currentItem } = itemContext;
     const { img_url,description,price,_id,sku,name } = currentItem;
+
+    const alertContext = useContext(AlertContext);
     
     const cartContext = useContext(CartContext);
     const {addToCart,products} = cartContext;
@@ -18,6 +21,7 @@ const ItemInfo = () => {
         price,
         qty:1
     });
+    const[inCart,setInCart] = useState(false);
     let{ qty } = item;
     useEffect(()=>{
         localStorage.setItem('cart', JSON.stringify(products));
@@ -36,7 +40,17 @@ const ItemInfo = () => {
         setItem({...item,qty:++qty})
     }
     const onAddToCart = ()=>{
-        addToCart(item);
+        for (let i = 0; i < products.length; i++) {
+            if(item._id === products[i]._id){
+                alertContext.setAlert('Item Already in Cart','danger');
+                setInCart(true);
+                return;
+            } 
+        }
+        if(inCart) 
+            return;
+        else 
+            addToCart(item);
     }
     return (
         <div className='container'>
