@@ -4,6 +4,7 @@ import {Link} from 'react-router-dom';
 import AuthContext from '../context/auth/authContext';
 import CartContext from '../context/cart/cartContext';
 import UserSublist from '../components/helpers/Usersublist';
+import Hamburger from '../components/helpers/Hamburger';
 
 const Navbar= ()=> {
     let size = window.location.origin.length
@@ -70,6 +71,7 @@ const Navbar= ()=> {
             <a className="logo" href='/'>W</a>
             <ul className="nav py-2">
                 <li className="nav-item ">
+                    <Hamburger isAuthenticated={isAuthenticated} user={user} onLogout={onLogout}/>
                     <span className="nav-link text-white"  onClick={e =>setVisbility(!visibility)}>Styles</span>
                     <ul className={'list-group position-absolute '+ (visibility?'d-inline-block':'d-none')}>
                         <li className='list-group-item' ><Link className='text-white' to={'/category/red_Strings'}>Red Strings</Link></li>

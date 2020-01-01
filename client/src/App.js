@@ -25,6 +25,7 @@ import OrderState from './context/order/OrderState';
 
 import setAuthToken from './utils/setAuthToken';
 import PrivateRoute from './utils/PrivateRouting';
+import AuthPrivate from './utils/AuthPrivate';
 
 if(localStorage.token){
   setAuthToken(localStorage.token);
@@ -54,7 +55,7 @@ const App = ()=> {
           <Route path='/category/:style'component={Styles}/>
           <PrivateRoute exact path='/admin-login/home' component ={Admin}/>
           <Route path='/admin-login' component={AdminLogin}/>
-          <Route path='/auth/orders' component={Orders}/>
+          <AuthPrivate exact path='/auth/orders' component={Orders}/>
           <Route exact path='/cart'component={Cart}/>
           <Route path='/item/:name' component={ItemInfo}/>
         </Switch>

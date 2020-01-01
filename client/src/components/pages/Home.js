@@ -25,7 +25,7 @@ const Home = ()=> {
         </div>
         <div className='container-fluid mt-4'>
             <div className='row'>
-                <div className='col-lg-4 col-md-4'>
+                <div className='col-lg-4 col-md-4 col-sm-12 mt-2'>
                 <div className='card'>
                     <img src={woodenImg} alt='wooden' className='card-img-top'/>
                     <div className='card-body bg-light'>
@@ -36,7 +36,7 @@ const Home = ()=> {
                     </div>
                 </div>
                 </div>
-                <div className='col-lg-4 col-md-4 '>
+                <div className='col-lg-4 col-md-4 col-sm-12 mt-2'>
                 <div className='card'>
                     <img src={RedStrings} alt='wooden' className='card-img-top'/>
                     <div className='card-body bg-light'>
@@ -47,7 +47,7 @@ const Home = ()=> {
                     </div>
                 </div>
                 </div>
-                <div className='col-lg-4 col-md-4'>
+                <div className='col-lg-4 col-md-4 col-sm-12 mt-2'>
                 <div className='card'>
                     <img src={Paracord} alt='wooden' className='card-img-top'/>
                     <div className='card-body bg-light'>

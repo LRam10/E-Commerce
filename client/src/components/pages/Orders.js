@@ -1,11 +1,14 @@
 import React,{Fragment,useContext,useEffect} from 'react';
 import OrderContext from '../../context/order/orderContext';
 import OrdersHistory from '../../components/Order/Orders';
+import AuthContext from '../../context/auth/authContext';
 const Orders = () => {
     const orderContext = useContext(OrderContext);
-    const{ orders,getOrders } = orderContext
+    const{ orders,getOrders } = orderContext;
+    const authContext = useContext(AuthContext);
     useEffect(()=>{
-        getOrders()
+        getOrders();
+        authContext.loadUser();
         // eslint-disable-next-line 
     },[])
 

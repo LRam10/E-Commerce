@@ -32,7 +32,7 @@ const Statement = () => {
     }
     return (
         <Fragment>
-            <div className='w-100 border mt-4'>
+            <div className='w-100 border mt-4 mb-4'>
             <h3 className='py-3 pl-2'><b>Order Summary</b></h3>
             <div className='clearfix px-3'>
                 <p className='float-left'>Sub-Total</p>
@@ -51,7 +51,6 @@ const Statement = () => {
                 <p className='float-right'><b>${grandTotal.toFixed(2)}</b></p>
             </div>
             </div>
-            {/* <button className='btn-dark w-100 mt-3'>Checkout</button> */}
             <StripeCheckout
                 stripeKey={stripeClient}
                 token={handleToken}
