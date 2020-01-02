@@ -1,7 +1,7 @@
 import React,{Fragment,useState} from 'react';
 import {Link,NavLink} from 'react-router-dom';
 
- const Hamburger = ({isAuthenticated, user,onLogout}) => {
+ const Hamburger = ({isAuthenticated, user,onLogout,products}) => {
      const [show,setShow] = useState(false);
      const [sublist,setSublist] = useState(false);
     return (
@@ -25,6 +25,10 @@ import {Link,NavLink} from 'react-router-dom';
                 <li><NavLink className='' to={'/customize'} exact activeStyle={{color:'#000'}} >Customize</NavLink></li>
                 {user && <li onClick={onLogout}><i className="fas fa-sign-out-alt">Logout</i></li>}
             </ul>
+            <Link to={'/cart'} id='mobileCart' className='text-dark '><i className="fas fa-shopping-cart">{products.length > 0 &&(
+                    <span id='inCart' className='position-absolute'>{products.length}</span>
+                )}</i></Link>
+        
         </Fragment>
     )
 }

@@ -71,7 +71,7 @@ const Navbar= ()=> {
             <a className="logo" href='/'>W</a>
             <ul className="nav py-2">
                 <li className="nav-item ">
-                    <Hamburger isAuthenticated={isAuthenticated} user={user} onLogout={onLogout}/>
+                    <Hamburger isAuthenticated={isAuthenticated} user={user} onLogout={onLogout} products={products}/>
                     <span className="nav-link text-white"  onClick={e =>setVisbility(!visibility)}>Styles</span>
                     <ul className={'list-group position-absolute '+ (visibility?'d-inline-block':'d-none')}>
                         <li className='list-group-item' ><Link className='text-white' to={'/category/red_Strings'}>Red Strings</Link></li>

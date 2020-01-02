@@ -194,6 +194,11 @@ footer ul p{
     border-radius: 6px;
     padding: 2px;
 }
+#mobileCart{
+  position: absolute;
+  right:10px;
+  display: none;
+}
 #qty{
   font-size: 10px;
   color:#919191;
@@ -233,7 +238,9 @@ footer ul p{
 .sublist li{
   padding: .5rem 1rem 0 1rem;
 }
-
+.sublist li a {
+  font-size: 12px;
+}
 .slideout{
   animation-name: slideout;
   animation-duration: 1s;
@@ -297,6 +304,18 @@ footer ul p{
   .justify-content-center{
     justify-content: start !important;
   }
+  #mobileCart{
+    display: block;
+  }
+  .small-text{
+    font-size: 12px;
+  }
+  .d-flex{
+    display: block !important;
+  }
+  .d-flex img{
+    width: 100%;
+  }
 }
 
 @media (max-width:759px){
@@ -309,6 +328,10 @@ footer ul p{
   }
   h3{
     font-size: 1.50rem;
+  }
+  footer ul{
+    display: inline;
+    margin: 10px 0rem;
   }
 }
 @media (max-width: 1010px) {
