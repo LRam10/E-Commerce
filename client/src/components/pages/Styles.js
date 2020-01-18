@@ -1,5 +1,6 @@
 import React,{Fragment,useContext,useEffect} from 'react'
 import Items from '../Items/Items'
+import Search from '../helpers/Searchbar';
 import ItemContext from '../../context/item/itemContext';
 import AuthContext from '../../context/auth/authContext'
 import {useParams} from 'react-router-dom';
@@ -10,7 +11,7 @@ const Styles = ()=> {
     //ItemContext 
     const cat_text = style.replace('_',' ');
     const itemContext = useContext(ItemContext);
-    const {items,getItems,loading} = itemContext;
+    const {items,getItems,loading,filter} = itemContext;
     //AuthContext
     const authContext = useContext(AuthContext);
     const {loadUser} = authContext;
@@ -27,18 +28,16 @@ const Styles = ()=> {
         <Fragment>
             <div className='jumbotron'>
                 <h2 className='text-center text-uppercase'><u>{cat_text}</u></h2> 
+                <Search/>
             </div>
            <div className="container-fluid">
-            {loading === true ?
-            <div className='d-flex justify-content-center'>
-                <div className="spinner-border text-primary" role="status">
-                    <span className="sr-only">Loading...</span>
-                </div>
-            </div>:<Items items={items}/>} 
+            {filter !== null 
+            ? <Items items={filter}/>:
+            <Items items={items} loading={loading}/>} 
            
             </div> 
         </Fragment>
     )
 }
 
-export default Styles
+export default Styles;

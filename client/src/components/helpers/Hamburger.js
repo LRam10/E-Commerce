@@ -13,7 +13,7 @@ import {Link,NavLink} from 'react-router-dom';
                 </Fragment>:
                     <NavLink className="" to={'/login'} exact activeStyle={{color:'#000'}} >Account</NavLink>
                     }</li>
-                <li><span className='mr-1' onClick={e=> setSublist(!sublist)}>Styles</span>{sublist?<i class="fas fa-angle-up"></i>:<i class="fas fa-angle-down"></i>}
+                <li><span className='mr-1' onClick={e=> setSublist(!sublist)}>Styles</span>{sublist?<i className="fas fa-angle-up"></i>:<i className="fas fa-angle-down"></i>}
                     <ul className={'sublist '+ (sublist?'d-inline-block':'d-none')}>
                         <li className='' ><NavLink to={'/category/red_Strings'} activeStyle={{color:'#000'}} exact>Red Strings</NavLink></li>
                         <li className='' ><NavLink to={'/category/wooden'} activeStyle={{color:'#000'}} exact>Wooden</NavLink></li>

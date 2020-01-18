@@ -79,6 +79,9 @@ color:black;
   display: block;
   background-color: rgba(2,5,2,0.2)
 }
+.jumbotron{
+  margin-bottom:.5rem;
+}
 /* Customer made classes and styles */
 /* Vertically center div*/
 .nav-item span{

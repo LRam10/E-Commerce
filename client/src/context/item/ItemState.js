@@ -23,6 +23,7 @@ const ItemState = props =>{
         error:null,
         success:null,
         loading:null,
+        filter:null
     };
     const [state,dispatch] = useReducer(ItemReducer,initialState);
     //Get items
@@ -88,8 +89,13 @@ const ItemState = props =>{
         dispatch({type:GET_LOADING})
     }
     //Filter Items
-
+    const filterItems = key =>{
+        dispatch({type:FILTER_ITEMS,payload:key});
+    }
     //Clear Filter
+    const clearFilter = () =>{
+        dispatch({type:CLEAR_FILTER});
+    }
 
     //Clear Errors
     const clearErrors = ()=> dispatch({type:CLEAR_ERRORS});
@@ -101,13 +107,16 @@ const ItemState = props =>{
         error:state.error,
         success:state.success,
         loading:state.loading,
+        filter:state.filter,
         addItem,
         deleteItem,
         setCurrentItem,
         clearCurrentItem,
         updateItem,
         clearErrors,
-        getItems
+        getItems,
+        filterItems,
+        clearFilter
         }
     }>
     {props.children}

@@ -53,6 +53,19 @@ export default (state,action)=>{
             ...state,
             loading:true
         }
+        case FILTER_ITEMS:
+            return{
+                ...state,
+                filter:state.items.filter(item =>{
+                    const regex = new RegExp(`${action.payload}`,'gi');
+                    return item.name.match(regex) || item.description.match(regex);
+                })
+            }
+         case CLEAR_FILTER:
+             return{
+             ...state,
+            filter:null
+         }   
         default:return state;
     }
 }
