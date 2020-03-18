@@ -4,7 +4,7 @@ import ItemContext from '../../context/item/itemContext';
 
 
 const Item= ({item})=> {
-    const {img_url,category,price,description,name} = item
+    const {img_url,category,price,name} = item
     const itemContext = useContext(ItemContext);
 
     const onSetItem = ()=>{

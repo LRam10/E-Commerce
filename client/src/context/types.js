@@ -33,3 +33,7 @@ export const EDIT_DB_CART_LOGOUT = 'EDIT_DB_CART';
 export const UPDATE_CART = 'UPDATE_CART';
 //Order Type
 export const GET_ORDERS = 'GET_ORDERS';
+//Category Types
+export const GET_CATEGORIES = 'GET_CATEGORIES';
+export const POST_CATEGORY = 'POST_CATEGORY';
+export const DELETE_CATEGORY = 'DELETE_CATEGORY';

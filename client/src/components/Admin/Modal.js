@@ -32,10 +32,10 @@ const Modal = ({toggleModal}) => {
                     <textarea className='form-control' type='text' name='description' defaultValue={description} onChange={onChange}></textarea>
                     <label htmlFor='Description'>Category</label>
                     <select className='form-control'name='category' defaultValue={category} onChange={onChange}>
-                        <option value='Red_strings'>Red Strings</option>
-                        <option value='Wooden'>Wooden</option>
-                        <option value='Paracord'>Paracord</option>
-                        <option value='Friendship'>Friendship</option>
+                        <option value='red-strings'>Red Strings</option>
+                        <option value='wooden'>Wooden</option>
+                        <option value='paracord'>Paracord</option>
+                        <option value='friendship'>Friendship</option>
                     </select>
                     <label htmlFor='Description'>Price</label>
                     <input className='form-control' type='number' step='0.01' name='price' defaultValue={price} onChange={onChange}/>

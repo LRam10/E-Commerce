@@ -11,6 +11,7 @@ const cart =require('./Routes/Cart');
 const auth =require('./Routes/Auth');
 const checkout = require('./Routes/Checkout')
 const orders = require('./Routes/Order');
+const categories = require('./Routes/Category');
 //Database
 const connectDB = require('./config/db');
 
@@ -23,10 +24,12 @@ app.use(express.json({extended:false}));
 // res.send("Okay");
 // });
 app.use(cors());
+//all routes
 app.use('/register',user);
 app.use('/items',items);
 app.use('/cart',cart);
 app.use('/auth',auth);
+app.use('/categories',categories);
 app.use('/checkout',checkout);
 app.use('/orders',orders);
 if(process.env.NODE_ENV === 'production'){

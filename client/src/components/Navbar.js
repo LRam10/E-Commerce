@@ -5,6 +5,7 @@ import AuthContext from '../context/auth/authContext';
 import CartContext from '../context/cart/cartContext';
 import UserSublist from '../components/helpers/Usersublist';
 import Hamburger from '../components/helpers/Hamburger';
+import CategoryContext from '../context/category/categoryContext';
 
 const Navbar= ()=> {
     let size = window.location.origin.length
@@ -33,7 +34,14 @@ const Navbar= ()=> {
     //ProductsContext 
     const cartContext = useContext(CartContext);
     const { products,createCart,inDB,editCart } = cartContext;
-
+    //Category Context
+    const categoryContext = useContext(CategoryContext);
+    const {getCategories,categories} = categoryContext;
+    useEffect(()=>{
+        getCategories();
+        //eslint-disable-next-line
+      },[])
+    
     const onLogout =()=> {
         if(!inDB)
             createCart(products);
@@ -42,6 +50,7 @@ const Navbar= ()=> {
 
         logout();
     }
+    //change current 
     if(adminUrl !== `/admin-login`){
     return (
         <Fragment>
@@ -74,10 +83,11 @@ const Navbar= ()=> {
                     <Hamburger isAuthenticated={isAuthenticated} user={user} onLogout={onLogout} products={products}/>
                     <span className="nav-link text-white"  onClick={e =>setVisbility(!visibility)}>Styles</span>
                     <ul className={'list-group position-absolute '+ (visibility?'d-inline-block':'d-none')}>
-                        <li className='list-group-item' ><Link className='text-white' to={'/category/red_Strings'}>Red Strings</Link></li>
-                        <li className='list-group-item' ><Link className='text-white' to={'/category/wooden'}>Wooden</Link></li>
-                        <li className='list-group-item' ><Link className='text-white' to={'/category/paracord'}>Paracord</Link></li>
-                        <li className='list-group-item' ><Link className='text-white' to={'/category/friendship'}>Friendship</Link></li>
+                        {categories.map(category=>(
+                        <li className='list-group-item' key={category._id}><Link className='text-white' to={{pathname:`/category/${category.category_name}`,
+                    state:category}}>{category.category_name.split('-')
+                        .map( s => s.charAt(0).toUpperCase() + s.substring(1)).join(' ')}</Link></li>
+                        ))}
                     </ul>
                 </li>
                 <li className="nav-item">
@@ -96,7 +106,7 @@ const Navbar= ()=> {
         return(
             <nav className='navbar navbar-expand-lg bg-dark py-3' ref={node}>
                 <ul className='nav justify-content-end'>
-                    <li className='nav-brand text-white'>Admin Login</li>
+                    <li className='nav-brand text-white ml-3 text-primary'>Admin Login</li>
                 </ul>
             </nav>
         )

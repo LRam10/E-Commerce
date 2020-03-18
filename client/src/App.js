@@ -22,6 +22,7 @@ import AuthState from './context/auth/AuthState';
 import AlertState from './context/alerts/AlertState';
 import CartState from './context/cart/CartState';
 import OrderState from './context/order/OrderState';
+import CategoryState from './context/category/CategoryState';
 
 import setAuthToken from './utils/setAuthToken';
 import PrivateRoute from './utils/PrivateRouting';
@@ -30,7 +31,6 @@ import AuthPrivate from './utils/AuthPrivate';
 if(localStorage.token){
   setAuthToken(localStorage.token);
 }
-
 //Math.floor(new Date().getTime()/1000.0) -----> Set time to epoch time
 //259200 equals to 3 days in epoch time
 //86400 -----> one day
@@ -38,6 +38,7 @@ if(localStorage.token){
 const App = ()=> {
   return (
   <AuthState>
+    <CategoryState>
     <ItemState>
       <CartState>
         <OrderState>
@@ -66,6 +67,7 @@ const App = ()=> {
         </OrderState>
       </CartState>
      </ItemState> 
+     </CategoryState>
    </AuthState>    
   );
 }

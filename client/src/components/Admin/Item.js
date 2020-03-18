@@ -3,7 +3,9 @@ import ItemContext from '../../context/item/itemContext';
 import AlertContext from '../../context/alerts/alertContext';
 //Destructuring same as props.item
 const Item= ({item,toggleModal})=> {
-    const {img_url,category,price,description,sku,_id,name} = item
+    let {img_url,category,price,description,sku,_id,name} = item
+    category = category.replace('-',' ');
+    category = category.charAt(0).toUpperCase() + category.slice(1);
     //Item context init
     const itemContext = useContext(ItemContext);
     const {deleteItem,clearCurrentItem,error,setCurrentItem} = itemContext;

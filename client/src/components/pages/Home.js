@@ -42,7 +42,7 @@ const Home = ()=> {
                     <div className='card-body bg-light'>
                         <div className='card-text'>
                         <h5>Red Strings</h5>
-                        <Link className='btn btn-small btn-dark text-white' to={'/category/red_Strings'}>Shop</Link>
+                        <Link className='btn btn-small btn-dark text-white' to={'/category/red-strings'}>Shop</Link>
                         </div>
                     </div>
                 </div>

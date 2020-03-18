@@ -11,6 +11,7 @@ useEffect(()=>{
         text.current.value='';
     }
     clearFilter();
+    // eslint-disable-next-line
 },[items])
 const onSearch = e=>{
         if(text.current.value !== '')

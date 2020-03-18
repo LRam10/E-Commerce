@@ -19,11 +19,11 @@ const Sidebar = (props) => {
                 <li className={`nav-link `+(!show ? 'active':'')} data-cat=' ' onClick={changeToCreate}>Create Item</li>
                 <li className={`nav-link `+(show ? 'active':'')}><span className='d-block' onClick={(e) => setShow(!show)}>Delete/Edit</span>
                 <ul  className={show ? 'd-inline-block':'d-none'}>
-                    <li data-cat='Red_Strings' onClick={changeToEdit}>Red Strings</li>
-                    <li data-cat='Paracord' onClick={changeToEdit}>Paracord</li>
-                    <li data-cat='Wooden' onClick={changeToEdit}>Wooden</li>
-                    <li data-cat='Friendship' onClick={changeToEdit}>Friendship </li>
-                    <li data-cat='Oranaments' onClick={changeToEdit}>Ornaments</li>
+                    <li data-cat='red-strings' onClick={changeToEdit}>Red Strings</li>
+                    <li data-cat='paracord' onClick={changeToEdit}>Paracord</li>
+                    <li data-cat='wooden' onClick={changeToEdit}>Wooden</li>
+                    <li data-cat='friendship' onClick={changeToEdit}>Friendship </li>
+                    <li data-cat='oranaments' onClick={changeToEdit}>Ornaments</li>
                 </ul>
                 </li>
                 <li className='nav-link' onClick={onLogout}>Log out <i className="fas fa-sign-out-alt"></i></li>
