@@ -11,7 +11,7 @@ if(process.env.NODE_ENV !== 'production'){
     stripePromise = loadStripe(process.env.REACT_APP_STRIPE_CLIENT);
 }
 else{
-    stripePromise = loadStripe(process.env.REACT_APP_STRIPE_CLIENT);
+    stripePromise = loadStripe(process.env.REACT_APP_STRIPE_CLIENT_LIVE);
 }
 
 const Statement = () => {
