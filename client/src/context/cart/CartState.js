@@ -86,18 +86,18 @@ const CartState = props =>{
         }
     }
     //checkout for guest
-    const checkOut = async (token,price,items)=>{
+    const checkOut = async (paymentMethod,price,items)=>{
         try {
-            const response = await axios.post('/checkout',{token, price,items});
+            const response = await axios.post('/checkout',{paymentMethod, price,items});
             dispatch({type:CHECKOUT_CART,payload:response.data.status});
         } catch (error) {
             dispatch({type:CART_ERROR,payload:error.response.data.error});
         }
     };
     //checkout for logged in user
-    const authCheckout = async (token,price,items)=>{
+    const authCheckout = async (paymentMethod,price,items)=>{
         try {
-            const response = await axios.post('/checkout/auth',{token, price,items});
+            const response = await axios.post('/checkout/auth',{paymentMethod, price,items});
             dispatch({type:CHECKOUT_AUTH,payload:response.data.status});
         } catch (error) {
             dispatch({type:CART_ERROR,payload:error.response.data.error});

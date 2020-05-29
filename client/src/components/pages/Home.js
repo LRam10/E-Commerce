@@ -31,7 +31,8 @@ const Home = ()=> {
                     <div className='card-body bg-light'>
                         <div className='card-text'>
                             <h5>Wooden</h5>
-                            <Link className='btn btn-small btn-dark text-white' to={'/category/wooden'}>Shop</Link>
+                            <Link className='btn btn-small btn-dark text-white' to={{pathname:'/category/wooden',
+                        state:{img_url:'http://res.cloudinary.com/doei459zd/image/upload/v1584471523/Category/dnb9hd2tzfk4g3rgnzg2.jpg'}}}>Shop</Link>
                         </div>
                     </div>
                 </div>
@@ -42,7 +43,8 @@ const Home = ()=> {
                     <div className='card-body bg-light'>
                         <div className='card-text'>
                         <h5>Red Strings</h5>
-                        <Link className='btn btn-small btn-dark text-white' to={'/category/red-strings'}>Shop</Link>
+                        <Link className='btn btn-small btn-dark text-white' to={{pathname:'/category/red-strings',
+                    state:{img_url:'http://res.cloudinary.com/doei459zd/image/upload/v1584471489/Category/hilicwsjqvlx1l9vn62g.jpg'}}}>Shop</Link>
                         </div>
                     </div>
                 </div>
@@ -53,7 +55,8 @@ const Home = ()=> {
                     <div className='card-body bg-light'>
                         <div className='card-text'>
                         <h5>Paracord</h5>
-                        <Link className='btn btn-small btn-dark text-white' to={'/category/paracord'}>Shop</Link>
+                        <Link className='btn btn-small btn-dark text-white' to={{pathname:'/category/paracord',
+                    state:{img_url:'http://res.cloudinary.com/doei459zd/image/upload/v1584471604/Category/hkfzztd6j1buedi9j2po.jpg'}}}>Shop</Link>
                         </div>
                     </div>
                 </div>
@@ -65,7 +68,7 @@ const Home = ()=> {
             <div className='body-desc text-white'>
                 <h1><b>Friendship Bracelets</b></h1>
                 <h3>Simple gifts that mean more</h3>
-                <Link to={'/category/friendship'} className='sub-btn'>Explore Now</Link>
+                <Link to={{pathname:'/category/friendship',state:{img_url:'https://res.cloudinary.com/doei459zd/image/upload/v1584471583/Category/p9zpxxicvwzskettxlze.jpg'}}} className='sub-btn'>Explore Now</Link>
             </div>
         </div>
         <div className='fluid-container body-content bg-dark mb-5' style={{marginTop:'4rem'}}>

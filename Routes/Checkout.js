@@ -6,54 +6,52 @@ const auth = require('../middleware/auth');
 const Cart = require ('../models/Cart')
 const mongoose = require('mongoose');
 const Order = require('../models/Order');
-
+// For guest User
 router.post('/', async (req,res)=>{
 let status;
 let error;
 try {
-    let guest_id = uuid();
-    let { token,price,items } = req.body;
+    let { paymentMethod,price,items } = req.body;
     price = parseFloat(price);
-    const customer = await stripe.customers.create({
-        email:token.email,
-        source:token.id
-    });
-    const idempotency_key = uuid();
-    await stripe.charges.create({
-        amount:price * 100,
+    console.log(paymentMethod);
+    const payment = await stripe.paymentIntents.create({
+        amount:price,
         currency:'usd',
-        customer:customer.id,
-        receipt_email:token.email,
+        payment_method:paymentMethod.id,
+        receipt_email:paymentMethod.email,
         description:'Thanks for your business',
         shipping:{
-            name:token.card.name,
+            name:paymentMethod.billing_details.name,
             address:{
-                line1:token.card.address_line1,
-                line2:token.card.address_line2,
-                city:token.card.address_city,
-                country:token.card.address_country,
-                postal_code:token.card.address_zip
+                line1:paymentMethod.billing_details.address.line1,
+                line2:paymentMethod.billing_details.address.line2,
+                city:paymentMethod.billing_details.address.city,
+                country:paymentMethod.billing_details.address.country,
+                postal_code:paymentMethod.billing_details.address.postal_code
             }
-        }
-    },{idempotency_key});
+        },
+        confirm:true
+    });
+    console.log(payment);
     //Create History
     orderHistory = new Order({
-        user_id:new mongoose.Types.ObjectId(guest_id),
-        email:token.email,
-        address_street:token.card.address_line1,
-        address_postal:token.card.address_zip,
-        address_state:token.card.address_state,
-        address_city:token.card.address_city,
-        country:token.card.address_country,
+        email:paymentMethod.email,
+        address_street:paymentMethod.billing_details.address.line1,
+        address_postal:paymentMethod.billing_details.address.zip,
+        address_state:paymentMethod.billing_details.address.state,
+        address_city:paymentMethod.billing_details.address.city,
+        country:paymentMethod.billing_details.address.country,
         items,
-        payment_type:token.card.brand,
+        payment_type:paymentMethod.card.brand,
         total:price
     });
     status= 'Successful Transaction'
+    await orderHistory.save();
     res.json({status});
 
 } catch (err) {
     error = 'failure';
+    console.log(err);
     res.status(500).json({error});
 }
 });
@@ -65,47 +63,45 @@ router.post('/auth',auth, async (req,res)=>{
     try {
         let customer;
         let orderHistory;
-        let { token,price,items } = req.body;
+        let { paymentMethod,price,items } = req.body;
         price = parseFloat(price);
 
-        const customers = await stripe.customers.list({email:token.email});
+        const customers = await stripe.customers.list({email:paymentMethod.email});
         if(customers.data.length === 0){
              customer = await stripe.customers.create({
-                email:token.email,
-                source:token.id,
+                email:paymentMethod.email,
+                source:paymentMethod.id,
                 id:req.user.id
             });
         }
         customer = customers.data[0];
-        const idempotency_key = uuid();
         await stripe.charges.create({
             amount:price * 100,
             currency:'usd',
             customer:customer.id,
-            receipt_email:token.email,
+            receipt_email:paymentMethod.email,
             description:'Thanks for your business',
             shipping:{
-                name:token.card.name,
+                name:paymentMethod.billing_details.name,
                 address:{
-                    line1:token.card.address_line1,
-                    line2:token.card.address_line2,
-                    city:token.card.address_city,
-                    country:token.card.address_country,
-                    postal_code:token.card.address_zip
+                    line1:paymentMethod.billing_details.address.line1,
+                    city:paymentMethod.billing_details.address.city,
+                    country:paymentMethod.billing_details.address.country,
+                    postal_code:paymentMethod.billing_details.address.zip
                 }
             }
-        },{idempotency_key});
+        },);
         //Create Order History
         orderHistory = new Order({
             user_id:req.user.id,
-            email:token.email,
-            address_street:token.card.address_line1,
-            address_postal:token.card.address_zip,
-            address_state:token.card.address_state,
-            address_city:token.card.address_city,
-            country:token.card.address_country,
+            email:paymentMethod.email,
+            address_street:paymentMethod.billing_details.address.line1,
+            address_postal:paymentMethod.billing_details.address.zip,
+            address_state:paymentMethod.billing_details.address.state,
+            address_city:paymentMethod.billing_details.address.city,
+            country:paymentMethod.billing_details.address.country,
             items,
-            payment_type:token.card.brand,
+            payment_type:paymentMethod.card.brand,
             total:price
         });
         await orderHistory.save();

@@ -49,7 +49,7 @@ router.put("/",auth, async (req,res)=>{
             {new:true});
             res.json(cart.items);
     } catch (error) {
-        res.status(500),json({msg:'Server Error'});
+        res.status(500).json({msg:'Server Error'});
     }
 });
 

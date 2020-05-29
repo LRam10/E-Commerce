@@ -1,20 +1,23 @@
-import React,{Fragment,useContext} from 'react';
+import React,{Fragment,useContext,useState} from 'react';
+import Form from './Form';
+
 import CartContext from '../../context/cart/cartContext';
-import AuthContext from '../../context/auth/authContext';
-import StripeCheckout from 'react-stripe-checkout';
-let stripeClient;
+import { Elements } from '@stripe/react-stripe-js';
+import { loadStripe } from '@stripe/stripe-js';
+
+let stripePromise;
+
 if(process.env.NODE_ENV !== 'production'){
-    stripeClient = process.env.REACT_APP_STRIPE_CLIENT;
+    stripePromise = loadStripe(process.env.REACT_APP_STRIPE_CLIENT);
 }
 else{
-    stripeClient = process.env.REACT_APP_STRIPE_CLIENT;
+    stripePromise = loadStripe(process.env.REACT_APP_STRIPE_CLIENT);
 }
+
 const Statement = () => {
     //CartContext
     const cartContext =useContext(CartContext);
-    const { products,checkOut,authCheckout } = cartContext;
-    //AuthContext
-    const authContext = useContext(AuthContext);
+    const { products} = cartContext;
     let total = 0;
     products.forEach(product => {
         total += product.qty * product.price;
@@ -22,14 +25,9 @@ const Statement = () => {
     let tax = total.toFixed() * 0.08250;
     let grandTotal = total + tax;
 
-    const handleToken = (token)=>{
-        if(authContext.isAuthenticated){
-            authCheckout(token,grandTotal.toFixed(2),products)
-        }
-        else{
-            checkOut(token,grandTotal.toFixed(2),products);
-        }
-    }
+    const[form,setForm] = useState(false);
+
+    const toggleForm = ()=>setForm(!form);
     return (
         <Fragment>
             <div className='w-100 border mt-4 mb-4'>
@@ -51,14 +49,11 @@ const Statement = () => {
                 <p className='float-right'><b>${grandTotal.toFixed(2)}</b></p>
             </div>
             </div>
-            <StripeCheckout
-                stripeKey={stripeClient}
-                token={handleToken}
-                billingAddress
-                shippingAddress
-                amount={grandTotal.toFixed(2) * 100}
-            />
-
+            <Elements stripe = {stripePromise} >
+                <button className='btn btn-dark' onClick={toggleForm}>Checkout</button>
+                {form === true &&(
+                <Form grandTotal={grandTotal} products={products} toggleForm={toggleForm}/>)}
+            </Elements>
         </Fragment>
     )
 }
