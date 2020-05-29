@@ -11,7 +11,7 @@ if(process.env.NODE_ENV !== 'production'){
     stripePromise = loadStripe(process.env.REACT_APP_STRIPE_CLIENT);
 }
 else{
-    stripePromise = loadStripe(process.env.REACT_APP_STRIPE_CLIENT_LIVE);
+    stripePromise = loadStripe('pk_live_anGjuc0oJPgRAK0ViINHQVwS00pcxYvZuO');
 }
 
 const Statement = () => {
@@ -26,7 +26,6 @@ const Statement = () => {
     let grandTotal = total + tax;
 
     const[form,setForm] = useState(false);
-
     const toggleForm = ()=>setForm(!form);
     return (
         <Fragment>
@@ -49,7 +48,7 @@ const Statement = () => {
                 <p className='float-right'><b>${grandTotal.toFixed(2)}</b></p>
             </div>
             </div>
-            <Elements stripe = {stripePromise} >
+            <Elements stripe={stripePromise} >
                 <button className='btn btn-dark' onClick={toggleForm}>Checkout</button>
                 {form === true &&(
                 <Form grandTotal={grandTotal} products={products} toggleForm={toggleForm}/>)}
