@@ -1,19 +1,20 @@
 html,body{
   padding:0;
   margin:0;
-  font-family: 'Poppins', sans-serif;
+  font-family: 'Quicksand', sans-serif;
   height: 100%;
   width: 100%;
 }
-label{
-  margin: .5rem 0 0 0;
+label{margin: .5rem 0 0 0;}
+h1{font-size: 60px;}
+p{font-size: 16px;}
+.right-border{
+  border-right: #707070 1px solid;
 }
-p{
-  font-size: 16px;
-}
+
 /* Overwritten Bootstrap style for some elements */
 .navbar{
-  padding:0;
+  padding:0 45px;
 }
 .nav-link{
   margin-bottom:0px;
@@ -22,11 +23,11 @@ p{
   cursor: pointer;
 }
 .container-fluid{
-  padding: 0;
+  padding: 0px;
 }
 .row{
-  padding-right: 15px;
-  padding-left: 15px;
+  padding-right: 45px;
+  padding-left: 45px;
   margin:0;
 }
 .card-img-top{
@@ -110,7 +111,7 @@ color:black;
     top: 50%;
 }
 .img-cont{
-  background-image: url('./images/main.jpg');
+  background-image: url('./images/cover.png');
   background-repeat: no-repeat;
   background-size: cover;
   height: 600px;
@@ -119,27 +120,13 @@ color:black;
 .landing-section button{
   opacity: .8;
 }
-.fa-shopping-cart{
+.fa-shopping-cart .fa-user{
   font-size: 1.3rem;
 }
-.logo{
-  position: absolute!important;
-  left: 15px;
-  transform: translateY(-32px);
-  color: #fff;
-}
-.nav-item:before{
-  content: ' ';
-  height:70%;
-  width: 1px;
-  position: absolute;
-  background-color: #ffff;
-  transform: translateY(3px);
-}
-
 #top-menu{
   position: absolute;
   right: 0;
+  padding-right: 30px;
 }
 .img-desc{
   height: 110%;
@@ -205,7 +192,7 @@ footer ul p{
 #inCart{
   transform: translate(-9px,-5px);
     font-size: 11px;
-    background-color: rgba(255,255,255,.7);
+    background-color: #104B87;
     border-radius: 6px;
     padding: 2px;
 }
@@ -258,12 +245,31 @@ footer ul p{
 }
 .slideout{
   animation-name: slideout;
-  animation-duration: 1s;
+  animation-duration: 3s;
   transition: ease-out;
   animation-direction: normal;
 }
 .fa-angle-up, .fa-angle-down{
   font-size: 13px;
+}
+
+.btn-blue{
+  background-color: #104B87;
+  color: #fff;
+}
+
+.btn-blue:hover{
+  background-color: #fff;
+  border:#104B87 solid 2px;
+  font: #104B87;
+}
+.card-img-menu{
+  height: 250px;
+  width: 250px;
+  border-radius: 200px;
+}
+.bg-lblue{
+  background-color: #A3C7E5;
 }
 /* KeyFrames */
 @keyframes slidein{

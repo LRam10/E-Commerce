@@ -2,9 +2,9 @@ import React,{Fragment} from 'react';
 import {Route,Switch} from 'react-router-dom';
 import './App.css';
 
-import Navbar from './components/Navbar';
-import Footer from './components/Footer'
-import Home from './components/pages/Home';
+import Navbar from './components/Nav/Navbar';
+import Footer from './components/Footer';
+import Home from './components/Home/Home';
 import About from './components/pages/About';
 import Customize from './components/pages/Customize';
 import Styles from './components/pages/Styles'

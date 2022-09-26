@@ -6,7 +6,7 @@ import ItemContext from '../../context/item/itemContext';
 const Item= ({item})=> {
     const {img_url,category,price,name} = item
     const itemContext = useContext(ItemContext);
-
+    console.log(price);
     const onSetItem = ()=>{
         itemContext.setCurrentItem(item);
     }

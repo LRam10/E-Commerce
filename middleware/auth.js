@@ -1,6 +1,6 @@
 const jsonToken = require('jsonwebtoken');
 const dotenv = require('dotenv');
-dotenv.config();
+dotenv.config({debug:true});
 
 module.exports = function (req,res,next){
 //get token from header
