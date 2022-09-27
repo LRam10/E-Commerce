@@ -51,9 +51,10 @@ const Home = () => {
         </div>
       </div>
       <FeaturedItem 
-      name={"Elephant Good Luck Charm"}
+      name={"Lucky Elephant"}
+      img_url={'https://res.cloudinary.com/doei459zd/image/upload/v1575554850/Bracelet/i38e3nhs5wj2wzsexuky.jpg'}
       category={"Red Strings"}
-      description={"Adjustable unisex bracelets. Handmade with high quality material, with a silver 3cm diamater elephant charm. This beautiful bracelet make a good gift for him or her. Is believe that a red bracelts bring good luck and postitive energy "}/>
+      description={"Adjustable unisex bracelets. Handmade with high quality material, with a silver 3cm diamater elephant charm. This beautiful bracelet makes a good gift for him or her. Is believe that a red bracelts bring good luck and postitive energy "}/>
     </Fragment>
   );
 };

@@ -37,11 +37,13 @@ p{font-size: 16px;}
   height: 100%;
 }
 .list-group-item{
-  background-color:rgb(26, 128, 182);
+  background-color:#fff;
   border-bottom:1px solid #f2f2f2;
+  color:#707070;
 }
 .list-group{
-  transform: translate(-23%, 8.3px)
+  transform: translate(-23%, 8.3px);
+  box-shadow: 0 2px 6px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 }
 .list-group::after{
 content: ' ';
@@ -52,7 +54,7 @@ width: 0;
 height: 0; 
 border-left: 10px solid transparent;
 border-right: 10px solid transparent;
-border-bottom: 11px solid #fff;
+border-bottom: 11px solid #f3f3f3;
 }
 .list-group-item:first-child {
   border-top-left-radius: 3px;
@@ -171,6 +173,7 @@ color:black;
 footer{
   position:relative;
   bottom: 0;
+  background-color: #1178A5;
 }
 footer ul{
   display: inline-grid;
@@ -190,11 +193,14 @@ footer ul p{
   transform: scale(1.2);
 }
 #inCart{
-  transform: translate(-9px,-5px);
-    font-size: 11px;
-    background-color: #104B87;
-    border-radius: 6px;
-    padding: 2px;
+  transform: translate(-9px,-12px);
+    font-size: 13px;
+    background-color: #1178A5;
+    border-radius: 50px;
+    width: 20px;
+    height: 20px;
+    text-align: center;
+    color: #fff;
 }
 #mobileCart{
   position: absolute;
@@ -252,7 +258,10 @@ footer ul p{
 .fa-angle-up, .fa-angle-down{
   font-size: 13px;
 }
-
+.card-body{
+  border-bottom-right-radius: 20px;
+  border-bottom-left-radius: 20px;
+}
 .btn-blue{
   background-color: #104B87;
   color: #fff;
@@ -270,6 +279,31 @@ footer ul p{
 }
 .bg-lblue{
   background-color: #A3C7E5;
+}
+.tag-name{font-size:18px; color:#104B87; font-weight: 400;}
+.featured-item{height: 400px; width: 400px; border-radius: 15px;}
+.jumbotron{height: 350px;}
+.btn-add{
+  height: 40px;
+  width: 40px;
+  background-color: #1178A5;
+  border-radius: 30px;
+  position: absolute;
+  right: 0;
+  transform: translateY(-90%);
+}
+.btn-add:hover{
+  cursor:pointer;
+}
+.fa-cart-plus{
+  color: #fff;
+  display: inline-block;
+  margin-left: auto;
+  margin-right: auto;
+}
+.alert{
+  z-index: 500;
+  top:50%;
 }
 /* KeyFrames */
 @keyframes slidein{

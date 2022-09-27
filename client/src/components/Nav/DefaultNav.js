@@ -55,7 +55,7 @@ const DefaultNav = ({
               {categories.map((category) => (
                 <li className="list-group-item" key={category._id}>
                   <Link
-                    className="text-"
+                    className="text-dark"
                     to={{
                       pathname: `/category/${category.category_name}`,
                       state: category,

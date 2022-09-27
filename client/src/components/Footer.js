@@ -2,8 +2,8 @@ import React from 'react'
 
 const Footer=()=> {
     return (
-        <footer className='container-fluid px-3 py-3 bg-dark'>
-         <div className='row' > 
+        <footer className='container-fluid px-3 py-3'>
+         <div className='row pt-3'> 
             <div className='col-6 col-sm-6 col-md-3'>
             <ul>
                 <li><p><b>Contact Us</b></p></li>
@@ -40,7 +40,7 @@ const Footer=()=> {
             </ul>
             </div>
             </div>
-            <span className='text-center text-white d-block'>&copy; 2019 Warrior.com</span>
+            <span className='text-center text-white d-block pt-3'>&copy; 2019 Warrior.com</span>
         </footer>
     
     )
