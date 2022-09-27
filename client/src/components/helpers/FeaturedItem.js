@@ -36,12 +36,12 @@ const FeaturedItem = ({category,name,description,img_url}) => {
 }
   return (
     <div className="fluid-container mt-4 pt-4 pb-5 bg-lblue">
-        <h3 className='mb-5 ml-5'><u>Top Seller</u></h3>
+        <h3 className='mb-5 '><u>Top Seller</u></h3>
         <div className='row'>
-            <div className='col-6'>
+            <div className='col-sm-6 col-xs-12'>
             <img className='img-fluid shadow-sm featured-item' src={img_url}/>
             </div>
-            <div className='col-6'>
+            <div className='col-sm-6 col-xs-12'>
               <span className='tag-name pb-2 '>{category}</span>
               <h4 className='my-3'>{name}</h4>
               <p className='m-3'><b>${item.price}</b></p>

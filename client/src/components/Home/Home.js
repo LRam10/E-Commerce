@@ -22,27 +22,27 @@ const Home = () => {
     <Fragment>
       <Banner/>
       <div className="container-fluid mt-5 pt-5 mb-5 pb-5">
-      <h3 className="mb-5 ml-5"><u>Styles</u></h3>
+      <h3 className="mb-5 "><u>Styles</u></h3>
         <div className="row">
-          <div className="col-3  mt-2">
+          <div className="col-sm-3 col-xs-12 mt-2">
             <Card
             category={"wooden"}
             cover={woodenImg} 
             img={"http://res.cloudinary.com/doei459zd/image/upload/v1584471523/Category/dnb9hd2tzfk4g3rgnzg2.jpg"}/>
           </div>
-          <div className="col-3  mt-2">
+          <div className="col-sm-3 col-xs-12 mt-2">
           <Card 
             category={"red-strings"}
             cover={RedStrings}
             img={"https://res.cloudinary.com/doei459zd/image/upload/v1573665197/Bracelet/xhmd2kztgryk8y6gln2p.png"} />
           </div>
-          <div className="col-3  mt-2">
+          <div className="col-sm-3 col-xs-12 mt-2">
             <Card 
             category={"paracord"}
             cover={Paracord}
             img={"http://res.cloudinary.com/doei459zd/image/upload/v1584471604/Category/hkfzztd6j1buedi9j2po.jpg"} />
           </div>
-          <div className="col-3  mt-2">
+          <div className="col-sm-3 col-xs-12 mt-2">
             <Card 
             category={"friendship"}
             cover={"https://res.cloudinary.com/doei459zd/image/upload/v1575564841/Bracelet/pbk7p8117drevjgtmjkr.jpg"}

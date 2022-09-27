@@ -224,20 +224,22 @@ footer ul p{
 }
 /* Burger Menu */
 .burger{
+  z-index: 250;
   list-style: none;
   top: 39px;
   position: absolute;
-  color:#fff;
-  background-color: #1a80b6;
+  color:black;
+  background-color:#fff;
   padding: 0;
   width: 35%;
+  box-shadow: 0 5px 8px 0;
 }
 .burger li{
   padding: 1rem;
   margin:0;
 }
 .burger li a {
-  color:#fff;
+  color:black;
 }
 .sublist{
   list-style-type: none;
@@ -251,7 +253,7 @@ footer ul p{
 }
 .slideout{
   animation-name: slideout;
-  animation-duration: 3s;
+  animation-duration: 1s;
   transition: ease-out;
   animation-direction: normal;
 }
@@ -317,14 +319,38 @@ footer ul p{
 }
 @media (max-width:440px){
   h1{
-    font-size: 1.70rem;
+    font-size: 3.70rem;
   }
   h3{
     font-size: 1.30rem;
   }
+  h1,h3{text-align: center; margin-left: 0;}
   
 }
 @media (max-width:576px){
+  h1{
+    margin-top: 3rem;
+    font-size: 45px !important;
+  }
+  h3{
+    font-size: 2rem !important;
+  }
+  .img-cont{
+  height: 250px;
+  background-size: contain;
+  background-position-x: center;
+  }
+  .card-img-menu{
+    height: 150px;
+    width: 150px;
+  }
+  .btn-blue{
+    width: 80%;
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
+  }
+  h1,h3,p{text-align: center; margin-left: 0;}
   .navbar-brand{
     font-size: 1rem;
   }
@@ -354,7 +380,7 @@ footer ul p{
   }
   .fa-bars{
     cursor: pointer;
-    color: #fff;
+    color:#104B87;
   }
   .justify-content-center{
     justify-content: start !important;
@@ -365,11 +391,17 @@ footer ul p{
   .small-text{
     font-size: 12px;
   }
-  .d-flex{
+  /* .d-flex{
     display: block !important;
-  }
+  } */
   .d-flex img{
     width: 100%;
+  }
+  .row{
+    padding: 0;
+  }
+  .navbar{
+    padding: 0 !important;
   }
 }
 
