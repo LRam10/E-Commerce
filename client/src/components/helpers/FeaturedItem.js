@@ -36,7 +36,9 @@ const FeaturedItem = ({category,name,description,img_url}) => {
 }
   return (
     <div className="fluid-container mt-4 pt-4 pb-5 bg-lblue">
+        <div className='row'>
         <h3 className='mb-5 '><u>Top Seller</u></h3>
+        </div>
         <div className='row'>
             <div className='col-sm-6 col-xs-12'>
             <img className='img-fluid shadow-sm featured-item' src={img_url}/>

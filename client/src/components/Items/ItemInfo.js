@@ -67,7 +67,7 @@ const ItemInfo = () => {
                     <button type="button" className="btn btn-secondary">{item.qty}</button>
                     <button type="button" className="btn btn-secondary" onClick={onPlusItem}>+</button>
                 </div>
-                <button className='btn-primary btn-large px-2 m-3' onClick={onAddToCart}>ADD TO CART</button>
+                <button className='btn btn-blue btn-large px-2 m-3' onClick={onAddToCart}>ADD TO CART</button>
                 <h5 className='ml-3'>Description</h5>
                 <p className='ml-3 text-muted'>{description}</p>
                 </div>

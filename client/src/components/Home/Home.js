@@ -22,7 +22,9 @@ const Home = () => {
     <Fragment>
       <Banner/>
       <div className="container-fluid mt-5 pt-5 mb-5 pb-5">
-      <h3 className="mb-5 "><u>Styles</u></h3>
+        <div className="row">
+        <h3 className="mb-5 "><u>Styles</u></h3>
+        </div>
         <div className="row">
           <div className="col-sm-3 col-xs-12 mt-2">
             <Card
