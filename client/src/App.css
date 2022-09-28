@@ -307,6 +307,16 @@ footer ul p{
   z-index: 500;
   top:50%;
 }
+.navbar-brand{
+  left: 50%;
+  color: #707070;
+  font-weight: 900;
+  font-size: 25px;
+}
+.navbar-brand:hover{
+  transform: scale(1.1);
+  color: #1A80B6;
+}
 /* KeyFrames */
 @keyframes slidein{
   from{height: 20%;}
