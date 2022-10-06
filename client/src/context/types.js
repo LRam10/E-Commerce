@@ -20,6 +20,7 @@ export const ITEM_ERROR = 'ITEM_ERROR';
 export const PERCENTAGE = 'PERCENTAGE';
 export const GET_LOADING = 'CLEAR_ITEMS';
 export const LOGIN_ADMIN_SUCCESSFUL = 'LOGIN_ADMIN_SUCCESSFUl';
+export const GETITEMBYNAME = 'GETITEMNYNAME'
 //Cart Types
 export const GET_CART = 'GET_CART';
 export const ADD_ITEM_INCART = 'ADD_ITEM_INCART';

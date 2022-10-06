@@ -41,7 +41,7 @@ const FeaturedItem = ({category,name,description,img_url}) => {
         </div>
         <div className='row'>
             <div className='col-sm-6 col-xs-12'>
-            <img className='img-fluid shadow-sm featured-item' src={img_url}/>
+            <img className='img-fluid shadow-sm featured-item' alt={`${name}-img`} src={img_url}/>
             </div>
             <div className='col-sm-6 col-xs-12'>
               <span className='tag-name pb-2 '>{category}</span>

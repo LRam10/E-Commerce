@@ -14,6 +14,7 @@ ITEM_ERROR,
 CLEAR_ERRORS,
 GET_ITEMS,
 GET_LOADING,
+GETITEMBYNAME,
 } from '../types';
 
 const ItemState = props =>{
@@ -38,6 +39,16 @@ const ItemState = props =>{
         }
     };
 
+    const getItemByName = async (name)=>{
+        setLoading();
+        try {
+            const response = await axios.get(`/items/item/${name}`);
+            dispatch({type:GETITEMBYNAME,payload:response.data});
+
+        } catch (error) {
+            console.log(error.response);
+        }
+    };
     //Add Item
     const addItem = async item =>{
         setLoading();
@@ -116,7 +127,8 @@ const ItemState = props =>{
         clearErrors,
         getItems,
         filterItems,
-        clearFilter
+        clearFilter,
+        getItemByName
         }
     }>
     {props.children}

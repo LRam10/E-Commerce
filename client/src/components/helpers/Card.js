@@ -11,7 +11,7 @@ const Card = ({ img, category, cover }) => {
           },
         }}
       >
-        <img src={cover} className="card-img-menu" />
+        <img src={cover} alt={`${category}-img`} className="card-img-menu" />
       </Link>
 
       <div className="card-body bg-white">

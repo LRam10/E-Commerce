@@ -13,7 +13,7 @@ import Register from './components/Auth/Register'
 import Login from './components/Auth/Login';
 import Alerts from './components/helpers/Alert'
 import AdminLogin from './components/Admin/AdminLogin';
-import ItemInfo from './components/Items/ItemInfo';
+import InfoItem from './components/pages/InfoItem';
 import Orders from './components/pages/Orders';
 import Cart from './components/pages/Cart';
 
@@ -58,7 +58,7 @@ const App = ()=> {
           <Route path='/admin-login' component={AdminLogin}/>
           <AuthPrivate exact path='/auth/orders' component={Orders}/>
           <Route exact path='/cart'component={Cart}/>
-          <Route path='/item/:name' component={ItemInfo}/>
+          <Route path='/item/:name' component={InfoItem}/>
         </Switch>
       </div>
       <Footer/>

@@ -59,14 +59,25 @@ router.post("/",[auth,[
 //@Access  Public
 router.get("/:category",async (req,res)=>{
     try {
-    let items = await Item.find({category:req.params.category});
-    res.json(items);
+    let items = await Item.find({category:req.params.category}).lean();
+    res.send(items);
     } catch (error) {
         console.log(error);
         res.status(500);
     }
 });
-
+//@Type   GET
+//@Desc   GET item by name
+//@Access  Public
+router.get("/item/:name",async (req,res)=>{
+    try {
+    let item = await Item.findOne({name:req.params.name}).lean();
+    res.send(item);
+    } catch (error) {
+        console.log(error);
+        res.status(500);
+    }
+});
 //@Type   Put
 //@Desc   Edit items from admin page
 //@Access  Private

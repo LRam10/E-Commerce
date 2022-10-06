@@ -9,13 +9,19 @@ import  {
     GET_ITEMS,
     ITEM_ERROR,
     CLEAR_ERRORS,
-    GET_LOADING
+    GET_LOADING,
+    GETITEMBYNAME,
     } from '../types';
 export default (state,action)=>{
     switch(action.type){
         case GET_ITEMS:return{
             ...state,
             items:action.payload,
+            loading:false,
+        }
+        case GETITEMBYNAME:return{
+            ...state,
+            currentItem:action.payload,
             loading:false,
         }
         case ADD_ITEM:return {

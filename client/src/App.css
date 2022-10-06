@@ -207,8 +207,8 @@ footer ul p{
   right:10px;
   display: none;
 }
-#qty{
-  font-size: 10px;
+.small-text{
+  font-size: 14px;
   color:#919191;
 }
 .slidein{
