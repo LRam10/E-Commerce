@@ -5,6 +5,9 @@ import AlertContext from "../../context/alerts/alertContext";
 import ItemContext from "../../context/item/itemContext";
 import CartContext from "../../context/cart/cartContext";
 
+import Reviews from "../Reviews/Reviews";
+import Spinner from "../../utils/Spinner";
+
 
 const InfoItem = () => {
   let { name } = useParams();
@@ -27,18 +30,18 @@ const InfoItem = () => {
     localStorage.setItem("cart", JSON.stringify(products));
     // eslint-disable-next-line
   }, [products]);
-
+  
   const onMinusItem = () => {
     if (qty === 1) {
       return;
     }
-    setQty(qty -1);
+    setQty(prevQty => prevQty-1);
   };
   const onPlusItem = () => {
     if (qty === 10) {
       return;
     }
-    setQty(qty + 1);
+    setQty(prevQty => prevQty+ 1);
   };
   const onAddToCart = () => {
     currentItem.qty = qty;
@@ -55,13 +58,7 @@ const InfoItem = () => {
 
   return (
     <div className="container-fluid">
-      {!currentItem ? (
-        <div className="mx-auto">
-          <div className="spinner-border text-primary" role="status">
-            <span className="sr-only">Loading...</span>
-          </div>
-        </div>
-      ) : (
+      {!currentItem ? <Spinner/>: (
         <>
           <div className="row">
             <h3 className="m-3">{currentItem.name}</h3>
@@ -114,6 +111,9 @@ const InfoItem = () => {
               </div>
             </div>
           </div>
+          <Reviews 
+          item = {{...currentItem}}
+          />
         </>
       )}
     </div>

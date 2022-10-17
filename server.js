@@ -12,6 +12,7 @@ const auth =require('./Routes/Auth');
 const checkout = require('./Routes/Checkout')
 const orders = require('./Routes/Order');
 const categories = require('./Routes/Category');
+const reviews = require('./Routes/Reviews');
 //Database
 const connectDB = require('./config/db');
 
@@ -32,6 +33,7 @@ app.use('/auth',auth);
 app.use('/categories',categories);
 app.use('/checkout',checkout);
 app.use('/orders',orders);
+app.use('/reviews',reviews);
 if(process.env.NODE_ENV === 'production'){
     //set static folder
     app.use(express.static('client/build'));
