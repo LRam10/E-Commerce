@@ -71,6 +71,20 @@ const loginUser = async user =>{
 };
 //Logout User
 const logout =() => dispatch({type:LOGOUT});
+//GoogleLogin
+const googleLogin = async (token)=>{
+    let config = {
+        headers:{'Content-Type':'application/json'}
+    }
+    try {
+        const response = await axios.post('/auth/google',token,config);
+        dispatch({type:LOGIN_SUCCESSFUl,payload:response.data});
+        loadUser();
+    } catch (error) {
+        console.log(error)
+        dispatch({type:LOGIN_FAILURE,payload:error.response.data.msg});
+    }
+}
 
 //AdminLogin
 const loginAdmin = async user=>{
@@ -101,7 +115,8 @@ const loginAdmin = async user=>{
         clearErrors,
         loginUser,
         logout,
-        loginAdmin
+        loginAdmin,
+        googleLogin
         }
     }>
     {props.children}

@@ -21,7 +21,7 @@ const ModalReview = ({ handleModal, img_url, name, _id }) => {
     e.preventDefault();
     setReview({ ...review, [e.target.name]: e.target.value });
   };
-  const changeStars = (stars) => {setStarsSelected(stars);};
+  const changeStars = (stars) => {setStarsSelected(stars);}
 
   const onSubmit = async (e) => {
     e.preventDefault();

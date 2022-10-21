@@ -85,20 +85,13 @@ const DefaultNav = ({
         <ul className="nav float-right" id="top-menu">
           <li className="nav-item">
             {isAuthenticated ? (
-              <UserSublist user={user} />
+              <UserSublist user={user} onLogout={onLogout}/>
             ) : (
               <Link className="nav-link text-dark" to={"/login"}>
                 <i className="fas fa-user"></i>
               </Link>
             )}
           </li>
-          {isAuthenticated && (
-            <li className="nav-item">
-              <span className="nav-link text-dark" onClick={onLogout}>
-                <i className="fas fa-sign-out-alt">Logout</i>
-              </span>
-            </li>
-          )}
           <li className="nav-link mx-0">
             <Link to={"/cart"} className="text-dark">
               <i className="fas fa-shopping-cart">

@@ -22,7 +22,7 @@ const connectDB = async ()=>{
                 useFindAndModify:false,
                 useUnifiedTopology:true
             })
-            console.log('Locla Mongood Db')
+            console.log('Local Mongoo DB Connected')
         }
     } catch (error) {
         console.error(error.msg+" heres the error");

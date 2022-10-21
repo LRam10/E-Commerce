@@ -12,12 +12,14 @@ const UserSchema = mongoose.Schema({
     passwordObject:{
         password:{
             type:String,
-            require:true,
         },
         numberOfTries:{
             type:Number,
             default: 6
         }
+    },
+    picture:{
+        type:String,
     },
     email:{
         type:String,

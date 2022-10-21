@@ -4,10 +4,12 @@ import AuthContext from '../../context/auth/authContext';
 import Alert from '../../context/alerts/alertContext';
 import CartContext from '../../context/cart/cartContext';
 
+import {useGoogleLogin} from '@react-oauth/google';
+
 const Login = (props) => {
     //UserContext init
     const authContext = useContext(AuthContext);
-    const { loginUser,error,isAuthenticated,clearErrors, } = authContext;
+    const { loginUser,error,isAuthenticated,clearErrors,googleLogin} = authContext;
     //AlertContext
     const alertContext = useContext(Alert);
     const { setAlert } = alertContext;
@@ -36,6 +38,9 @@ const Login = (props) => {
         e.preventDefault();
         loginUser({email,password});
     }
+    const handleGoogleLogin = useGoogleLogin({
+        onSuccess:tokenResponse => googleLogin(tokenResponse),
+    });
     return (
         <div className='container'>
             <form className='mx-auto form-group mt-4 shadow-sm py-5' onSubmit={onLogin}>
@@ -45,8 +50,8 @@ const Login = (props) => {
                 <label htmlFor='password'>Password</label>
                 <input type='password' name='password' defaultValue={password} className='form-control' onChange={onChange} required></input>
                 <input type='submit' name='login' className='btn btn-primary mx-auto btn-block m-2' value='Sign Up'/>
-                <input type='submit' name='login' className='btn btn-danger mx-auto btn-block m-2' value='Google Account'/>
-                <p>Need an account? <Link to={'/register'}>Creat Account</Link></p>
+                <input type='submit' name='login' className='btn btn-danger mx-auto btn-block m-2' value='Google Account' onClick={handleGoogleLogin}/>
+                <p>Need an account? <Link to={'/register'}>Create an Account</Link></p>
             </form>
         </div>
     )
