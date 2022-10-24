@@ -50,7 +50,7 @@ const Login = (props) => {
                 <label htmlFor='password'>Password</label>
                 <input type='password' name='password' defaultValue={password} className='form-control' onChange={onChange} required></input>
                 <input type='submit' name='login' className='btn btn-primary mx-auto btn-block m-2' value='Sign Up'/>
-                <input type='submit' name='login' className='btn btn-danger mx-auto btn-block m-2' value='Google Account' onClick={handleGoogleLogin}/>
+                <input type='submit' name='login' className='btn btn-danger mx-auto btn-block m-2' value='Login With Google' onClick={handleGoogleLogin}/>
                 <p>Need an account? <Link to={'/register'}>Create an Account</Link></p>
             </form>
         </div>
