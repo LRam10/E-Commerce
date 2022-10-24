@@ -24,20 +24,20 @@ const Register = (props) => {
         firsName:'',
         lastName:'',
         email:'',
-        password:'',
+        currentPassword:'',
         confPassword:''
     });
-    let {firstName,lastName,email,password,confPassword} = user;
+    let {firstName,lastName,email,currentPassword,confPassword} = user;
 
   const onChange = (e) => setUser({...user,[e.target.name]:e.target.value});
 
   const onRegister =(e)=>{
       e.preventDefault();
-      if(password !== confPassword){
+      if(currentPassword !== confPassword){
           setAlert('Passwords do not match','danger');
       }
       else{
-        registerUser({firstName,lastName,email,password});
+        registerUser({firstName,lastName,email,currentPassword});
       }
   }
     return (
@@ -51,13 +51,14 @@ const Register = (props) => {
                     <input type='text' defaultValue={lastName} name='lastName' className='form-control' onChange={onChange} required></input>
                 
                     <label htmlFor='email'>Email</label>
-                    <input type='email' name='email' defaultValue={email} className='form-control' onChange={onChange} required></input>
+                    <input type='email' name='email' defaultValue={email} className='form-control' onChange={onChange} autoComplete='username' required></input>
                 
                     <label htmlFor='password'>Password</label>
-                    <input type='password' name='password' defaultValue={password} className='form-control' onChange={onChange} minLength='6' required></input>
+                    <input type='password' name='currentPassword' defaultValue={currentPassword} className='form-control' 
+                   autoComplete='current-password' onChange={onChange} minLength='6' required></input>
                 
                     <label htmlFor='confPassword'>Confirm Password</label>
-                    <input type='password' name='confPassword' defaultValue={confPassword} className='form-control' onChange={onChange} minLength='6' required></input>
+                    <input type='password' name='confPassword' defaultValue={confPassword} className='form-control' autoComplete='confirm-password' onChange={onChange} minLength='6' required></input>
                     <input type='submit' className='btn btn-primary mx-auto btn-block m-2' value='Sign Up'/>
                     <p>Already have an account? <Link to={'/login'}>Login</Link></p>
             </form>

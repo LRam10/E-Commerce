@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom';
 import AuthContext from '../../context/auth/authContext';
 import Alert from '../../context/alerts/alertContext';
 import CartContext from '../../context/cart/cartContext';
-
 import {useGoogleLogin} from '@react-oauth/google';
 
 const Login = (props) => {
@@ -46,9 +45,10 @@ const Login = (props) => {
             <form className='mx-auto form-group mt-4 shadow-sm py-5' onSubmit={onLogin}>
             <h3 className='text-center'>Log In</h3>
                 <label htmlFor='email'>Email</label>
-                <input type='text' name='email' defaultValue={email} className='form-control' onChange={onChange} required></input>
+                <input type='text' name='email' defaultValue={email} className='form-control' onChange={onChange}autoComplete='username' required></input>
                 <label htmlFor='password'>Password</label>
-                <input type='password' name='password' defaultValue={password} className='form-control' onChange={onChange} required></input>
+                <input type='password' name='password' defaultValue={password} className='form-control' 
+               autoComplete='current-password' onChange={onChange} required></input>
                 <input type='submit' name='login' className='btn btn-primary mx-auto btn-block m-2' value='Sign Up'/>
                 <input type='submit' name='login' className='btn btn-danger mx-auto btn-block m-2' value='Login With Google' onClick={handleGoogleLogin}/>
                 <p>Need an account? <Link to={'/register'}>Create an Account</Link></p>

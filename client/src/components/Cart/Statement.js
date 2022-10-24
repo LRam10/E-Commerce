@@ -8,12 +8,11 @@ import { loadStripe } from '@stripe/stripe-js';
 let stripePromise;
 
 if(process.env.NODE_ENV !== 'production'){
-    stripePromise = loadStripe(process.env.REACT_APP_STRIPE_CLIENT);
+    stripePromise = loadStripe(`${process.env.REACT_APP_STRIPE_CLIENT_TEST}`);
 }
 else{
-    stripePromise = loadStripe('pk_live_anGjuc0oJPgRAK0ViINHQVwS00pcxYvZuO');
+    stripePromise = loadStripe(`${process.env.REACT_APP_STRIPE_CLIENT_LIVE}`);
 }
-
 const Statement = () => {
     //CartContext
     const cartContext =useContext(CartContext);
