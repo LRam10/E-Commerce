@@ -41,19 +41,22 @@ const Login = (props) => {
         onSuccess:tokenResponse => googleLogin(tokenResponse),
     });
     return (
-        <div className='container'>
+        <div className='d-flex align-items-center auth-home'>
+            <div className='container'>
             <form className='mx-auto form-group mt-4 shadow-sm py-5' onSubmit={onLogin}>
             <h3 className='text-center'>Log In</h3>
-                <label htmlFor='email'>Email</label>
+                <label htmlFor='email'>Email:</label>
                 <input type='text' name='email' defaultValue={email} className='form-control' onChange={onChange}autoComplete='username' required></input>
-                <label htmlFor='password'>Password</label>
-                <input type='password' name='password' defaultValue={password} className='form-control' 
+                <label htmlFor='password'>Password:</label>
+                <input type='password' name='password' defaultValue={password} className='form-control mb-4' 
                autoComplete='current-password' onChange={onChange} required></input>
                 <input type='submit' name='login' className='btn btn-primary mx-auto btn-block m-2' value='Sign Up'/>
                 <input type='submit' name='login' className='btn btn-danger mx-auto btn-block m-2' value='Login With Google' onClick={handleGoogleLogin}/>
                 <p>Need an account? <Link to={'/register'}>Create an Account</Link></p>
             </form>
         </div>
+        </div>
+        
     )
 }
 

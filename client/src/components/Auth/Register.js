@@ -41,7 +41,8 @@ const Register = (props) => {
       }
   }
     return (
-        <div className='container'>
+        <div className='d-flex align-items-center auth-home'>
+            <div className='container'>
             <form className='mx-auto form-group mt-4 shadow-sm' onSubmit={onRegister}>
             <h3 className='text-center'>Create Account</h3>
                     <label htmlFor='firtsName'>First Name</label>
@@ -63,6 +64,8 @@ const Register = (props) => {
                     <p>Already have an account? <Link to={'/login'}>Login</Link></p>
             </form>
         </div>
+        </div>
+        
     )
 }
 

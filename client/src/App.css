@@ -119,6 +119,14 @@ color:black;
     position: absolute;
     top: 50%;
 }
+.auth-home{
+  background-image: url('https://res.cloudinary.com/doei459zd/image/upload/e_gradient_fade:20/v1666894007/Category/login-page_hcugqm.png');
+  height: 80vh;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+}
+
 .img-cont{
   background-image: url('./images/cover.png');
   background-repeat: no-repeat;
@@ -442,7 +450,13 @@ footer ul p{
 @media (max-width: 1010px) {
 }
 
-@media (max-width: 1270px) {
-
+@media (max-width: 1770px) {
+.form-group{
+  width: 511px;
+}
+.img-cont{
+  background-size: contain;
+  background-position: bottom;
+}
   }
   

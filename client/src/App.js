@@ -46,7 +46,6 @@ const App = ()=> {
    <Fragment>
       <Navbar/>
       <Alerts/>
-      <div>
         <Switch>
           <Route exact path='/' component={Home}/>
           <Route exact path='/about' component={About}/>
@@ -60,7 +59,6 @@ const App = ()=> {
           <Route exact path='/cart'component={Cart}/>
           <Route path='/item/:name' component={InfoItem}/>
         </Switch>
-      </div>
       <Footer/>
       </Fragment>
         </AlertState>
