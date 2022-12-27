@@ -54,6 +54,17 @@ router.post("/",[auth,[
         console.log(error);
     }
 });
+router.get('/', async(req,res)=>{
+    try{
+        let items = await Item.find({}).lean();
+        res.send(items);
+    }
+    catch(error){
+        console.log(error);
+        res.status(500);
+    }
+
+})
 //@Type   GET
 //@Desc   GET items of categories
 //@Access  Public

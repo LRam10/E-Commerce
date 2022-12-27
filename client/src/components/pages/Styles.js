@@ -7,10 +7,10 @@ import { useParams } from "react-router-dom";
 import { useExpiration } from "../../utils/useExpiration";
 
 const Styles = (props) => {
-  let { style } = useParams();
+  let { style } = useParams() || 'all';
   const { img_url } = props.location.state;
   //ItemContext
-  const cat_text = style.replace("-", " ");
+  const cat_text = style.replace("-", " ") ;
   const itemContext = useContext(ItemContext);
   const { items, getItems, loading, filter } = itemContext;
   //AuthContext

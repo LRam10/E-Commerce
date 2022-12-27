@@ -30,13 +30,25 @@ const ItemState = props =>{
     //Get items
     const getItems = async (category)=>{
         setLoading();
-        // category = category.charAt(0).toUpperCase() + category.slice(1)
+        console.log(category)
+        if(category === 'all'){
+            try {
+                const response = await axios.get(`/items/`);
+                dispatch({type:GET_ITEMS,payload:response.data});
+            } catch (error) {
+                console.log(error.response);
+            }
+        }
+        else{
+                // category = category.charAt(0).toUpperCase() + category.slice(1)
         try {
             const response = await axios.get(`/items/${category}`);
             dispatch({type:GET_ITEMS,payload:response.data});
         } catch (error) {
             console.log(error.response);
         }
+        }
+        
     };
 
     const getItemByName = async (name)=>{
