@@ -4,7 +4,7 @@
   "description": "Senior design project",
   "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jest",
     "start": "node server.js",
     "server": "nodemon server.js",
     "client": "npm start --prefix client",
@@ -31,6 +31,7 @@
     "uuid": "^3.4.0"
   },
   "devDependencies": {
-    "concurrently": "^5.1.0"
+    "concurrently": "^5.1.0",
+    "jest": "^29.5.0"
   }
 }

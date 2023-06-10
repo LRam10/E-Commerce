@@ -68,9 +68,10 @@ border-bottom: 11px solid #f3f3f3;
   border-top-right-radius: 3px;
 }
 .form-group {
-  margin-bottom: 1rem;
+  margin: 1rem 1rem;
   width: 422px;
   padding: 1rem;
+  background-color: #fff;
 }
 .form-control{
   font-size: .9rem;
@@ -121,7 +122,7 @@ color:black;
 }
 .auth-home{
   background-image: url('https://res.cloudinary.com/doei459zd/image/upload/e_gradient_fade:20/v1666894007/Category/login-page_hcugqm.png');
-  height: 80vh;
+  height: 100%;
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center;
@@ -321,17 +322,18 @@ footer ul p{
 }
 .alert{
   z-index: 500;
-  top:50%;
+  bottom:20px;
+  left:20px;
+  position: absolute;
+  width: 230px;
+  font-size: 12px !important;
+  font-weight: 700;
 }
 .navbar-brand{
   left: 50%;
   color: #707070;
   font-weight: 900;
   font-size: 25px;
-}
-.navbar-brand:hover{
-  transform: scale(1.1);
-  color: #1A80B6;
 }
 /* KeyFrames */
 @keyframes slidein{

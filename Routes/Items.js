@@ -5,6 +5,7 @@ const auth = require('../middleware/auth');
 const cloudinary = require('cloudinary').v2;
 const fileupload = require('express-fileupload');
 const mongoose = require('mongoose');
+const items = require('../Services/items');
 
 router.use(fileupload({
     useTempFiles:true
@@ -54,17 +55,7 @@ router.post("/",[auth,[
         console.log(error);
     }
 });
-router.get('/', async(req,res)=>{
-    try{
-        let items = await Item.find({}).lean();
-        res.send(items);
-    }
-    catch(error){
-        console.log(error);
-        res.status(500);
-    }
-
-})
+router.get('/', items.list);
 //@Type   GET
 //@Desc   GET items of categories
 //@Access  Public

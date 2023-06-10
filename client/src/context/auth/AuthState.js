@@ -27,26 +27,28 @@ const AuthState = props =>{
 
 //Load user
 const loadUser = async () =>{
-    if(localStorage.token){
-        setAuthToken(localStorage.token);
+    if (localStorage.token) {
+      setAuthToken(localStorage.token);
+
+      try {
+        const response = await axios.get("/auth");
+        dispatch({ type: USER_LOADED, payload: response.data });
+      } catch (error) {
+        dispatch({ type: AUTH_ERROR });
+      }
     }
-  try {
-    const response = await axios.get('/auth');
-    dispatch({type:USER_LOADED,payload:response.data});
-  } catch (error) {
-      dispatch({type:AUTH_ERROR});
-  }
 };
 //Register User
 const registerUser = async (userData) =>{
     try {
         let config = {
-            headers:{'Content-Type':'application/json'},
+            headers:{'Content-Type':'application/json','Accept':'application/json'},
         };
         const response = await axios.post('/register',userData,config);
         dispatch({type:REGISTER_SUCCESS,payload:response.data});
         loadUser();
     } catch (error) {
+        console.log(error);
     console.log(error.response.data.msg);
      dispatch({type:REGISTER_FAILURE,payload:error.response.data.msg});
     }

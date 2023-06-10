@@ -27,7 +27,7 @@ const Navbar = () => {
   const onLogout = () => {
     if (!inDB) createCart(products);
     else editCart(products);
-
+    localStorage.removeItem('token');
     logout();
   };
   //change current

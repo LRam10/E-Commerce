@@ -81,7 +81,7 @@ const DefaultNav = ({
             </Link>
           </li>
         </ul>
-        <Link className="navbar-brand text-center position-absolute" to={'/'}>SolBracelets</Link>
+        <a className="navbar-brand text-center position-absolute" href="/">SolBracelets</a>
         <ul className="nav float-right" id="top-menu">
           <li className="nav-item">
             {isAuthenticated ? (

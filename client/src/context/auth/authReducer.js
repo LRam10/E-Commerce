@@ -35,7 +35,8 @@ export default (state,action)=>{
                 isAuthenticated:false,
                 loading:false,
                 error:action.payload,
-                user:null
+                user:null,
+                isAdmin:false,
             }
             case LOGIN_SUCCESSFUl:
                 localStorage.setItem('token',action.payload.token);
@@ -67,9 +68,7 @@ export default (state,action)=>{
             case CLEAR_ERRORS:return{
                 ...state,error:null
             }
-            case LOGOUT:
-                localStorage.removeItem('token');
-                return{
+            case LOGOUT:return{
                     ...state,
                     token:null,
                     isAuthenticated:false,

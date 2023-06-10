@@ -53,6 +53,7 @@ router.post("/google", async (req, res) => {
 //@Access  Private
 router.get("/", auth, async (req, res) => {
   try {
+    console.log('Get user',req.body, req.user);
     const user = await userModel
       .findById(req.user.id)
       .select("-passwordObject");
@@ -77,6 +78,7 @@ router.post(
       return res.status(400).json({ errors: errors.array() });
     }
     try {
+      console.log('User Register', req.body)
       //destructuring from the request body
       const { password, email } = req.body;
       let user = await userModel.findOne({ email });

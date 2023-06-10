@@ -35,7 +35,9 @@ const Styles = (props) => {
           <u>{cat_text}</u>
         </h1>
       </div>
-      <Search />
+      <div className="row mt-3">
+        <Search />
+      </div>
       <div className="container-fluid">
         {filter !== null ? (
           <Items items={filter} />

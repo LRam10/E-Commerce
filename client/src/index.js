@@ -6,7 +6,6 @@ import App from "./App";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import { store } from "../src/app/store";
 import { Provider } from "react-redux";
-// import * as serviceWorker from './serviceWorker';
 
 ReactDOM.render(
   <GoogleOAuthProvider clientId={process.env.REACT_APP_GOOGLE_OAUTH_CLIENT_ID}>
