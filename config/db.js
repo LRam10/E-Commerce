@@ -16,16 +16,14 @@ const connectDB = async ()=>{
             console.log("MongoDB has been connected");
         }
         else{
-            await mongoose.connect('mongodb://127.0.0.1:27017/?directConnection=true&serverSelectionTimeoutMS=2000&appName=mongosh+1.5.4',{
+            await mongoose.connect(db,{
                 useNewUrlParser:true,
-                useCreateIndex:true,
-                useFindAndModify:false,
                 useUnifiedTopology:true
             })
             console.log('Local Mongoo DB Connected')
         }
     } catch (error) {
-        console.error(error.msg+" heres the error");
+        console.error(error+" heres the error");
         process.exit(1);
     }
     
