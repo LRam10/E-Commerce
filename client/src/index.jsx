@@ -1,6 +1,6 @@
 // import ReactDOM from "react-dom";
 // import { BrowserRouter as Router } from "react-router-dom";
-// import App from "./App";
+import App from "./App";
 import React from "react"
 import {createRoot} from 'react-dom/client';
 
@@ -9,7 +9,7 @@ import {createRoot} from 'react-dom/client';
 // import { store } from "./app/store";
 // import { Provider } from "react-redux";
 const root = createRoot(document.getElementById('root'));
-root.render(<div>Hello App</div>);
+root.render(<App/>);
 // ReactDOM.render(
 //   // <GoogleOAuthProvider clientId={process.env.REACT_APP_GOOGLE_OAUTH_CLIENT_ID}>
 //   //   <Provider store={store}>
