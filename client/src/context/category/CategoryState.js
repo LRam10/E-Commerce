@@ -1,37 +1,19 @@
-import React ,{useReducer} from 'react';
-import {GET_CATEGORIES} from '../types';
-import CategoryReducer from './CategoryReducer';
-import CategoryContext from './categoryContext';
-import axios from 'axios';
-
-
-const CategoryState = props => {
-    const initialState ={
-        categories:[],
-        currentCategory:null
-    };
-
-    const [state,dispatch] = useReducer(CategoryReducer,initialState);
-    //get categories
-    const getCategories = async ()=>{
+//get categories
+   export const getCategories = async ()=>{
+    let headers= {
+        "Accept": "application/json",
+        "Content-Type": "application/json",
+    }
         try {
-            const response = await axios.get('/categories');
-            dispatch({type:GET_CATEGORIES,payload:response.data});
+            const response = await fetch('http://localhost:5000/categories',{
+                headers,
+                method: 'GET',
+            });
+            if(!response.ok){
+                throw new Error('Request categories failed');
+            }
+            return response.json();
         } catch (error) {
-            console.log(error);
-
+            throw new Error(error);
         }
     };
-
-
-    return <CategoryContext.Provider
-    value = {{
-        categories:state.categories,
-        currentCategory:state.currentCategory,
-        getCategories
-    }}>
-        {props.children}
-    </CategoryContext.Provider>
-};
-
-export default CategoryState;

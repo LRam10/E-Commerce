@@ -1,8 +1,4 @@
-import {configureStore} from "@reduxjs/toolkit";
-import reviewsSlice  from "./features/reviews/reviewsSlice";
-
-export const store = configureStore({
-reducer:{
-    reviews:reviewsSlice,
-}
-});
+import { create } from 'zustand';
+const useStore = create((set)=>{
+    
+})
