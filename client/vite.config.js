@@ -10,7 +10,7 @@ export default defineConfig(() => {
     Svgr({svgrOptions:{icon:true}})
     ],
     server:{
-      proxy:"http://localhost:5000"
+      proxy:"http://localhost:5001"
     },
     
   };

@@ -1,7 +1,8 @@
-import React,{Fragment} from 'react';
+import React from 'react';
 import './App.css';
 import PageLayout from './layouts/PageLayout';
-
+import { Router } from './Router';
+import {RouterProvider} from "react-router-dom";
 // import Navbar from './components/Nav/Navbar';
 // import Footer from './components/Footer';
 // import Home from './components/Home/Home';
@@ -37,7 +38,12 @@ import PageLayout from './layouts/PageLayout';
 //3600 seconds -----> one hour
 const App = ()=> {
   return (
-  <PageLayout/>
+  <PageLayout>
+    <RouterProvider router={Router} >
+      
+    </RouterProvider>
+  </PageLayout>
+    
   );
 }
 

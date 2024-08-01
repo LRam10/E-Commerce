@@ -1,5 +1,6 @@
 import React from 'react'
 import NavBar from './NavBar'
+import Footer from './Footer';
 import { getCategories } from '../context/category/CategoryState';
 import { useQuery } from '@tanstack/react-query';
 export default function PageLayout({children}) {
@@ -9,6 +10,7 @@ export default function PageLayout({children}) {
     <>
     <NavBar categories={query.data}/>
     {children}
+    <Footer />
     </>
   )
 }

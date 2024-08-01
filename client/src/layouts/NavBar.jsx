@@ -1,7 +1,9 @@
-import React, { useState } from 'react'
-
+import React, { useState,useRef } from 'react'
+import { useOutsideClick } from '../CustomHooks/useClickOutside';
 export default function NavBar({categories}) {
   const [navIndex,setNavIndex] = useState(null);
+  const outerRef = useRef();
+  useOutsideClick(closeSubMenu, outerRef);
   const list = [
     {
       'name':'Home',
@@ -14,24 +16,27 @@ export default function NavBar({categories}) {
       'subNaviagtion': categories
     }
   ]
-   function handleSubNavClick(index){
+  function closeSubMenu(){
+    setNavIndex(null);
+  }
+   function handleSubNavClick(e,index){
+    e.stopPropagation();
     if(index == navIndex){
-      setNavIndex(null) 
       return;
     }
     setNavIndex(index);
   }
   const navList = list.map((item,index)=>
     (
-      <li className='relative cursor-pointer text-[#17151A] flex items-center gap-2' key={index} onClick={()=>handleSubNavClick(index)}>
-        <span>{item.name}</span>
+      <li className='relative cursor-pointer text-[#17151A] flex items-center gap-2'  ref={outerRef} key={index} onClick={(e)=>handleSubNavClick(e,index)}>
+        <span >{item.name}</span>
         {item.subNaviagtion ? (
           <>
           <svg className="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
           < path stroke="currentColor" d="m1 1 4 4 4-4"/>
           </svg>
-          <ul className={navIndex != index ? "hidden" : "absolute border-[1px] bg-white border-[#17151A] text-black p-2 text-sm translate-x-0[-.5rem] top-[100%] right-0"} >
-            {item.subNaviagtion.map(nav=> <li className='p-2' key={nav._id}>{nav.category_name.charAt(0).toUpperCase() + nav.category_name.slice(1)}</li>)}
+          <ul className={navIndex != index ? "hidden" : "absolute border-[1px] bg-white border-[#17151A] text-black text-sm translate-x-0[-.5rem] top-[100%] right-0"} >
+            {item.subNaviagtion.map(nav=> <li className='py-2 px-3 capitalize hover:bg-[#EB0E3C] hover:text-white hover:scale-105' key={nav._id}>{nav.category_name.replace('-', ' ')}</li>)}
           </ul>
           </>
         ):''}
@@ -40,7 +45,7 @@ export default function NavBar({categories}) {
     )
   )
   return (
-    <nav className='flex items-center px-[25px] py-[15px] justify-between border-b-[1px] border-[#17151A]'>
+    <nav className='flex items-center px-[64px] py-[15px] h-[72px] justify-between border-b-[1px] border-[#17151A]'>
       <ul className='flex items-center gap-[30px]'>
         {navList}
       </ul>

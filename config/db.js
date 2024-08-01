@@ -8,18 +8,13 @@ const connectDB = async ()=>{
     try {
         if(process.env.NODE_ENV === 'production'){
             await mongoose.connect(db,{
-                useNewUrlParser:true,
                 useCreateIndex:true,
                 useFindAndModify:false,
-                useUnifiedTopology:true
             });
             console.log("MongoDB has been connected");
         }
         else{
-            await mongoose.connect(db,{
-                useNewUrlParser:true,
-                useUnifiedTopology:true
-            })
+            await mongoose.connect(db)
             console.log('Local Mongoo DB Connected')
         }
     } catch (error) {
