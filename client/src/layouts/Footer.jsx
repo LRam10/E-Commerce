@@ -6,7 +6,7 @@ const Footer=()=> {
          <div className='grid grid-cols-4'> 
             <div className='col-6 col-sm-6 col-md-3'>
             <ul className="flex flex-col gap-3">
-                <li className="font-semibold text-[16px] text-[#d60c37]">Contact Us</li>
+                <li className="font-semibold text-[16px] text-[#d60c37] underline-offset-1">Contact Us</li>
                 <li>WBracelets@gmail.com</li>
                 <li>+1(832)-455-4305</li>
                 <li>Houston, TX 77055</li>
@@ -14,7 +14,7 @@ const Footer=()=> {
             </div>
             <div className='col-6 col-sm-6 col-md-3'>
             <ul className="flex flex-col gap-3">
-                <li className="font-semibold text-[16px] text-[#d60c37]">Social Media</li>
+                <li className="font-semibold text-[16px] text-[#d60c37] underline-offset-1">Social Media</li>
                 <li>Instagram</li>
                 <li>Facebook</li>
                 <li>Twitter</li>
@@ -23,7 +23,7 @@ const Footer=()=> {
             </div>
             <div className='col-6 col-sm-6 col-md-3'>
             <ul className="flex flex-col gap-3">
-                <li className="font-semibold text-[16px] text-[#d60c37]">Brand</li>
+                <li className="font-semibold text-[16px] text-[#d60c37] underline-offset-1">Brand</li>
                 <li>Story Behind</li>
                 <li>Wholesale</li>
                 <li>Ambassador</li>
@@ -33,7 +33,7 @@ const Footer=()=> {
             </div>
             <div className="col-6 col-sm-6 col-md-3">
             <ul className="flex flex-col gap-3">
-                <li className="font-semibold text-[16px] text-[#d60c37]">Help</li>
+                <li className="font-semibold text-[16px] text-[#d60c37] underline-offset-1">Help</li>
                 <li>FAQ</li>
                 <li>Legal Disclosure</li>
                 <li>Other</li>

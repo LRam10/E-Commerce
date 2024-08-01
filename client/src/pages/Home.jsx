@@ -6,7 +6,10 @@ import { useQuery } from '@tanstack/react-query';
 export default function Home() {
   const { isPending, error, data} = useQuery({
     queryKey:['repoItems'],
-    queryFn:()=>fetch('http://localhost:3000/items?offset=0&limit=4').then(res => res.json())
+    queryFn:async ()=>{
+      const response  = await fetch('http://localhost:3000/items?offset=0&limit=4');
+      return response.json();
+    }
   })
   return (
     <Fragment>

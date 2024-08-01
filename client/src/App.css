@@ -11,3 +11,6 @@ html,body{
 li{
   list-style-type: none;
 }
+.card-img-menu{
+  mask-image:radial-gradient(white 60%, transparent);
+}
