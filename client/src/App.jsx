@@ -40,7 +40,6 @@ const App = ()=> {
   return (
   <PageLayout>
     <RouterProvider router={Router} >
-      
     </RouterProvider>
   </PageLayout>
     
