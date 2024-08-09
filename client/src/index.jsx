@@ -3,11 +3,15 @@ import React from "react"
 import {createRoot} from 'react-dom/client';
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { GoogleOAuthProvider } from "@react-oauth/google";
 const root = createRoot(document.getElementById('root'));
 const queryClient = new QueryClient();
 root.render(
+<GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_AUTH_KEY}>
+
 <QueryClientProvider client={queryClient}>
   <App/>
 </QueryClientProvider>
+</GoogleOAuthProvider>
 );
 

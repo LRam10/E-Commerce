@@ -1,12 +1,12 @@
 import React, { useState,useRef } from 'react'
 import { useOutsideClick } from '../CustomHooks/useClickOutside';
 import { useUser } from '../store/useUser';
+import { useAppStore } from '../store/useAppStore';
 import ButtonFill from '../components/common/ButtonFill';
 export default function NavBar({categories}) {
   const [navIndex,setNavIndex] = useState(null);
   const outerRef = useRef();
   useOutsideClick(closeSubMenu, outerRef);
-
   //user store
   const loggedInUser = useUser((set)=>set.user);
   const list = [
@@ -21,9 +21,10 @@ export default function NavBar({categories}) {
       'subNaviagtion': categories
     }
   ]
-
-  function handleSingIn(){
-    console.log('handleSingIn')
+  const setAutModal = useAppStore((state)=>state.setModal);
+  function handleSingIn(e){
+    e.stopPropagation();
+    setAutModal(true);
   }
   function closeSubMenu(){
     setNavIndex(null);
