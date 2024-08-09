@@ -6,19 +6,31 @@ import {useGoogleLogin} from '@react-oauth/google';
 import { useOutsideClick } from '../../CustomHooks/useClickOutside';
 import { useUser } from '../../store/useUser';
 import { useAppStore } from '../../store/useAppStore';
+import TextField from '../common/TextField';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { callAPI } from '../../utils/utils';
 const AuthModal = () => {
   const modalRef = useRef();
   //Store
-  const submitUser = useUser((state)=>state.getSubmitUser)
+  const setToken = useUser((state)=>state.setToken)
   const setModal = useAppStore((state)=>state.setModal)
   //Component state
   const [user, setUser] = useState({
     email: '',
     password: '',
   });
+  const queryClient = useQueryClient();
+  const {mutate, isSuccess, isPending} = useMutation({
+    mutationFn:(user)=>callAPI('/auth', 'POST', null, 'json',user),
+    onSuccess:(data)=>{
+      queryClient.invalidateQueries({queryKey:['user']});
+      setToken(data.token);
+      setModal(false);
+    }
+  })
   const handleLogin  = (e)=>{
     e.preventDefault();
-    submitUser(user);
+    mutate(user);
   }
   useOutsideClick(handleCloseModal, modalRef);
   function handleCloseModal() {
@@ -45,14 +57,17 @@ const AuthModal = () => {
         </div>
 
         <form className="flex flex-col gap-[35px]">
-          <div className="flex flex-col gap-2">
-            <label>Email</label>
-            <input type="text"  name='email' defaultValue={user.email} className='form-control' onChange={onChange} autoComplete='username' required/>
-          </div>
-          <div className="flex flex-col gap-2">
-            <label>Password</label>
-            <input type="password"  name='password' defaultValue={user.password} className='form-control' onChange={onChange} autoComplete='password' required/>
-          </div>
+          <TextField 
+          type={'text'}
+          name={'email'}
+          placeholder={'Enter your email'}
+          onChange={onChange}/>
+          <TextField 
+          type={'password'}
+          name={'password'}
+          placeholder={'Password'}
+          onChange={onChange}/>
+      
           <ButtonFill text={'Submit'} onClick={handleLogin}/>
         </form>
         <hr className="border-[.5px] border-[#c9c9c9] my-[24px]"/>

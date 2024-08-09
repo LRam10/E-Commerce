@@ -48,7 +48,7 @@ router.post("/google", async (req, res) => {
     console.log(error);
   }
 });
-//@Type   POST
+//@Type   GEt
 //@Desc   Create Authentication
 //@Access  Private
 router.get("/", auth, async (req, res) => {
@@ -63,7 +63,7 @@ router.get("/", auth, async (req, res) => {
     res.status(500).send("server error");
   }
 });
-//@Type   GEt
+//@Type   POST
 //@Desc   get authentication token
 //@Access  Public
 router.post(
