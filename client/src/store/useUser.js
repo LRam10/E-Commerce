@@ -7,5 +7,7 @@ export const useUser = create((set)=>({
   access_token:localStorage.getItem('access_token'),
   setToken:async (token)=>{
     set((state)=>({...state,access_token:token}));
+    if(!token)
+      localStorage.removeItem('access_token');
   }
 }))

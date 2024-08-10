@@ -10,7 +10,8 @@ export default function Home() {
     queryFn:()=> callAPI('/items','GET', {
       offset:0,
       limit:4
-    })
+    }),
+    retry:3,
   })
   return (
     <Fragment>

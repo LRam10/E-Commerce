@@ -14,11 +14,16 @@ export const callAPI = async (url, method = 'GET', query, type='json', body, ext
       body: body ? JSON.stringify(body) : null
     });
     if (!response.ok) {
-      throw new Error('Request categories failed');
+      const resultError = await response.json();
+      let error = new Error()
+      error.data = resultError.errors
+      throw error;
     }
     const result = await response.json();
     return result
   } catch (error) {
-    throw new Error(error);
+    let returnError = new Error();
+    returnError.data = error.data
+    throw returnError;
   }
 }

@@ -19,13 +19,25 @@ const AuthModal = () => {
     email: '',
     password: '',
   });
+
+  const [formError, setFormError] = useState(null);
   const queryClient = useQueryClient();
-  const {mutate, isSuccess, isPending} = useMutation({
+  const {mutate, isSuccess, isPending, error} = useMutation({
     mutationFn:(user)=>callAPI('/auth', 'POST', null, 'json',user),
     onSuccess:(data)=>{
       queryClient.invalidateQueries({queryKey:['user']});
       setToken(data.token);
       setModal(false);
+      localStorage.setItem('access_token',data.token)
+    
+    },
+    onError:(error)=>{
+     error.data.map(err=>{
+      setFormError(prev=>({
+        ...prev,
+        [err.param]: err.msg
+      }))
+     })
     }
   })
   const handleLogin  = (e)=>{
@@ -40,6 +52,7 @@ const AuthModal = () => {
     onSuccess: tokenResponse => googleLogin(tokenResponse),
   });
   const onChange = (event) => {
+    setFormError(null);
     setUser(prev => ({
       ...prev,
       [event.target.name]: event.target.value
@@ -61,12 +74,14 @@ const AuthModal = () => {
           type={'text'}
           name={'email'}
           placeholder={'Enter your email'}
-          onChange={onChange}/>
+          onChange={onChange}
+          formError={formError}/>
           <TextField 
           type={'password'}
           name={'password'}
           placeholder={'Password'}
-          onChange={onChange}/>
+          onChange={onChange}
+          formError={formError}/>
       
           <ButtonFill text={'Submit'} onClick={handleLogin}/>
         </form>

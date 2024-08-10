@@ -38,11 +38,8 @@ if(localStorage.token){
 //3600 seconds -----> one hour
 const App = ()=> {
   return (
-  <PageLayout>
     <RouterProvider router={Router} >
     </RouterProvider>
-  </PageLayout>
-    
   );
 }
 

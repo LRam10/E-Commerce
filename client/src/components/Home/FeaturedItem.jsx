@@ -28,7 +28,7 @@ export default function FeaturedItem({img, product_title}) {
           <ButtonFill text={'Add to cart'}/>
         </div>
       </div>
-      <div className="border-[#F4F4F4] h-[640px] w-[640px] flex items-center border-[1px]">
+      <div className="border-[#F4F4F4] h-[640px] w-[640px] flex items-center border-[1px] border-solid border-[#cecece] rounded">
       <img src={img} className="h-[540px] w-[540px] mx-auto rounded-[8px]"  />
       </div>
     </div>
