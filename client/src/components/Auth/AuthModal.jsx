@@ -19,11 +19,38 @@ const AuthModal = () => {
     email: '',
     password: '',
   });
+  const [userSingup, setUserSingup] = useState({
+    firstName:'',
+    lastName:'',
+    email:'',
+    password:'',
+    rePassword:''
+  })
+  const [isLoginView, setLoginView] = useState(true)
 
   const [formError, setFormError] = useState(null);
+  //React Query 
   const queryClient = useQueryClient();
-  const {mutate, isSuccess, isPending, error} = useMutation({
+  const {mutate:loginMutation, isSuccess, isPending, error} = useMutation({
     mutationFn:(user)=>callAPI('/auth', 'POST', null, 'json',user),
+    onSuccess:(data)=>{
+      queryClient.invalidateQueries({queryKey:['user']});
+      setToken(data.token);
+      setModal(false);
+      localStorage.setItem('access_token',data.token)
+    
+    },
+    onError:(error)=>{
+     error.data.map(err=>{
+      setFormError(prev=>({
+        ...prev,
+        [err.param]: err.msg
+      }))
+     })
+    }
+  })
+  const {mutate:signupMutation, isSuccess:singupSuccess, isPending:singupPending, error:singupError} = useMutation({
+    mutationFn:(user)=>callAPI('/register', 'POST', null, 'json',user),
     onSuccess:(data)=>{
       queryClient.invalidateQueries({queryKey:['user']});
       setToken(data.token);
@@ -42,7 +69,20 @@ const AuthModal = () => {
   })
   const handleLogin  = (e)=>{
     e.preventDefault();
-    mutate(user);
+    loginMutation(user);
+  }
+  const handleSignUp = (e)=>{
+    e.preventDefault();
+    if(userSingup.password !== userSingup.rePassword){
+      setFormError((prev)=>(
+        {
+          ...prev,
+          rePassword:'Passwords do not match'
+        }
+      ));
+      return;
+    }
+    signupMutation(userSingup);
   }
   useOutsideClick(handleCloseModal, modalRef);
   function handleCloseModal() {
@@ -58,38 +98,99 @@ const AuthModal = () => {
       [event.target.name]: event.target.value
     }))
   }
-  return (
-    <div className="fixed w-full h-full bg-[#0006] top-0 z-10 flex items-center justify-center" >
-      <div className="flex flex-col bg-white border-[1px] gap-2 border-[1p] px-[35px] py-[30px] w-[550px]  rounded-lg" ref={modalRef}>
-        <H3>
-          Welcome Back
-        </H3>
-        <div className=" flex items-center  font-extralight">
-          <p>New User?</p>
-          <a href="" className="text-blue">Create New Account</a>
-        </div>
+  const onSingupChange =  (event) => {
+    setFormError(null);
+    setUserSingup(prev => ({
+      ...prev,
+      [event.target.name]: event.target.value
+    }))
+  }
+  const logingView = ()=>
+  (
+    <div className="flex flex-col bg-white border-[1px] gap-2 border-[1p] px-[35px] py-[30px] w-[550px]  rounded-lg" ref={modalRef}>
+      <H3>
+        Welcome Back
+      </H3>
+      <div className="text-[14px] flex items-center  font-extralight gap-2 my-3">
+        <p>New User?</p>
+        <span className="text-cyan-500 cursor-pointer" onClick={()=>setLoginView(false)}>Create New Account</span>
+      </div>
 
-        <form className="flex flex-col gap-[35px]">
-          <TextField 
+      <form className="flex flex-col gap-[35px]">
+        <TextField
           type={'text'}
           name={'email'}
           placeholder={'Enter your email'}
           onChange={onChange}
-          formError={formError}/>
-          <TextField 
+          formError={formError} />
+        <TextField
           type={'password'}
           name={'password'}
           placeholder={'Password'}
           onChange={onChange}
-          formError={formError}/>
-      
-          <ButtonFill text={'Submit'} onClick={handleLogin}/>
-        </form>
-        <hr className="border-[.5px] border-[#c9c9c9] my-[24px]"/>
-        <ButtonOutline text={'Continue With Google'} color={'#EB0E3C'} onClick={handleGoogleLogin}/>
+          formError={formError} />
+
+        <ButtonFill text={'Submit'} onClick={handleLogin} />
+      </form>
+      <hr className="border-[.5px] border-[#c9c9c9] my-[24px]" />
+      <ButtonOutline text={'Continue With Google'} color={'#EB0E3C'} onClick={handleGoogleLogin} />
+    </div>
+
+  )
+  const singUpView = ()=>(
+    <div className="flex flex-col bg-white border-[1px] gap-2 border-[1p] px-[35px] py-[30px] w-[550px]  rounded-lg" ref={modalRef}>
+       <H3>
+        Create an Account
+      </H3>
+      <div className="text-[14px] flex items-center  font-extralight gap-2 my-3">
+        <p>Already have an account?</p>
+        <span className="text-cyan-500 cursor-pointer">Login</span>
       </div>
+
+      <form className="flex flex-col gap-[35px]">
+        <TextField
+          type={'text'}
+          name={'firstName'}
+          placeholder={'Enter your name'}
+          onChange={onSingupChange}
+          formError={formError} />
+        <TextField
+          type={'text'}
+          name={'email'}
+          placeholder={'Enter your email'}
+          onChange={onSingupChange}
+          formError={formError} />
+        <TextField
+          type={'text'}
+          name={'lastName'}
+          placeholder={'Enter your last name'}
+          onChange={onSingupChange}
+          formError={formError}
+        />
+        <TextField
+          type={'password'}
+          name={'password'}
+          placeholder={'Password'}
+          onChange={onSingupChange}
+          formError={formError} />
+        <TextField
+          type={'password'}
+          name={'rePassword'}
+          placeholder={'Confirm password'}
+          onChange={onSingupChange}
+          formError={formError}/>
+
+        <ButtonFill text={'Submit'} onClick={handleSignUp} />
+      </form>
     </div>
   )
+
+  return (
+    <div className="fixed w-full h-full bg-[#0006] top-0 z-10 flex items-center justify-center">
+      {isLoginView ? logingView() : singUpView()}
+    </div>
+  )
+
 }
 
 export default AuthModal

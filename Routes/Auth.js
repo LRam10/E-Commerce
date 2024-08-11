@@ -53,7 +53,7 @@ router.post("/google", async (req, res) => {
 //@Access  Private
 router.get("/", auth, async (req, res) => {
   try {
-    console.log('Get user',req.body, req.user);
+    console.log('Get user',req.body);
     const user = await userModel
       .findById(req.user.id)
       .select("-passwordObject");
@@ -112,7 +112,7 @@ router.post(
         }
       );
     } catch (error) {
-      console.log(error.message);
+      console.log(error);
       res.status(500).send("Server Error");
     }
   }
