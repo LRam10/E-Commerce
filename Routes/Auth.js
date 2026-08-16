@@ -48,12 +48,12 @@ router.post("/google", async (req, res) => {
     console.log(error);
   }
 });
-//@Type   POST
-//@Desc   Create Authentication
+//@Type   GET
+//@Desc   Get user information via token
 //@Access  Private
 router.get("/", auth, async (req, res) => {
   try {
-    console.log('Get user',req.body, req.user);
+    console.log('Get user',req.body);
     const user = await userModel
       .findById(req.user.id)
       .select("-passwordObject");
@@ -63,8 +63,8 @@ router.get("/", auth, async (req, res) => {
     res.status(500).send("server error");
   }
 });
-//@Type   GEt
-//@Desc   get authentication token
+//@Type   POST
+//@Desc   Sign User in with password and email
 //@Access  Public
 router.post(
   "/",
@@ -91,7 +91,11 @@ router.post(
       if (!isMatch) {
         user.passwordObject.numberOfTries--;
         await user.save();
-        return res.status(400).json({ msg: "Invalid password" });
+
+        return res.status(400).json({ errors: [{
+          param:'password',
+          msg:'Invalid password'
+        }] });
       }
       const payload = {
         user: { id: user.id, access: user.accessType },
@@ -108,7 +112,7 @@ router.post(
         }
       );
     } catch (error) {
-      console.log(error.message);
+      console.log(error);
       res.status(500).send("Server Error");
     }
   }

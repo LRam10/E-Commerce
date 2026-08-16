@@ -2,8 +2,10 @@ const Item = require('../models/Item');
 
 exports.list = async function (req, res) {
     try{
-        console.log('get all items',req.body);
-        let items = await Item.find({}).lean();
+        console.log('Fetching all items',req.body, req.query);
+        const offset = req.query.offset || 0;
+        const limit = parseInt(req.query.limit) || 10;
+        let items = await Item.find({}).lean().limit(limit);
         res.send(items);
     }
     catch(error){

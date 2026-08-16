@@ -8,24 +8,17 @@ const connectDB = async ()=>{
     try {
         if(process.env.NODE_ENV === 'production'){
             await mongoose.connect(db,{
-                useNewUrlParser:true,
                 useCreateIndex:true,
                 useFindAndModify:false,
-                useUnifiedTopology:true
             });
             console.log("MongoDB has been connected");
         }
         else{
-            await mongoose.connect('mongodb://127.0.0.1:27017/?directConnection=true&serverSelectionTimeoutMS=2000&appName=mongosh+1.5.4',{
-                useNewUrlParser:true,
-                useCreateIndex:true,
-                useFindAndModify:false,
-                useUnifiedTopology:true
-            })
+            await mongoose.connect(db)
             console.log('Local Mongoo DB Connected')
         }
     } catch (error) {
-        console.error(error.msg+" heres the error");
+        console.error(error+" heres the error");
         process.exit(1);
     }
     
