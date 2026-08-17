@@ -5,12 +5,8 @@ const Card = ({ item }) => {
   return (
     <div className="border-[1px] border-[#cecece] rounded-[8px] p-2">
       <Link
-        to={{
-          pathname: `/category/${item.category}`,
-          state: {
-            img_url: item.img,
-          },
-        }}
+        to={`/category/${item.category}`}
+        state={{ img_url: item.img_url }}
       >
         <img src={item.img_url} alt={`${item.category}-img`} className="card-img-menu rounded-lg" />
       </Link>

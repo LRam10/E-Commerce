@@ -2,16 +2,14 @@ const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 dotenv.config();
 //get URI from the config file
-const db = process.env.MongoURI;
+const db = encodeURI(process.env.MongoURI);
 
 const connectDB = async ()=>{
     try {
-        if(process.env.NODE_ENV === 'production'){
+        if(process.env.NODE_ENV !== 'production'){
             await mongoose.connect(db,{
-                useCreateIndex:true,
-                useFindAndModify:false,
+              useUnifiedTopology:true
             });
-            console.log("MongoDB has been connected");
         }
         else{
             await mongoose.connect(db)
