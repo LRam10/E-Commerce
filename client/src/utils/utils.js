@@ -8,7 +8,7 @@ export const callAPI = async (url, method = 'GET', query, type='json', body, ext
     ...extraHeaders
   }
   try {
-    const response = await fetch(`http://localhost:3000${url}`, {
+    const response = await fetch(`${url}`, {
       headers: type ==='json'? headers : undefined,
       method: method,
       body: body ? JSON.stringify(body) : null
