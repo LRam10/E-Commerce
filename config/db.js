@@ -6,9 +6,9 @@ const db = encodeURI(process.env.MongoURI);
 
 const connectDB = async ()=>{
     try {
-        if(process.env.NODE_ENV === 'production'){
+        if(process.env.NODE_ENV !== 'production'){
             await mongoose.connect(db,{
-              useNewUrlParser:true
+              useUnifiedTopology:true
             });
         }
         else{

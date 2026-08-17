@@ -1,4 +1,5 @@
 import React, { useState,useRef } from 'react'
+import { Link } from 'react-router-dom';
 import { useOutsideClick } from '../CustomHooks/useClickOutside';
 import { useUser } from '../store/useUser';
 import { useAppStore } from '../store/useAppStore';
@@ -24,13 +25,14 @@ export default function NavBar({categories}) {
   const list = [
     {
       'name':'Home',
+      'path':'/',
     },
     {
       'name':'About'
     },
     {
       'name':'Collections',
-      'subNaviagtion': categories
+      'subNavigation': categories
     }
   ]
   const setAutModal = useAppStore((state)=>state.setModal);
@@ -53,15 +55,15 @@ export default function NavBar({categories}) {
   }
   const navList = list.map((item,index)=>
     (
-      <li className='relative cursor-pointer text-[#17151A] flex items-center gap-2 px-3'  ref={outerRef} key={index} onClick={(e)=>toggleNavIndex(e,index)}>
-        <span >{item.name}</span>
-        {item.subNaviagtion ? (
+      <li className='relative cursor-pointer text-[#17151A] flex items-center gap-2 px-3' key={index} onClick={(e)=>toggleNavIndex(e,index)}>
+        <span >{item.path ? <Link to={item.path}>{item.name}</Link> : item.name}</span>
+        {item.subNavigation ? (
           <>
           <svg  className={navIndex != index ? 'w-3 h-3 rotate-[-90deg]' : 'w-3 h-3'} aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
           < path stroke="currentColor" d="m1 1 4 4 4-4" />
           </svg>
           <ul className={navIndex != index ? "hidden" : "absolute border-[1px] bg-white border-[#17151A] text-black text-sm translate-x-0[-.5rem] top-[100%] right-0"}  >
-            {item.subNaviagtion.map(nav=> <li className='py-2 px-3 capitalize hover:bg-[#EB0E3C] hover:text-white hover:scale-105' key={nav._id}><a href="https://tailwindcss.com/" target="_blank">{nav.category_name.replace('-', ' ')}</a></li>)}
+            {item.subNavigation.map(nav=> <li className='py-2 px-3 capitalize hover:bg-[#EB0E3C] hover:text-white hover:scale-105' key={nav._id}><Link to={`/category/${nav.category_name}`} className='block'>{nav.category_name.replace('-', ' ')}</Link></li>)}
           </ul>
           </>
         ):''}
@@ -71,7 +73,7 @@ export default function NavBar({categories}) {
   )
   return (
     <nav className='flex items-center px-[64px] py-[15px] h-[72px] justify-between'>
-      <ul className='flex items-center divide-x '>
+      <ul className='flex items-center divide-x ' ref={outerRef}>
         {navList}
       </ul>
       <span>
