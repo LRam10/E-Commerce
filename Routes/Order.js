@@ -11,7 +11,7 @@ route.get('/',auth,async (req,res)=>{
         res.json(orders);
     } catch (error) {
         console.log(error);
-        res.json.status(500).json({msg:"Server Error"});
+        res.status(500).json({msg:"Server Error"});
     }
 });
 

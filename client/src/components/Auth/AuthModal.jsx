@@ -67,6 +67,18 @@ const AuthModal = () => {
      })
     }
   })
+  const {mutate:googleMutation} = useMutation({
+    mutationFn:(tokenResponse)=>callAPI('/auth/google', 'POST', null, 'json', tokenResponse),
+    onSuccess:(data)=>{
+      queryClient.invalidateQueries({queryKey:['user']});
+      setToken(data.token);
+      setModal(false);
+      localStorage.setItem('access_token',data.token)
+    },
+    onError:()=>{
+      setFormError(prev=>({...prev, google:'Google sign in failed, please try again'}))
+    }
+  })
   const handleLogin  = (e)=>{
     e.preventDefault();
     loginMutation(user);
@@ -89,7 +101,9 @@ const AuthModal = () => {
       setModal(false);
   }
   const handleGoogleLogin = useGoogleLogin({
-    onSuccess: tokenResponse => googleLogin(tokenResponse),
+    onSuccess: tokenResponse => googleMutation(tokenResponse),
+    onError: () => setFormError(prev=>({...prev, google:'Google sign in failed, please try again'})),
+    onNonOAuthError: () => setFormError(prev=>({...prev, google:'Google sign in was cancelled'})),
   });
   const onChange = (event) => {
     setFormError(null);
@@ -133,6 +147,7 @@ const AuthModal = () => {
         <ButtonFill text={'Submit'} onClick={handleLogin} />
       </form>
       <hr className="border-[.5px] border-[#c9c9c9] my-[24px]" />
+      {formError?.google && <p className="text-[12px] text-red-500">{formError.google}</p>}
       <ButtonOutline text={'Continue With Google'} color={'#EB0E3C'} onClick={handleGoogleLogin} />
     </div>
 

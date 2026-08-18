@@ -22,6 +22,10 @@ export default defineConfig(() => {
     Svgr({svgrOptions:{icon:true}})
     ],
     server:{
+      // NOTE: COOP is deliberately NOT set. useGoogleLogin opens a real popup and
+      // needs a live window.opener; a same-origin* COOP severs it. Only the Sign In
+      // With Google button / One Tap need COOP, and we use neither.
+      // headers: { 'Cross-Origin-Opener-Policy': 'same-origin-allow-popups' },
       proxy: Object.fromEntries(
         API_ROUTES.map(route => [route, 'http://localhost:3000'])
       ),

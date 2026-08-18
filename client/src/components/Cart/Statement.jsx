@@ -7,11 +7,11 @@ import { loadStripe } from '@stripe/stripe-js';
 
 let stripePromise;
 
-if(process.env.NODE_ENV !== 'production'){
-    stripePromise = loadStripe(`${process.env.REACT_APP_STRIPE_CLIENT_TEST}`);
+if(import.meta.env.DEV){
+    stripePromise = loadStripe(`${import.meta.env.VITE_STRIPE_CLIENT_TEST}`);
 }
 else{
-    stripePromise = loadStripe(`${process.env.REACT_APP_STRIPE_CLIENT_LIVE}`);
+    stripePromise = loadStripe(`${import.meta.env.VITE_STRIPE_CLIENT_LIVE}`);
 }
 const Statement = () => {
     //CartContext
