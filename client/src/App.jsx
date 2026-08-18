@@ -11,7 +11,6 @@ import {RouterProvider} from "react-router-dom";
 // import Styles from './components/pages/Styles'
 // import Admin from './components/pages/Admin';
 // import Register from './components/Auth/Register'
-// import Login from './components/Auth/Login';
 // import Alerts from './components/helpers/Alert'
 // import AdminLogin from './components/Admin/AdminLogin';
 // import InfoItem from './components/pages/InfoItem';

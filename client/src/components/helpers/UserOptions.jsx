@@ -17,7 +17,7 @@ const UserOptions = ({user,onLogout}) => {
         </div>
 
         <ul style={forward} className={'absolute top-[100%] bg-white w-full right-0 cursor-pointer ' + (showList ? 'block' : 'hidden')} onMouseLeave={() => setShowlist(false)}>
-          <li className="text-center hover:bg-[#d60c37] hover:text-white py-2 px-3"><Link className='text-dark' to={`/auth/orders`}>My Orders</Link></li>
+          <li className="text-center hover:bg-[#d60c37] hover:text-white py-2 px-3"><Link className='text-dark' to={`/orders`}>My Orders</Link></li>
           <li className="text-center hover:bg-[#d60c37] hover:text-white py-2 px-3">
             <span className="text-dark" onClick={onLogout}>
               Logout <i className="fas fa-sign-out-alt"></i>
