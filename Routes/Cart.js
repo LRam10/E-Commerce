@@ -10,15 +10,13 @@ const Cart = require ('../models/Cart')
 router.post("/",auth, async (req,res)=>{
     const items = req.body;
     try {
-        let cart = await Cart.findOne({user_id:req.user.id});
-        if(cart != null){
-            return res.status(500).json({msg:'Cart is already active'})
-        }
-         cart = new Cart({
-            user_id:req.user.id,items,active:true
-        });
-        await cart.save();
-         return res.sendStatus(200);
+        //Upsert so a returning user's cart is replaced rather than rejected
+        const cart = await Cart.findOneAndUpdate(
+            {user_id:req.user.id},
+            {$set:{items, active:true}},
+            {new:true, upsert:true}
+        );
+        return res.json({items:cart.items});
     } catch (error) {
         console.log(error);
         res.status(500).json({msg:'Server error'})

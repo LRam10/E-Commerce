@@ -1,15 +1,13 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import { callAPI } from '../utils/utils';
-import { useUser } from './useUser';
 
-export const userCartStore = create(persist((set)=>({
+export const userCartStore = create(persist((set,get)=>({
   cartItems:[],
   addToCart:(item)=>{
     set((state)=>({cartItems:[...state.cartItems,item]}));
   },
   removeFromCart:(itemId)=>{
-    console.log(itemId)
     set((state)=>({cartItems:state.cartItems.filter((cartItem)=>cartItem._id !== itemId)}));
   },
   clearCart:()=>{
@@ -18,12 +16,13 @@ export const userCartStore = create(persist((set)=>({
   editQty:(item,qty)=>{
     set((state)=>({cartItems:state.cartItems.map((cartItem)=>cartItem._id === item._id ? {...cartItem,qty:qty} : cartItem)}));
   },
+  //Push the current cart to the server, must run while the auth cookie is still valid
+  saveCart:async()=>{
+    await callAPI('/cart','POST',null,'json',get().cartItems);
+  },
+  //Callers gate on isAuthenticated, the cookie carries the auth
   fetchCartItems:async()=>{
-    const access_token = useUser.getState().access_token;
-    if(!access_token) return;
-    const response = await callAPI('/cart','GET',null, 'json', null,{
-      'x-auth-token':access_token
-    });
+    const response = await callAPI('/cart','GET');
     if(response.items?.length > 0){
       set(()=>({cartItems:response.items}));
     }

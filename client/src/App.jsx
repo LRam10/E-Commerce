@@ -2,8 +2,9 @@ import React, { useEffect } from 'react';
 import './App.css';
 import { Router } from './Router';
 import {RouterProvider} from "react-router-dom";
-import { useQuery } from '@tanstack/react-query';
 import { userCartStore } from './store/userCartStore';
+import { useUser } from './store/useUser';
+import { useAuthUser } from './CustomHooks/useAuthUser';
 // import Navbar from './components/Nav/Navbar';
 // import Footer from './components/Footer';
 // import Home from './components/Home/Home';
@@ -37,12 +38,16 @@ if(localStorage.token){
 //86400 -----> one day
 //3600 seconds -----> one hour
 const App = ()=> {
+  //Resolves the auth cookie once on mount, NavBar shares the same query
+  useAuthUser();
+  const isAuthenticated = useUser((state)=>state.isAuthenticated);
   const fetchCartItems = userCartStore((state)=>state.fetchCartItems);
-  const access_token = localStorage.getItem('access_token');
 
   useEffect(()=>{
+    //No cookie, no request
+    if(!isAuthenticated) return;
     fetchCartItems();
-  },[fetchCartItems, access_token]);
+  },[isAuthenticated, fetchCartItems]);
 
   return (
     <RouterProvider router={Router} >

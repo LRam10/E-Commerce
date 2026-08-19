@@ -35,10 +35,7 @@ const AuthModal = () => {
     mutationFn:(user)=>callAPI('/auth', 'POST', null, 'json',user),
     onSuccess:(data)=>{
       queryClient.invalidateQueries({queryKey:['user']});
-      setToken(data.token);
       setModal(false);
-      localStorage.setItem('access_token',data.token)
-    
     },
     onError:(error)=>{
      error.data.map(err=>{
@@ -69,11 +66,9 @@ const AuthModal = () => {
   })
   const {mutate:googleMutation} = useMutation({
     mutationFn:(tokenResponse)=>callAPI('/auth/google', 'POST', null, 'json', tokenResponse),
-    onSuccess:(data)=>{
+    onSuccess:()=>{
       queryClient.invalidateQueries({queryKey:['user']});
-      setToken(data.token);
       setModal(false);
-      localStorage.setItem('access_token',data.token)
     },
     onError:()=>{
       setFormError(prev=>({...prev, google:'Google sign in failed, please try again'}))
