@@ -29,7 +29,7 @@ const UserOptions = ({user,onLogout}) => {
 }
 
 const forward = {
-    zIndex:'1029',
+    zIndex:'50',
     transform:'translateY(.3px)'
 }
 export default UserOptions;

@@ -1,48 +1,28 @@
-import React,{useContext,useEffect} from 'react';
+import React from 'react';
 import Product from '../Cart/Product';
 import Statement from '../Cart/Statement';
-import CartContext from '../../context/cart/cartContext';
-import AlertContext from '../../context/alerts/alertContext'
 import {useExpiration} from '../../utils/useExpiration';
-
+import { useQueryClient } from '@tanstack/react-query';
+import { userCartStore } from '../../store/userCartStore';
 const Cart = () => {
-//AuthContext
-//CartContext
-const cartContext = useContext(CartContext);
-const { products,deleteFromCart,editCartQty,success,error,clearErrors } = cartContext;
-//AlertContext
-const alertContext = useContext(AlertContext);
-const deleteItem = (id)=> deleteFromCart(id);
-const editQty = (item)=> editCartQty(item);
-useEffect(()=>{
-    if(error){
-        alertContext.setAlert(error,'danger');
-    }
-    if(success){
-        alertContext.setAlert(success,'success');
-        clearErrors();
-    }
-    // eslint-disable-next-line
-},[error,success]);
-useExpiration();
 //Checks current time with expiration time and updates the cart to database for Logged in user
+const {cartItems,removeFromCart,editQty} = userCartStore();
 
-if(!products.length > 0) return(<div className='jumbotron'><h1>You Cart is Currently Empty</h1></div>);
-
+if(!cartItems.length > 0) return(<div className='jumbotron'><h1>You Cart is Currently Empty</h1></div>);
 else {
     return (
-        <div className='container'>
+        <div className='w-[300px]'>
             <div className='row mt-3 mb-3'>
                 <div className='col-lg-8'>
-                 <span className='mt-2 mb-2'>Total Items ({products.length})</span>   
-                {products.map(product=>(
+                 <span className='mt-2 mb-2'>Total Items ({cartItems.length})</span>   
+                {cartItems.map(product=>(
                     <div className='border m-1 d-flex' key={product._id}>
-                        <Product product={product} deleteItem={deleteItem} editQty={editQty}/>
+                        <Product product={product} deleteItem={removeFromCart} editQty={editQty}/>
                     </div>
                 ))}
                 </div>
                 <div className='col-lg-4'>
-                    <Statement/>
+                    {/* <Statement/> */}
                 </div>
             </div>
         </div>

@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import './App.css';
-import PageLayout from './layouts/PageLayout';
 import { Router } from './Router';
 import {RouterProvider} from "react-router-dom";
+import { useQuery } from '@tanstack/react-query';
+import { userCartStore } from './store/userCartStore';
 // import Navbar from './components/Nav/Navbar';
 // import Footer from './components/Footer';
 // import Home from './components/Home/Home';
@@ -36,6 +37,13 @@ if(localStorage.token){
 //86400 -----> one day
 //3600 seconds -----> one hour
 const App = ()=> {
+  const fetchCartItems = userCartStore((state)=>state.fetchCartItems);
+  const access_token = localStorage.getItem('access_token');
+
+  useEffect(()=>{
+    fetchCartItems();
+  },[fetchCartItems, access_token]);
+
   return (
     <RouterProvider router={Router} >
     </RouterProvider>

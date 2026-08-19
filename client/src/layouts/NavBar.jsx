@@ -3,11 +3,14 @@ import { Link } from 'react-router-dom';
 import { useOutsideClick } from '../CustomHooks/useClickOutside';
 import { useUser } from '../store/useUser';
 import { useAppStore } from '../store/useAppStore';
+import { userCartStore } from '../store/userCartStore';
 import { useQuery } from '@tanstack/react-query';
 import UserOptions from '../components/helpers/UserOptions';
 import ButtonFill from '../components/common/ButtonFill';
 import { callAPI } from '../utils/utils';
 export default function NavBar({categories}) {
+  const setSideBar = useAppStore((state)=>state.setSideBar);
+  const cartCount = userCartStore((state)=>state.cartItems.length);
   const [navIndex,setNavIndex] = useState(null);
   const outerRef = useRef();
   useOutsideClick(closeSubMenu, outerRef);
@@ -80,9 +83,14 @@ export default function NavBar({categories}) {
         <img src="https://res.cloudinary.com/doei459zd/image/upload/v1701136032/Bracelet/logo_njdryd.webp" className='w-[35px] h-[35px]'/>
       </span>
       <div className='flex items-center gap-4'>
-        <svg className="w-6 h-6  dark:text-white cursor-pointer text-[#EB0E3C]" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 20">
-          <path stroke="#404040" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9V4a3 3 0 0 0-6 0v5m9.92 10H2.08a1 1 0 0 1-1-1.077L2 6h14l.917 11.923A1 1 0 0 1 15.92 19Z"/>
-        </svg>
+        <div className='relative'>
+          {cartCount > 0 && (
+            <span className='absolute z-[5] h-4 w-4 bg-[#EB0E3C] border-solid border-[1px] border-grey rounded-full text-xs text-white top-[-4px] right-[-10px] flex items-center justify-center'>{cartCount}</span>
+          )}
+          <svg onClick={setSideBar} className="w-6 h-6  dark:text-white cursor-pointer text-[#EB0E3C]" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 20">
+            <path stroke="#404040" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9V4a3 3 0 0 0-6 0v5m9.92 10H2.08a1 1 0 0 1-1-1.077L2 6h14l.917 11.923A1 1 0 0 1 15.92 19Z"/>
+          </svg>
+        </div>
         {
           user ? 
           <UserOptions user={user} onLogout={handleLogout}/> : (
