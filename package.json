@@ -27,7 +27,7 @@
     "express-validator": "^6.4.0",
     "google-auth-library": "^8.6.0",
     "jsonwebtoken": "^9.0.0",
-    "mongoose": "^8.5.2",
+    "mongoose": "^8.24.1",
     "stripe": "^7.15.0",
     "uuid": "^3.4.0"
   },
