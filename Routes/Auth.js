@@ -41,7 +41,14 @@ router.post("/google", async (req, res) => {
       },
       (err, token) => {
         if (err) throw err;
-        res.json({ token });
+        res.cookie('auth',token,{
+          httpOnly: true,
+          secure: process.env.NODE_ENV === 'production' ? true :false,
+          sameSite:'lax',
+          maxAge:7 * 24 * 60 * 60 * 1000,
+          path:'/'
+        })
+        res.json({ success: true });
       }
     );
   } catch (error) {
@@ -155,4 +162,17 @@ router.post("/admin", async (req, res) => {
     res.status(500).send("Server Error");
   }
 });
+
+router.post("/logout",(req,res)=>{
+  try {
+      res.clearCookie('auth',{
+        httpOnly:true,
+        secure: process.env.NODE_ENV === 'production' ? true :false,
+        sameSite:'lax'
+      })
+      res.sendStatus(200);
+  } catch (error) {
+    res.status(500);
+  }
+})
 module.exports = router;

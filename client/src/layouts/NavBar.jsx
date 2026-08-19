@@ -2,28 +2,34 @@ import React, { useState,useRef } from 'react'
 import { Link } from 'react-router-dom';
 import { useOutsideClick } from '../CustomHooks/useClickOutside';
 import { useUser } from '../store/useUser';
+import { useAuthUser } from '../CustomHooks/useAuthUser';
 import { useAppStore } from '../store/useAppStore';
 import { userCartStore } from '../store/userCartStore';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import UserOptions from '../components/helpers/UserOptions';
 import ButtonFill from '../components/common/ButtonFill';
-import { callAPI } from '../utils/utils';
 export default function NavBar({categories}) {
   const setSideBar = useAppStore((state)=>state.setSideBar);
+  const { logOut} = useUser();
   const cartCount = userCartStore((state)=>state.cartItems.length);
+  const saveCart = userCartStore((state)=>state.saveCart);
+  const clearCart = userCartStore((state)=>state.clearCart);
   const [navIndex,setNavIndex] = useState(null);
   const outerRef = useRef();
   useOutsideClick(closeSubMenu, outerRef);
   //user store
-  const access_token = useUser((set)=>set.access_token);
-  const setToken = useUser((set)=>set.setToken)
-  const { data:user } = useQuery({
-    queryKey:['user',{access_token:access_token}],
-    queryFn:()=> callAPI('/auth','GET',null, 'json', null,{
-      'x-auth-token':access_token
-    }),
-    retry: 2,
-    enabled: !!access_token,
+  const queryClient = useQueryClient();
+  const { data:user } = useAuthUser();
+  const { mutate:logOutMutation } = useMutation({
+    mutationFn:async ()=>{
+      //Order matters, the cart POST is cookie-authenticated so it has to land before logout
+      await saveCart();
+      clearCart();
+      userCartStore.persist.clearStorage();
+      await logOut();
+    },
+    //Drop the cached user so the nav flips back to Sign In, no refetch needed
+    onSuccess:()=> queryClient.setQueryData(['user'], null),
   })
   const list = [
     {
@@ -44,7 +50,7 @@ export default function NavBar({categories}) {
     setAutModal(true);
   }
   function handleLogout(){
-    setToken(null);
+    logOutMutation()
   }
   function closeSubMenu(){
     setNavIndex(null);

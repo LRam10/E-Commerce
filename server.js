@@ -13,18 +13,32 @@ const checkout = require('./Routes/Checkout')
 const orders = require('./Routes/Order');
 const categories = require('./Routes/Category');
 const reviews = require('./Routes/Reviews');
+const cookieParse = require('cookie-parser')
 //Database
 const connectDB = require('./config/db');
 
 connectDB();
 const PORT = process.env.PORT || 5000;
+//Local and prod (prod client is served from the same Railway domain)
+const allowedOrigins = [
+  'http://localhost:5173',
+  'https://web-production-43196.up.railway.app'
+];
+
+const corsOptions = {
+  origin: (origin, callback) => {
+    //No Origin header = same-origin or non-browser client, let it through
+    if (!origin) return callback(null, true);
+    return callback(null, allowedOrigins.includes(origin));
+  },
+  credentials: true
+};
+app.disable('x-powered-by');
 //body-parser middleware
 app.use(express.json({extended:false}));
 
-// app.get('/',(req,res)=>{
-// res.send("Okay");
-// });
-app.use(cors());
+app.use(cookieParse())
+app.use(cors(corsOptions));
 //all routes
 app.use('/register',user);
 app.use('/items',items);
