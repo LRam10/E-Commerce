@@ -4,9 +4,15 @@
 html,body,#root{
   padding:0;
   margin:0;
-  font-family: 'Overpass', sans-serif;
+  font-family: 'Bricolage Grotesque', sans-serif;
+  background-color: #F1F1F1;
   height: 100%;
   width: 100%;
+}
+/* Nothing in the design bleeds horizontally, so a stray fixed width should
+   never hand the page a sideways scrollbar. */
+html,body{
+  overflow-x: hidden;
 }
 /* Chrome, Safari, Edge, Opera */
 input::-webkit-outer-spin-button,
@@ -23,9 +29,9 @@ li{
   height: 350px;
   margin: auto;
 }
-input,
-select,
-textarea,[type='text']{
+input:not(.sol-input),
+select:not(.sol-input),
+textarea,[type='text']:not(.sol-input){
   border-bottom: solid 1px #404040;
   padding:10px;
   background-color: #e8e8e8;
@@ -35,8 +41,16 @@ textarea,[type='text']{
   border-right: 0px;
   border-radius:3px 3px 0 0;
 }
-input:focus{
+/* `.sol-input` is the opt-out for the legacy input skin above, so the focus
+   skin has to honour the same opt-out or it repaints Sol inputs grey. */
+input:not(.sol-input):focus{
   background-color: #d6d2d2;
   outline: none !important;
   border-bottom: 1px solid #ed1a1a;
+}
+/* Baseline keyboard focus ring for every interactive element. Components sitting
+   on a red or black surface override this with `focus-visible:outline-white`. */
+:focus-visible{
+  outline: 2px solid #E90707;
+  outline-offset: 2px;
 }

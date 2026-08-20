@@ -1,17 +1,18 @@
-import React,{Fragment} from 'react'
+import React, { Fragment } from 'react'
 import Order from './Order';
-const Orders = ({orders}) => {
+
+const Orders = ({ orders }) => {
     return (
         <Fragment>
-            <div className='row'>
-             <div className='col-8'>  
-             <p>Total Order:{orders.length}</p>
-            {orders.map(order=>(
-                <div className='my-2 border rounded-top' key={order._id}>
-                    <Order order={order}/>
-                </div>
-            ))}
-            </div>
+            <p className="pt-[14px] text-[15px] leading-[21px] text-sol-gray">
+                Total orders: {orders.length}
+            </p>
+            <div className="flex flex-col gap-[15px] pt-[14px] sm:gap-[17px]">
+                {orders.map(order => (
+                    <div className="overflow-hidden rounded-card border border-sol-stroke-light" key={order._id}>
+                        <Order order={order} />
+                    </div>
+                ))}
             </div>
         </Fragment>
     )

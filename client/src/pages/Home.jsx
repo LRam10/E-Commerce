@@ -1,32 +1,46 @@
-import { useState } from 'react';
-import FeaturedItem from '../components/Home/FeaturedItem';
-import Cart from '../components/pages/Cart';
-import PreviewList from '../components/Home/PreviewList';
-import Hero from '../components/Home/Hero';
-import React, { Fragment} from 'react'
+import React, { Fragment, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
+import Hero from '../components/Home/Hero';
+import ValueProps from '../components/Home/ValueProps';
+import FeaturedCollection from '../components/Home/FeaturedCollection';
+import ProductSpotlight from '../components/Home/ProductSpotlight';
+import HandmadeStory from '../components/Home/HandmadeStory';
 import { callAPI } from '../utils/utils';
+
 export default function Home() {
-  const { isPending, error, data} = useQuery({
-    queryKey:['repoItems'],
-    queryFn:()=> callAPI('/items','GET', {
-      offset:0,
-      limit:4
+  const { isPending, error, data } = useQuery({
+    queryKey: ['repoItems'],
+    queryFn: () => callAPI('/items', 'GET', {
+      offset: 0,
+      limit: 8,
     }),
-    retry:3,
-  })
+    retry: 3,
+  });
+
+  const [spotlightIndex, setSpotlightIndex] = useState(0);
+  const items = data ?? [];
+  const spotlight = items[spotlightIndex % (items.length || 1)];
+
+  const step = (delta) => {
+    if (!items.length) return;
+    setSpotlightIndex((i) => (i + delta + items.length) % items.length);
+  };
+
   return (
     <Fragment>
-      <Hero />
-      <FeaturedItem
-      product_title={'Lucky Elephant'} 
-      img={'https://res.cloudinary.com/doei459zd/image/upload/v1575554850/Bracelet/i38e3nhs5wj2wzsexuky.jpg'}/>
-      <div className="px-[64px] py-[35px] flex flex-col gap-4">
-      <h2 className="text-[48px] font-bold capitalize">Trending now</h2>
-      <div className="grid grid-cols-4 gap-4">
-        <PreviewList items={data} isLoading={isPending} error={error} />
-      </div>
-      </div>
+      <main className="mx-auto flex w-full max-w-[1440px] flex-col gap-[15px] px-[12px] py-[15px] sm:gap-[17px] sm:px-[20px] sm:py-[17px]">
+        <Hero />
+        <ValueProps />
+        <FeaturedCollection items={items} isLoading={isPending} error={error} />
+        {spotlight && (
+          <ProductSpotlight
+            item={spotlight}
+            onPrev={() => step(-1)}
+            onNext={() => step(1)}
+          />
+        )}
+        <HandmadeStory />
+      </main>
     </Fragment>
-  )
+  );
 }
