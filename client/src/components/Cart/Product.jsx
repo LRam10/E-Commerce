@@ -27,14 +27,14 @@ const Product = ({product,deleteItem,editQty}) => {
                     <span className='text-[14px] leading-[21px] text-sol-gray'>In stock</span>
 
                     <div className='flex items-center justify-between gap-3'>
-                        <select
+                        {/* <select
                             className="sol-input h-[40px] rounded-pill border border-sol-stroke-light bg-white px-4 text-[14px] text-black outline-none"
                             name='qty'
                             aria-label={`Quantity for ${name}`}
                             defaultValue={qty}
                             onChange={onChange}>
                             {[...Array(10)].map((_,i)=>(<option key={i+1}>{i+1}</option>))}
-                        </select>
+                        </select> */}
                         <button
                             type='button'
                             onClick={onDelete}

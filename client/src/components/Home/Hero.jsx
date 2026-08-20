@@ -19,10 +19,10 @@ const Hero = ({ img = HERO_IMG }) => {
               Unique, high-quality and hand-made bracelets for you.
             </p>
             <Link
-              to="/category/bracelet"
+              to="/category"
               className="flex h-[56px] w-full max-w-[392px] items-center justify-center rounded-pill border border-sol-stroke bg-white text-[15px] font-medium text-black transition-colors hover:bg-sol-cream focus-visible:outline-white sm:h-[60px]"
             >
-              Buy now
+              Shop All
             </Link>
           </div>
         </div>

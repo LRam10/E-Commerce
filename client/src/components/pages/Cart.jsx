@@ -1,11 +1,12 @@
 import React from 'react';
 import Product from '../Cart/Product';
+import { useState } from 'react';
 import { userCartStore } from '../../store/userCartStore';
 
 const Cart = () => {
 //Checks current time with expiration time and updates the cart to database for Logged in user
 const {cartItems,removeFromCart,editQty} = userCartStore();
-
+const [checkoutDisabled, setCheckout] = useState(true)
 const subtotal = cartItems.reduce((sum, p) => sum + Number(p.price) * Number(p.qty || 1), 0);
 
 if(!cartItems.length > 0) return(
@@ -36,7 +37,10 @@ else {
                         &#36;{subtotal.toFixed(2)}
                     </span>
                 </div>
-                <button className='h-[56px] w-full rounded-pill border border-sol-stroke bg-sol-red text-[15px] font-medium text-white transition-colors hover:bg-sol-red-dark focus-visible:outline-sol-ink sm:h-[60px]'>
+                <button className={`h-[56px] w-full rounded-pill border border-sol-stroke ${checkoutDisabled ? 
+                'text-gray-500 bg-gray-200 opacity-1 cursor-not-allowed ' : 'bg-sol-red text-white transition-colors hover:bg-sol-red-dark focus-visible:outline-sol-ink'}  text-[15px] font-medium  sm:h-[60px]`}
+                disabled={checkoutDisabled}
+                cl>
                     Checkout
                 </button>
             </div>

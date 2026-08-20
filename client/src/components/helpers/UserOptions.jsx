@@ -33,7 +33,7 @@ const UserOptions = ({ user, onLogout }) => {
         </button>
 
         <ul
-          className={`absolute right-0 top-[calc(100%+6px)] z-50 min-w-[170px] overflow-hidden rounded-card border border-sol-stroke-light bg-white py-1 text-[15px] shadow-sm ${
+          className={`absolute right-0 top-[calc(100%+1px)] z-50 min-w-[170px] overflow-hidden rounded-card border border-sol-stroke-light bg-white py-1 text-[15px] shadow-sm ${
             showList ? 'block' : 'hidden'
           }`}
         >

@@ -116,7 +116,16 @@ router.post(
         },
         (err, token) => {
           if (err) throw err;
-          res.json({ token });
+          res.cookie('auth',token,{
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production' ? true :false,
+            sameSite:'lax',
+            maxAge:7 * 24 * 60 * 60 * 1000,
+            path:'/'
+          })
+          res.json({
+            success:true
+          } );
         }
       );
     } catch (error) {

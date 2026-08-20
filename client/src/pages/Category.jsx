@@ -14,12 +14,14 @@ const SkeletonCard = () => (
 
 export default function Category() {
   const { category } = useParams();
+  const all = !category ? true : false;
+  const endpoint = all ? '/items' : `/items/${category}`
   const { isPending, error, data } = useQuery({
     queryKey: ['categoryItems', category],
-    queryFn: () => callAPI(`/items/${category}`, 'GET'),
+    queryFn: () => callAPI(endpoint, 'GET'),
     retry: 3,
   })
-  const title = category.replaceAll('-', ' ');
+  const title = all ? 'All' : category.replaceAll('-', ' ');
 
   return (
     <main className="mx-auto flex min-h-[60vh] w-full max-w-[1440px] flex-col gap-[15px] px-[12px] py-[15px] sm:gap-[17px] sm:px-[20px] sm:py-[17px]">

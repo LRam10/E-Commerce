@@ -83,9 +83,9 @@ export default function NavBar({ categories }) {
 
   return (
     <header className="sticky top-0 z-40">
-      <div className="flex h-[40px] items-center justify-center bg-sol-ink sm:h-[48px]">
+      <div className="flex h-[40px] items-center justify-center bg-[#f6be00] sm:h-[48px]">
         <span className="text-[12px] font-bold uppercase leading-[28px] text-white sm:text-[14px]">
-          Spring Sale!
+          Under maintenance!
         </span>
       </div>
 
