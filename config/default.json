@@ -1,4 +1,0 @@
-{
-    "mongoURI":"mongodb+srv://lram10:Luna12-&@bracelet-id-0dqwd.mongodb.net/test?retryWrites=true&w=majority",
-    "jwtSecret":"dreamcatcher"
-}
