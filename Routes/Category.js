@@ -5,6 +5,8 @@ const Category = require('../models/Category');
 const auth = require('../middleware/auth');
 const fileupload = require('express-fileupload');
 const cloudinary = require('cloudinary').v2;
+//Middeleware
+const rateLimiter = require('../middleware/rateLimiter');
 
 router.use(fileupload({
     useTempFiles:true
@@ -20,7 +22,7 @@ cloudinary.config({
 //@Type   Get
 //@Desc   Get all categories
 //@Access  Public
-router.get('/', async (req,res)=>{
+router.get('/',rateLimiter, async (req,res)=>{
 try {
     let categories = await Category.find({});
     res.status(200).json(categories);
@@ -43,7 +45,6 @@ router.post('/',[auth,
         //Getting request body and files can be an array
         const {category_name,sub_categories} = req.body;
         const img_url = req.files.img_url;
-        console.log(req.body);
         try {
             let category = await Category.findOne({category_name});
             if (category){

@@ -18,8 +18,7 @@ export default function Category() {
   const endpoint = all ? '/items' : `/items/${category}`
   const { isPending, error, data } = useQuery({
     queryKey: ['categoryItems', category],
-    queryFn: () => callAPI(endpoint, 'GET'),
-    retry: 3,
+    queryFn: () => callAPI(endpoint, 'GET')
   })
   const title = all ? 'All' : category.replaceAll('-', ' ');
 
