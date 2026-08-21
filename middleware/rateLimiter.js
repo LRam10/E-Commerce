@@ -1,5 +1,5 @@
 const FixedWindowLimiter =require('../helpers/fixedWindowLimiter');
-const REQUEST_LIMIT = 2;
+const REQUEST_LIMIT = 10;
 const WINDOW_MS=60_000;
 const rateLimiter = new FixedWindowLimiter(REQUEST_LIMIT, WINDOW_MS);
 module.exports = async function(req,res, next){
@@ -11,17 +11,21 @@ module.exports = async function(req,res, next){
       msg:'Unauthorize'
     })
   }
-  const requestPath = `${req.method}:${req.path}`;
+  //Split bucket it different request, instead of merging many routes into one bucker
+  const requestPath = `${req.method}:${req.baseUrl}:${req.path}`;
+  console.log({
+    requestPath
+  })
   const keyIndentifier= `${requestPath}:${userIndentifer}`;
   try {
-    const isAllowedRequest = await rateLimiter.allowRequest(keyIndentifier)
-    if(!isAllowedRequest) {
-      const remainingTtl = await rateLimiter.getTtl( keyIndentifier);
-      console.log(remainingTtl)
-      //Set proper headers
-      if(remainingTtl > 0) res.setHeader('Retry-After', remainingTtl.toString());
-      res.setHeader('X-RateLimit-Limit', REQUEST_LIMIT.toString());
-      res.setHeader('X-RateLimit-Remaining', '0');
+    const { allowed, limit, remaining, resetMs } = await rateLimiter.allowRequest(keyIndentifier);
+    //Clients can only pace themselves if they see these on success too
+    res.setHeader('X-RateLimit-Limit', limit.toString());
+    res.setHeader('X-RateLimit-Remaining', remaining.toString());
+    if(!allowed) {
+      //Round up: flooring tells the client to retry before the window closes
+      const retryAfterSeconds = Math.max(1, Math.ceil(resetMs / 1000));
+      res.setHeader('Retry-After', retryAfterSeconds.toString());
       return res.status(429).json({
         msg:'Too Many Request, try again later'
       })

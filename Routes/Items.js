@@ -6,7 +6,7 @@ const cloudinary = require('cloudinary').v2;
 const fileupload = require('express-fileupload');
 const mongoose = require('mongoose');
 const items = require('../Services/items');
-
+const rateLimiter = require('../middleware/rateLimiter');
 router.use(fileupload({
     useTempFiles:true
 }));
@@ -55,11 +55,11 @@ router.post("/",[auth,[
         console.log(error);
     }
 });
-router.get('/', items.list);
+router.get('/', [rateLimiter], items.list);
 //@Type   GET
 //@Desc   GET items of categories
 //@Access  Public
-router.get("/:category",async (req,res)=>{
+router.get("/:category",[rateLimiter],async (req,res)=>{
     try {
     let items = await Item.find({category:req.params.category}).lean();
     res.send(items);
