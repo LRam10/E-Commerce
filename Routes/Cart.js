@@ -4,10 +4,13 @@ const auth = require('../middleware/auth');
 
 const User = require('../models/User');
 const Cart = require ('../models/Cart')
+
+//Middlewares
+const rateLimiter = require("../middleware/rateLimiter");
 //@Type   POST
 //@Desc   Create new cart
 //@Access  Private
-router.post("/",auth, async (req,res)=>{
+router.post("/",[auth, rateLimiter], async (req,res)=>{
     const items = req.body;
     try {
         //Upsert so a returning user's cart is replaced rather than rejected
@@ -25,7 +28,7 @@ router.post("/",auth, async (req,res)=>{
 //@Type   GET
 //@Desc   Get Cart items
 //@Access  Private
-router.get("/",auth,async (req,res)=>{
+router.get("/",[auth, rateLimiter],async (req,res)=>{
     try {
         let cart = await Cart.findOne({user_id:req.user.id}).select('items active -_id');
         if(!cart){
@@ -40,7 +43,7 @@ router.get("/",auth,async (req,res)=>{
 //@Type   Put
 //@Desc   Edit items in cart
 //@Access  Private
-router.put("/",auth, async (req,res)=>{
+router.put("/",[auth,rateLimiter], async (req,res)=>{
     try {
         const cart = await Cart.findOneAndUpdate({user_id:req.user.id},
             {$set:{items:req.body}},

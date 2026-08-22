@@ -10,7 +10,8 @@ const queryClient = new QueryClient({
     queries:{
       //4xx is a real answer, not a transient failure, retrying it just spams the server
       retry:(failureCount, error)=>{
-        if(error?.status >= 400 && error?.status < 500) return false;
+        console.log(error);
+        if((error?.status >= 400 || error?.status === 429) && error?.status < 500) return false;
         return failureCount < 3;
       }
     }

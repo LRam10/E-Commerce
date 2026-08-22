@@ -2,7 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 
 const HERO_IMG =
-  "https://res.cloudinary.com/doei459zd/image/upload/v1584471489/Category/hilicwsjqvlx1l9vn62g.jpg";
+  "https://res.cloudinary.com/doei459zd/image/upload/v1787416846/Bracelet/hero_sol_img_tfuph3.png";
 
 const Hero = ({ img = HERO_IMG }) => {
   return (

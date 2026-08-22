@@ -11,9 +11,12 @@ const axios = require("axios");
 const { OAuth2Client } = require("google-auth-library");
 const client = new OAuth2Client(process.env.GOOGLE_OAUTH_CLIENT_ID);
 
+//Middelwares
+const rateLimiter = require('../middleware/rateLimiter');
+
 dotenv.config();
 
-router.post("/google", async (req, res) => {
+router.post("/google",[rateLimiter], async (req, res) => {
   try {
     const { access_token } = req.body;
     const response = await axios.get(
@@ -59,7 +62,7 @@ router.post("/google", async (req, res) => {
 //@Type   GET
 //@Desc   Get user information via token
 //@Access  Private
-router.get("/", auth, async (req, res) => {
+router.get("/", [auth,rateLimiter], async (req, res) => {
   try {
     console.log('Get user',req.body);
     const user = await userModel
@@ -77,6 +80,7 @@ router.get("/", auth, async (req, res) => {
 router.post(
   "/",
   [
+    rateLimiter,
     check("email", "Please provide a valid email").isEmail(),
     check("password", "Please input a password").not().isEmpty(),
   ],
@@ -134,7 +138,7 @@ router.post(
     }
   }
 );
-router.post("/admin", async (req, res) => {
+router.post("/admin",[rateLimiter],async (req, res) => {
   try {
     //destructuring from the request body
     const { password, email } = req.body;
@@ -172,7 +176,7 @@ router.post("/admin", async (req, res) => {
   }
 });
 
-router.post("/logout",(req,res)=>{
+router.post("/logout", rateLimiter,(req,res)=>{
   try {
       res.clearCookie('auth',{
         httpOnly:true,

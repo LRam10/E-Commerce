@@ -1,16 +1,10 @@
-import React,{Fragment,useState,useEffect} from 'react'
+import React, { Fragment } from 'react'
+import { MAX_QTY } from '../../store/userCartStore'
 
-const Product = ({product,deleteItem,editQty}) => {
+const Product = ({product,deleteItem,increaseQty,decreaseQty}) => {
     const {img_url,price,qty,_id,name} = product;
-    const[item,setItem] = useState(product);
+    const quantity = Number(qty) || 1;
     const onDelete = ()=> deleteItem(_id);
-    const onChange = (e)=>{
-        setItem({...item,qty:e.target.value});
-    }
-    useEffect(() => {
-        editQty(item)
-        // eslint-disable-next-line
-    }, [item])
     return (
         <Fragment>
             <div className='flex items-start gap-[12px] px-[17px] sm:gap-[15px]'>
@@ -21,20 +15,36 @@ const Product = ({product,deleteItem,editQty}) => {
                 <div className='flex min-w-0 flex-1 flex-col gap-[8px]'>
                     <div className='flex items-start justify-between gap-3'>
                         <span className='truncate font-display text-[16px] font-medium leading-[18px] tracking-[0.18px] text-black'>{name}</span>
-                        <span className='shrink-0 font-display text-[16px] font-medium leading-[18px] tracking-[0.18px] text-black'>&#36;{price}</span>
+                        <span className='shrink-0 font-display text-[16px] font-medium leading-[18px] tracking-[0.18px] text-black'>
+                            &#36;{(Number(price) * quantity).toFixed(2)}
+                        </span>
                     </div>
 
-                    <span className='text-[14px] leading-[21px] text-sol-gray'>In stock</span>
+                    <span className='text-[14px] leading-[21px] text-sol-gray'>
+                        &#36;{Number(price).toFixed(2)} each
+                    </span>
 
                     <div className='flex items-center justify-between gap-3'>
-                        {/* <select
-                            className="sol-input h-[40px] rounded-pill border border-sol-stroke-light bg-white px-4 text-[14px] text-black outline-none"
-                            name='qty'
-                            aria-label={`Quantity for ${name}`}
-                            defaultValue={qty}
-                            onChange={onChange}>
-                            {[...Array(10)].map((_,i)=>(<option key={i+1}>{i+1}</option>))}
-                        </select> */}
+                        <div className='flex h-[40px] items-center gap-[4px] rounded-pill border border-sol-stroke-light px-[6px]'>
+                            <button
+                                type='button'
+                                onClick={()=>decreaseQty(_id)}
+                                disabled={quantity === 1}
+                                aria-label={`Decrease quantity for ${name}`}
+                                className='flex h-[28px] w-[28px] items-center justify-center rounded-full text-[16px] leading-none text-sol-ink transition-colors hover:bg-sol-page disabled:text-sol-track disabled:hover:bg-transparent'>
+                                &#8722;
+                            </button>
+                            <span aria-live='polite' className='min-w-[22px] text-center text-[14px] text-sol-ink'>{quantity}</span>
+                            <button
+                                type='button'
+                                onClick={()=>increaseQty(_id)}
+                                disabled={quantity === MAX_QTY}
+                                aria-label={`Increase quantity for ${name}`}
+                                className='flex h-[28px] w-[28px] items-center justify-center rounded-full text-[16px] leading-none text-sol-ink transition-colors hover:bg-sol-page disabled:text-sol-track disabled:hover:bg-transparent'>
+                                &#43;
+                            </button>
+                        </div>
+
                         <button
                             type='button'
                             onClick={onDelete}

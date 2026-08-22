@@ -3,6 +3,7 @@ import { createBrowserRouter } from "react-router-dom";
 import Home from "./pages/Home";
 import Category from "./pages/Category";
 import Orders from "./pages/Orders";
+import InfoItem from "./components/pages/InfoItem";
 import NotFound from "./pages/NotFound";
 import RouteError from "./pages/RouteError";
 import PageLayout from "./layouts/PageLayout.jsx";
@@ -24,6 +25,11 @@ export const Router = createBrowserRouter([
     {
       path:"category",
       element:<Category />
+    },
+    {
+      //Product detail, keyed by name because that is what /items/item/:name looks up
+      path:"product/:name",
+      element:<InfoItem />
     },
     {
       path:"orders",

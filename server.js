@@ -24,7 +24,6 @@ const allowedOrigins = [
   'http://localhost:5173',
   'https://web-production-43196.up.railway.app'
 ];
-
 const corsOptions = {
   origin: (origin, callback) => {
     //No Origin header = same-origin or non-browser client, let it through
@@ -33,6 +32,7 @@ const corsOptions = {
   },
   credentials: true
 };
+app.set('trust proxy', 1) 
 app.disable('x-powered-by');
 //body-parser middleware
 app.use(express.json({extended:false}));
