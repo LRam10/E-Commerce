@@ -2,7 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 
 const STORY_IMG =
-  "https://res.cloudinary.com/doei459zd/image/upload/v1575554850/Bracelet/i38e3nhs5wj2wzsexuky.jpg";
+  "https://res.cloudinary.com/doei459zd/image/upload/v1787417081/Bracelet/cta_sol_bracelets_prvhzn.png";
 
 const HandmadeStory = ({ img = STORY_IMG }) => {
   return (

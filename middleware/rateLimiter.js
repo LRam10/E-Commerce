@@ -13,9 +13,6 @@ module.exports = async function(req,res, next){
   }
   //Split bucket it different request, instead of merging many routes into one bucker
   const requestPath = `${req.method}:${req.baseUrl}:${req.path}`;
-  console.log({
-    requestPath
-  })
   const keyIndentifier= `${requestPath}:${userIndentifer}`;
   try {
     const { allowed, limit, remaining, resetMs } = await rateLimiter.allowRequest(keyIndentifier);

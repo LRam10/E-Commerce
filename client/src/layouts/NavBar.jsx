@@ -4,7 +4,7 @@ import { useOutsideClick } from '../CustomHooks/useClickOutside';
 import { useUser } from '../store/useUser';
 import { useAuthUser } from '../CustomHooks/useAuthUser';
 import { useAppStore } from '../store/useAppStore';
-import { userCartStore } from '../store/userCartStore';
+import { userCartStore, selectCartCount } from '../store/userCartStore';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import UserOptions from '../components/helpers/UserOptions';
 
@@ -20,7 +20,8 @@ const SearchIcon = ({ className = 'h-6 w-6' }) => (
 export default function NavBar({ categories }) {
   const setSideBar = useAppStore((state) => state.setSideBar);
   const { logOut } = useUser();
-  const cartCount = userCartStore((state) => state.cartItems.length);
+  //Badge counts units, so bumping a line's quantity moves it too
+  const cartCount = userCartStore(selectCartCount);
   const saveCart = userCartStore((state) => state.saveCart);
   const clearCart = userCartStore((state) => state.clearCart);
   const [moreOpen, setMoreOpen] = useState(false);

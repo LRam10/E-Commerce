@@ -138,7 +138,7 @@ router.post(
     }
   }
 );
-router.post("/admin", async (req, res) => {
+router.post("/admin",[rateLimiter],async (req, res) => {
   try {
     //destructuring from the request body
     const { password, email } = req.body;
@@ -176,7 +176,7 @@ router.post("/admin", async (req, res) => {
   }
 });
 
-router.post("/logout",(req,res)=>{
+router.post("/logout", rateLimiter,(req,res)=>{
   try {
       res.clearCookie('auth',{
         httpOnly:true,

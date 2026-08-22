@@ -113,20 +113,19 @@ router.put("/:id",auth,async (req,res)=>{
 //@Type   Delete
 //@Desc   DElETE items from
 //@Access  Private
-router.delete("/:id",auth,async (req,res)=>{
-
-    try {
-        let item = await Item.findOne({_id:new mongoose.Types.ObjectId(req.params.id)});
-        // the item is no longer available
-        if (!item)return res.status(400).json({msg:'Item does not exists'})
-        if(req.user.access != 1){
-            return res.status(400).json({msg:'Not Authorized'})
-        }
-         await Item.findOneAndRemove({_id:new mongoose.Types.ObjectId(req.params.id)});
-         res.json({msg:'Item has been Remove'});
-    } catch (error) {
-        res.status(500).json({msg:'Server Error'});
+router.delete("/:id", auth, async (req, res) => {
+  try {
+    if (req.user.access != 1) {
+      return res.status(400).json({ msg: 'Not Authorized' })
     }
-   });
+    let item = await Item.findOne({ _id: new mongoose.Types.ObjectId(req.params.id) });
+    // the item is no longer available
+    if (!item) return res.status(400).json({ msg: 'Item does not exists' })
+    await Item.findOneAndRemove({ _id: new mongoose.Types.ObjectId(req.params.id) });
+    res.json({ msg: 'Item has been Remove' });
+  } catch (error) {
+    res.status(500).json({ msg: 'Server Error' });
+  }
+});
 
 module.exports = router;

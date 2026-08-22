@@ -24,7 +24,7 @@ const ProductCard = ({ item }) => {
     <div className="group flex h-full w-full flex-col overflow-hidden rounded-card border border-sol-stroke bg-white">
       <div className="relative h-[260px] rounded-t-card transition-colors group-hover:bg-sol-cream sm:h-[300px] lg:h-[339px]">
         <Link
-          to={`/category/${item.category}`}
+          to={`/product/${encodeURIComponent(item.name)}`}
           state={{ img_url: item.img_url }}
           className="block h-full rounded-t-card"
         >
@@ -51,8 +51,10 @@ const ProductCard = ({ item }) => {
         <div className="flex flex-col gap-[10px]">
           <Stars />
           <div className="flex items-center justify-between gap-4">
-            <h4 className="truncate font-display text-[16px] font-medium leading-[18px] tracking-[0.18px] text-black">
-              {item.name}
+            <h4 className="min-w-0 truncate font-display text-[16px] font-medium leading-[18px] tracking-[0.18px] text-black">
+              <Link to={`/product/${encodeURIComponent(item.name)}`} className="hover:underline">
+                {item.name}
+              </Link>
             </h4>
             <span className="shrink-0 font-display text-[16px] font-medium leading-[18px] tracking-[0.18px] text-black">
               &#36;{item.price}
