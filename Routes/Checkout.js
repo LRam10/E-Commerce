@@ -6,6 +6,10 @@ const auth = require('../middleware/auth');
 const Cart = require ('../models/Cart')
 const mongoose = require('mongoose');
 const Order = require('../models/Order');
+
+const checkout = require('../Services/checkout');
+
+const { check} = require('express-validator');
 // For guest User
 router.post('/', async (req,res)=>{
 let status;
@@ -116,4 +120,14 @@ router.post('/auth',auth, async (req,res)=>{
         res.status(500).json({error});
     }
     });
+
+    //New create checkout session
+    router.post('/create-checkout-session',[
+        check('items').isArray(),
+        check('items.*.price_id').not().isEmpty(),
+        check('items.*.quantity').not().isEmpty()],
+        check('checkout_session_key').not().isEmpty(),
+        checkout.createSession);
+    //Get checkout session status
+    router.get('/get-session-status',[check('session_id').not().isEmpty()],checkout.getSessionStatus);
 module.exports = router;
