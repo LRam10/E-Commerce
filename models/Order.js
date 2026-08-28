@@ -4,7 +4,7 @@ const Item = require('./Item');
 const OrderSchema = new mongoose.Schema({
     user_id:{
         type:mongoose.Schema.Types.ObjectId,
-        ref:'user'
+        ref:'user',
     },
     email:{type:String},
     address_street:{type:String},
@@ -20,7 +20,15 @@ const OrderSchema = new mongoose.Schema({
     shipped:{type:Boolean,default:false},
     close_date:{type:Date},
     payment_type:{type:String},
-    total:{type:Number}
+    total:{type:Number},
+    stripe_session_id:{
+        type:String
+    },
+    status:{
+        type:String,
+        enum: ['pending', 'processing', 'completed', 'cancelled'],
+        required: true,
+    }
 });
 
 module.exports = mongoose.model('order',OrderSchema);

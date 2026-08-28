@@ -1,5 +1,7 @@
-const stripe = require('stripe')(process.env.TEST_STRIPE_SECRET_KEY);
 const { validationResult} = require('express-validator');
+
+const { createCheckoutSession } = require('../services/stripe');
+const { createOrderDb }= require('../services/orders'); 
 exports.createSession = async (req, res) => {
   try {
     const errors = validationResult(req);
@@ -7,26 +9,35 @@ exports.createSession = async (req, res) => {
       return res.status(400).json({ errors: errors.array() });
     }
     const { items, checkout_session_key } = req.body;
-    //TODO: Make sure the checkout_session_key is unique and not used before to prevent duplicate sessions
-    const session = await stripe.checkout.sessions.create({
-      ui_mode:"elements",
-      line_items:items,
-      mode:'payment',
-      success_url:`${process.env.APP_URL}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
-      metadata:{
-        checkout_session_key
-      },
-      automatic_tax:{
-        enabled:true
-      }
+
+    const session = await createCheckoutSession(items, checkout_session_key);
+    console.log({
+      session
     })
+    if(!session){
+      res.json({
+        error:'Failed to create session, please try again'
+      });
+      return;
+    }
+    const totalAmount = session?.amount_total;
+    const getOrder = await createOrderDb(session.id, items, 'pending', totalAmount);
+    if(!getOrder){
+      res.json({
+        error:"Failed to create order, please try again",
+        currentSession:session.id
+      });
+      return;
+    }
+    
+    
     res.json({
       clientSecret:session.client_secret,
       checkoutSessionId:session.id
     });
 
-  }catch (err) {  
-    res.status(500).json({error: err.message});
+  }catch (err) {
+    res.status(err.status || 500).json({error: err.message});
   }
 }
 

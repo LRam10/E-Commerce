@@ -5,7 +5,7 @@ const auth = require('../middleware/auth');
 const cloudinary = require('cloudinary').v2;
 const fileupload = require('express-fileupload');
 const mongoose = require('mongoose');
-const items = require('../Services/items');
+const items = require('../controllers/items');
 const rateLimiter = require('../middleware/rateLimiter');
 router.use(fileupload({
     useTempFiles:true

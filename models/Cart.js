@@ -12,6 +12,10 @@ const CartSchema = mongoose.Schema({
     active:{
         type:Boolean,
         default:false
+    },
+    cartSessionId:{
+        type:String,
+        required:false
     }
 });
 

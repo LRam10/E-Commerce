@@ -7,6 +7,7 @@ import InfoItem from "./components/pages/InfoItem";
 import NotFound from "./pages/NotFound";
 import RouteError from "./pages/RouteError";
 import PageLayout from "./layouts/PageLayout.jsx";
+import Checkout, { checkoutLoader } from "./pages/Checkout";
 export const Router = createBrowserRouter([
   {
     id: "root",
@@ -34,6 +35,13 @@ export const Router = createBrowserRouter([
     {
       path:"orders",
       element:<Orders />
+    },
+    {
+      //The loader creates the Checkout Session before the page renders, so the
+      //Stripe provider mounts with a client secret already in hand
+      path:"checkout",
+      element:<Checkout />,
+      loader:checkoutLoader
     },
     {
       //Unmatched URLs render inside the layout so the nav and footer stay put

@@ -5,10 +5,6 @@ import {RouterProvider} from "react-router-dom";
 import { userCartStore } from './store/userCartStore';
 import { useUser } from './store/useUser';
 import { useAuthUser } from './CustomHooks/useAuthUser';
-import { loadStripe } from '@stripe/stripe-js';
-import {
-  CheckoutElementsProvider
-} from '@stripe/react-stripe-js/checkout';
 // import Navbar from './components/Nav/Navbar';
 // import Footer from './components/Footer';
 // import Home from './components/Home/Home';
@@ -38,8 +34,6 @@ if(localStorage.token){
   setAuthToken(localStorage.token);
 }
 
-const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
-
 //Math.floor(new Date().getTime()/1000.0) -----> Set time to epoch time
 //259200 equals to 3 days in epoch time
 //86400 -----> one day
@@ -49,10 +43,6 @@ const App = ()=> {
   useAuthUser();
   const isAuthenticated = useUser((state)=>state.isAuthenticated);
   const fetchCartItems = userCartStore((state)=>state.fetchCartItems);
-    const appearance = {
-    theme: 'stripe',
-  };
-
 
   useEffect(()=>{
     //No cookie, no request
@@ -60,20 +50,10 @@ const App = ()=> {
     fetchCartItems();
   },[isAuthenticated, fetchCartItems]);
 
-  return (
-    <CheckoutElementsProvider 
-    stripe={stripePromise}
-    options={{
-      clientSecret,
-       elementsOptions: {appearance},
-       adaptivePricing:{
-        allowed:false
-       }
-    }}>
-      <RouterProvider router={Router} >
-      </RouterProvider>
-    </CheckoutElementsProvider>
-  );
+  //The Stripe provider lives on the /checkout route, not here. It needs a client
+  //secret, and a client secret needs line items, which only exist once the user
+  //has a cart and is actually checking out
+  return <RouterProvider router={Router} />;
 }
 
 export default App;

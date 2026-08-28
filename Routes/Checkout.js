@@ -1,13 +1,13 @@
 const express = require('express');
 const router = express.Router();
-const stripe = require('stripe')(process.env.Stripe_Secret);
+const stripe = require('stripe')(process.env.TEST_STRIPE_SECRET_KEY);
 const uuid = require('uuid/v4');
 const auth = require('../middleware/auth');
 const Cart = require ('../models/Cart')
 const mongoose = require('mongoose');
 const Order = require('../models/Order');
 
-const checkout = require('../Services/checkout');
+const checkout = require('../controllers/checkout');
 
 const { check} = require('express-validator');
 // For guest User
@@ -17,7 +17,6 @@ let error;
 try {
     let { paymentMethod,price,items } = req.body;
     price = parseFloat(price);
-    console.log(paymentMethod);
     const payment = await stripe.paymentIntents.create({
         amount:price,
         currency:'usd',
@@ -122,11 +121,14 @@ router.post('/auth',auth, async (req,res)=>{
     });
 
     //New create checkout session
+    //Prices are looked up from the catalogue in the service, so the body only has
+    //to name the items. The closing bracket used to land before
+    //checkout_session_key, which left that check dangling outside the chain
     router.post('/create-checkout-session',[
-        check('items').isArray(),
-        check('items.*.price_id').not().isEmpty(),
-        check('items.*.quantity').not().isEmpty()],
-        check('checkout_session_key').not().isEmpty(),
+        check('items').isArray({min:1}),
+        check('items.*.item_id').isMongoId(),
+        check('items.*.quantity').isInt({min:1}),
+        check('checkout_session_key').not().isEmpty()],
         checkout.createSession);
     //Get checkout session status
     router.get('/get-session-status',[check('session_id').not().isEmpty()],checkout.getSessionStatus);
