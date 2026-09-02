@@ -1,120 +1,183 @@
+//Libs
 const stripe = require('stripe')(process.env.TEST_STRIPE_SECRET_KEY);
 const uuid = require('uuid');
-//Webokk secrete
-const SHARED_STRIPE_SECRET = process.env.STRIPE_SHARED_SECRET;
-const APP_URL = process.env.APP_URL;
-const { createCheckoutSession,
-  getCheckoutSession,
-  updateCheckoutSession,
-  updateCheckoutFingerprint,
-  deleteCheckoutSession
-} = require('./checkout_session');
+
+//Storare
+
+const redisClient = require('../config/redis');
 //Services
 const { buildLineItems, createHashItems } = require('./items');
+const { claimCheckoutSession,
+  updateCheckoutSession,
+  updateCheckoutFingerprint,
+} = require('./checkout_session');
+
+const CHECKOUT_SESSION_TTLS = 60 * 30;
+//Webokk secrete
+const APP_URL = process.env.APP_URL;
+const SHARED_STRIPE_SECRET = process.env.STRIPE_SHARED_SECRET;
+/*
+@Desc   Turn a won claim into a Stripe Checkout Session. Called with the key already
+        persisted on the claim, so if this request died last time and is being retried,
+        Stripe replays the session it already made instead of opening a second one.
+@param  {object} cart - carried only for the owner, which is stamped into metadata
+@param  {object} claim - the claim row this request owns
+@param  {array}  lineItems
+@returns {object} {id, client_secret}
+*/
+const materializeStripeSession = async (cart, claim, lineItems) => {
+  let session;
+  try {
+    session = await stripe.checkout.sessions.create({
+      ui_mode: "elements",
+      line_items: lineItems,
+      mode: 'payment',
+      //ui_mode elements rejects success_url. Redirect-based methods come back here
+      //and the page reads the outcome from get-session-status
+      return_url: `${APP_URL}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
+      //Read back by the webhook. Keeping the cart and its owner here means order
+      //creation never has to resolve them through the claim, which by then may have
+      //expired and been taken over by a later checkout.
+      metadata: {
+        cart_id: claim.cart_id.toString(),
+        ...(cart?.user_id ? {user_id: String(cart.user_id)} : {}),
+        ...(cart?.guest_id ? {guest_id: String(cart.guest_id)} : {}),
+      },
+      automatic_tax: {
+        enabled: true
+      },
+      expires_at: claim.expires_at
+      //Replaying the same key returns the session already created for it rather
+      //than opening another one
+    }, { idempotencyKey: claim.idempotency_key });
+  } catch (error) {
+    //Stripe rejects a key that is still in flight on another request. That request is
+    //about to produce the session, so the caller should retry rather than make its own.
+    if (error?.type === 'StripeIdempotencyError') {
+      throw Object.assign(
+        new Error('Checkout session is still being created, please try again'),
+        { status: 409 }
+      );
+    }
+    throw error;
+  }
+
+  const checkoutUpdate = await updateCheckoutSession(
+    claim._id,
+    claim.idempotency_key,
+    session.id,
+    session.client_secret,
+    session.expires_at
+  );
+  if (!checkoutUpdate) {
+    //The claim was taken over while Stripe was answering. This session is orphaned
+    //rather than duplicated - it is never handed to a buyer and expires on its own.
+    throw Object.assign(
+      new Error('Checkout session was reset, please try again'),
+      { status: 409 }
+    );
+  }
+  
+  return {
+    id: session.id,
+    client_secret: session.client_secret,
+  };
+}
+
 /*
 @Docs
-//@Desc   Create a new stripe session for a user with an indempotency 
-// key to prevent duplicate sessions
-//@param {string}   sessionId - Object containing session details
-//@param {array} items - Array of items to be purchased, each with item_id and quantity
+//@Desc   Get the one Stripe session for this cart, creating it only if this request is
+//        the one that won the claim. Concurrent requests for the same cart converge on
+//        a single session instead of each opening one.
+//@param {object} cart
 //@returns {object} - Returns an object containing the client secret and checkout session ID
-*/ 
-const CHECKOUT_SESSION_TTLS = 60 * 30;
+*/
 exports.createStripeSession = async (cart) => {
-  try {
-    const items = cart?.items;
-    const lineItems = await buildLineItems(items);
-    if(!lineItems){
-      throw new Error('Failed to create line items');
-    }
-    //hashitems 
-    const fingerprint = createHashItems(items);
-    //Check if a session already exists for this cart and hash, with pending status
-    const claimCheckout = await createCheckoutSession(cart._id, fingerprint);
+  //A cart leaves 'active' once it is paid for. Refusing it here is what stops the back
+  //button, or a reloaded /checkout, opening a second session for a basket already bought.
+  if (cart?.status !== 'active') {
+    throw Object.assign(new Error('This cart is no longer available for checkout'), { status: 409 });
+  }
 
-    if(claimCheckout) {
-      const userId = cart?.user_id ?? cart?.guest_id;
-      const idempotencyKey = uuid.v4();
-      const key = `${userId}:checkout:${idempotencyKey}`;
-      const expiresAt = Math.floor(Date.now() / 1000) + CHECKOUT_SESSION_TTLS
-      const session = await stripe.checkout.sessions.create({
-        ui_mode: "elements",
-        line_items:lineItems,
-        mode: 'payment',
-        //ui_mode elements rejects success_url. Redirect-based methods come back here
-        //and the page reads the outcome from get-session-status
-        return_url: `${APP_URL}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
-        metadata: {
-          checkoutSessionId: claimCheckout._id.toString(),
-        },
-        automatic_tax: {
-          enabled: true
-        },
-        expires_at: expiresAt
-        //Replaying the same cart returns the session already created for it rather
-        //than opening another one
-      }, { idempotencyKey: key });
+  const lineItems = await buildLineItems(cart?.items);
+  const fingerprint = createHashItems(lineItems);
 
-      //Update the checkout session with the stripe session id and client secret
-      const stripeSessionId = session.id;
-      const clientSecret = session.client_secret;
-      const expires_at = session.expires_at;
-      const checkoutUpdate = await updateCheckoutSession(
-        cart._id, stripeSessionId,
-        clientSecret,
-        expires_at,
-        key
+  const expiresAt = Math.floor(Date.now() / 1000) + CHECKOUT_SESSION_TTLS;
+  //Generated once per claim and persisted before Stripe is called
+  const idempotencyKey = `checkout:${cart._id}:${uuid.v4()}`;
+
+  const { won, claim } = await claimCheckoutSession(cart._id, fingerprint, idempotencyKey, expiresAt);
+  if (!claim) throw new Error('Failed to claim checkout session');
+
+  if (claim.status === 'completed') {
+    throw Object.assign(new Error('This cart has already been paid for'), { status: 409 });
+  }
+
+  //Either we won, or we lost to a request that died before Stripe answered. Both replay
+  //the claim's key, so both end up pointing at the same Stripe session.
+  if (won || !claim.stripe_session_id) {
+    return materializeStripeSession(cart, claim, lineItems);
+  }
+
+  //Cart items have changed
+  if (claim.fingerprint !== fingerprint) {
+    //Win the right to reprice before touching Stripe
+    const repriced = await updateCheckoutFingerprint(claim._id, claim.fingerprint, fingerprint);
+    if (!repriced) {
+      throw Object.assign(
+        new Error('Checkout session is being updated, please try again'),
+        { status: 409 }
       );
-
-      if (!checkoutUpdate) {
-        throw new Error('Failed to update checkout session');
-      }
-      return {
-        id: session.id,
-        client_secret: session.client_secret,
-      }
     }
-    //get existing seession for this cart
-
-    const existingSession = await getCheckoutSession(cart._id);
-    if(!existingSession) throw new Error('Failed to get existing checkout session');
-    //Request for secret key has not compeleted yet,
-    if(!existingSession.secret_key) throw new Error('Checkout session is still being processed, please try again');
-
-    if( existingSession.status !== 'pending' && existingSession.expires_at < Math.floor(Date.now() / 1000)) {
-      await deleteCheckoutSession(cart._id);
-      return createStripeSession(cart);
-    }
-
-    //Cart items have changed
-    if(existingSession.fingerprint !== fingerprint) {
-      await stripe.checkout.sessions.update(existingSession.stripe_session_id, {
-        line_items:lineItems ,
+    try {
+      await stripe.checkout.sessions.update(claim.stripe_session_id, {
+        line_items: lineItems,
       });
-      //Update the fingerprint in the checkout session
-      const updatedSession = await updateCheckoutFingerprint(
-        cart._id,
-        fingerprint,
-      )
+    } catch (error) {
+      //Leaving the row claiming a price Stripe never took would hand the next request a
+      //secret for the wrong amount, so put the old fingerprint back.
+      await updateCheckoutFingerprint(claim._id, fingerprint, claim.fingerprint);
+      throw error;
     }
-    return {
-      id: existingSession.stripe_session_id,
-      client_secret: existingSession.secret_key,
-    }
-    
+  }
 
-
-  } catch (error) {
-    console.log(error)
-    return null
+  return {
+    id: claim.stripe_session_id,
+    client_secret: claim.client_secret,
   }
 }
 
-exports.getStripeSession = async(sessionId)=>{
+//line_items expansion returns 100 entries by default. Cart validation caps a cart at 50
+//lines, so this is covered - raising that cap means paginating here.
+const SESSION_EXPAND = ['line_items.data.price.product', 'payment_intent.latest_charge'];
+const SESSION_CACHE_SECONDS = 24 * 60 * 60;
+
+/*
+@Desc   Retrieve a Checkout Session with the line items and the charge expanded. Webhook
+        payloads arrive with fixed expansion, so this is the only way to reach either.
+@param  {string} sessionId
+@param  {boolean} fromCache - read path only. Order creation must always call with false:
+        the cache is an optimisation for the receipt page, and an order built from a stale
+        object is a wrong record that is hard to correct afterwards.
+@returns {object|null} the session, or null if Stripe could not be reached
+*/
+exports.getStripeSession = async (sessionId, fromCache = false) => {
+  const key = `stripe:session:${sessionId}`;
+  if (fromCache) {
+    const cached = await redisClient.get(key);
+    if (cached) return typeof cached === 'string' ? JSON.parse(cached) : cached;
+  }
   try {
-    return stripe.checkout.sessions.retrieve(sessionId, {expand: ["payment_intent", "subscription"]});
+    const session = await stripe.checkout.sessions.retrieve(sessionId, { expand: SESSION_EXPAND });
+    //Only a terminal session may be cached. The success page polls this endpoint to watch
+    //payment_status change, so caching an open session would stop the poll ever settling
+    //and would tell a buyer who has paid that nothing happened.
+    if (session?.status === 'complete' || session?.status === 'expired') {
+      await redisClient.setex(key, SESSION_CACHE_SECONDS, JSON.stringify(session));
+    }
+    return session;
   } catch (error) {
-    console.log('Failed to get session id')
+    console.log(`Failed to retrieve Stripe session ${sessionId}:`, error?.message);
     return null;
   }
 }

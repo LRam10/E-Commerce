@@ -1,9 +1,9 @@
 const { validationResult} = require('express-validator');
 
 const { createStripeSession , getStripeSession, verifySignature } = require('../services/stripe');
-const { createOrderDb }= require('../services/orders'); 
 
 const { handleCheckoutComplete } = require('../services/payments');
+const { handleCheckoutExpired } = require('../services/checkout_session');
 
 const { getCart } = require('../services/cart');
 exports.createSession = async (req, res) => {
@@ -13,8 +13,9 @@ exports.createSession = async (req, res) => {
       return res.status(400).json({ errors: errors.array() });
     }
     const { cartId } = req.body;
-    //Get the items from the cart, and clamp the quantity to the max allowed for each item
-    const cart = await getCart(cartId);
+    //Ownership is part of the lookup, so a cart that is not the caller's reads as missing
+    const owner = req?.user?.id ? {userId: req.user.id} : {guestId: req?.guestId};
+    const cart = await getCart(cartId, owner);
     const session = await createStripeSession(cart);
     if(!session){
       res.json({
@@ -49,7 +50,7 @@ exports.getSessionStatus = async (req, res) => {
   try {
 
     const session_id = req.query.session_id;
-    const session = await getStripeSession(session_id)
+    const session = await getStripeSession(session_id, true)
     //Error getting session
     if(!session){
       res.status(400).json({
@@ -79,22 +80,24 @@ exports.getSessionStatus = async (req, res) => {
   }
 }
 exports.webhook = async(req,res)=>{
+  let event;
   try {
-    let event;
     // Get the signature sent by Stripe
     const signature = req.headers['stripe-signature'];
     event = verifySignature(req.body, signature)
     if(!event){
+      //The only genuinely malformed case, and the only one Stripe should not resend
       return res.sendStatus(400);
     }
-    console.log(event, event.type);
+    //The event object carries customer name, email and billing address - log the id only
+    console.log(`Stripe event ${event.id} ${event.type}`);
   switch (event.type) {
-    case 'payment_intent.succeeded':
+    case 'checkout.session.async_payment_succeeded':
       const paymentIntent = event.data.object;
       // Then define and call a method to handle the successful payment intent.
       // handlePaymentIntentSucceeded(paymentIntent);
       break;
-    case 'payment_method.attached':
+    case 'checkout.session.async_payment_failed':
       const paymentMethod = event.data.object;
       // Then define and call a method to handle the successful attachment of a PaymentMethod.
       // handlePaymentMethodAttached(paymentMethod);
@@ -116,7 +119,9 @@ exports.webhook = async(req,res)=>{
   res.json({received: true})
 
   } catch (error) {
-    console.log(error);
-    return res.sendStatus(400);
+    //Stripe retries any non-2xx, but a 400 tells whoever reads the dashboard the payload
+    //was malformed and sends them hunting for a signature problem instead of this one
+    console.error(`Webhook handler failed for event ${event?.id} (${event?.type})`, error);
+    return res.sendStatus(500);
   }
 }

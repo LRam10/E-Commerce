@@ -1,5 +1,6 @@
 const express = require("express");
 const router = express.Router();
+const { body, validationResult } = require('express-validator');
 const optionalAuth = require('../middleware/optionalAuth');
 
 const User = require('../models/User');
@@ -7,31 +8,62 @@ const Cart = require ('../models/Cart')
 
 //Middlewares
 const rateLimiter = require("../middleware/rateLimiter");
+//Services
+const { MAX_QTY, resolveCartItems, hydrateCartItems } = require('../services/items');
+
+//A cart line is an item id and an amount. Anything else in the request is ignored, and
+//the fields are picked out by hand below - validation rejects bad shapes but does not
+//strip extra keys on its own.
+const lineRules = (prefix) => [
+    body(`${prefix}._id`).isMongoId().withMessage('Each cart line needs a valid item id'),
+    body(`${prefix}.qty`).optional().isInt({min:1, max:MAX_QTY})
+        .withMessage(`Quantity must be a whole number between 1 and ${MAX_QTY}`),
+];
+
+const pickLines = (items) => items.map(({_id, qty}) => ({_id, qty}));
+
+//Unknown item, or not enough stock, answers with its own status. Anything else is ours.
+const sendCartError = (res, error) => {
+    if (error.status) {
+        return res.status(error.status).json({msg:error.message, unavailable:error.unavailable});
+    }
+    console.log(error);
+    return res.status(500).json({msg:'Server error'});
+}
+
+const owner = (req) => req?.guestId ? {guest_id:req.guestId} : {user_id:req?.user?.id};
+
 //@Type   POST
 //@Desc   Create new cart
 //@Access  Private
-router.post("/",[optionalAuth, rateLimiter], async (req,res)=>{
-    const items = req.body;
-    let userId = req?.user?.id;
-    const isGuest = req?.guestId;
-    if(isGuest){
-        userId = req?.guestId;
+router.post("/",[
+    optionalAuth,
+    rateLimiter,
+    body().isArray({min:1, max:50}).withMessage('A cart must be a non-empty list of items'),
+    ...lineRules('*')
+], async (req,res)=>{
+    const errors = validationResult(req);
+    if(!errors.isEmpty()){
+        return res.status(400).json({errors:errors.array()});
     }
-    const filter = isGuest ? {guest_id:userId} : {user_id:userId};
+    //status is part of the filter so a paid cart is never reopened - the buyer gets a
+    //new one instead, which the partial unique index allows
+    const filter = {...owner(req), status:'active'};
     try {
+        //Prices and names come back from the catalogue, never from the request
+        const {lines, items} = await resolveCartItems(pickLines(req.body));
         //Upsert so a returning user's cart is replaced rather than rejected
         const cart = await Cart.findOneAndUpdate(
             filter,
-            {$set:{items, active:true}},
+            {$set:{items:lines}},
             {new:true, upsert:true}
         );
         return res.json({
-            items: cart.items,
+            items,
             cartId: cart._id
         });
     } catch (error) {
-        console.log(error);
-        res.status(500).json({msg:'Server error'})
+        return sendCartError(res, error);
     }
 });
 //@Type   GET
@@ -39,20 +71,15 @@ router.post("/",[optionalAuth, rateLimiter], async (req,res)=>{
 //@Access  Private
 router.get("/",[optionalAuth, rateLimiter],async (req,res)=>{
     try {
-        let userId = req?.user?.id;
-        const isGuest = req?.guestId;
-        if (isGuest) {
-            userId = req?.guestId;
-        }
-        const filter = isGuest ? { guest_id: userId } : { user_id: userId };
-        let cart = await Cart.findOne(filter).select('items active _id');
+        const filter = {...owner(req), status:'active'};
+        const cart = await Cart.findOne(filter).select('items status _id');
         if(!cart){
-            cart = {items:[],active:false}
+            return res.json({items:[], active:false, cartId:null});
         }
         res.json({
-            items:cart.items,
-            active:cart.active,
-            cartId:cart._id
+            items: await hydrateCartItems(cart.items),
+            active: cart.status === 'active',
+            cartId: cart._id
         });
     } catch (error) {
         console.log(error);
@@ -62,19 +89,32 @@ router.get("/",[optionalAuth, rateLimiter],async (req,res)=>{
 //@Type   Put
 //@Desc   Edit items in cart
 //@Access  Private
-router.put("/",[optionalAuth,rateLimiter], async (req,res)=>{
-    const cartId = req.body.cartId;
-    if(!cartId){
-        return res.status(400).json({msg:'Missing cartId'});
+router.put("/",[
+    optionalAuth,
+    rateLimiter,
+    body('cartId').isMongoId().withMessage('A valid cartId is required'),
+    body('items').isArray({min:1, max:50}).withMessage('items must be a non-empty list'),
+    ...lineRules('items.*')
+], async (req,res)=>{
+    const errors = validationResult(req);
+    if(!errors.isEmpty()){
+        return res.status(400).json({errors:errors.array()});
     }
-    const items = req.body.items;
+    const { cartId } = req.body;
     try {
-        const cart = await Cart.findOneAndUpdate({_id:cartId},
-            {$set:{items:items}},
+        const {lines, items} = await resolveCartItems(pickLines(req.body.items));
+        //Without the owner in the filter anyone holding a cartId could rewrite its items,
+        //including while its owner is part way through paying for it
+        const cart = await Cart.findOneAndUpdate(
+            {_id:cartId, status:'active', ...owner(req)},
+            {$set:{items:lines}},
             {new:true});
-            res.json(cart.items);
+        if(!cart){
+            return res.status(404).json({msg:'Cart not found'});
+        }
+        res.json(items);
     } catch (error) {
-        res.status(500).json({msg:'Server Error'});
+        return sendCartError(res, error);
     }
 });
 
