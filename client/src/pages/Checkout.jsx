@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { redirect, useLoaderData } from "react-router-dom";
+
 import {
   PaymentElement,
   ContactDetailsElement,
@@ -13,30 +14,24 @@ import ItemList from '../components/Cart/ItemList';
 import { userCartStore, MAX_QTY } from "../store/userCartStore";
 import { callAPI } from "../utils/utils";
 
-//Stripe dedupes session creation on this key, so it has to describe the cart
-//rather than the visit. Re-entering checkout with an unchanged cart then reuses
-//the session it already made instead of stacking up abandoned ones
-const cartKey = (cartItems) => cartItems
-  .map((item)=>`${item._id}:${item.qty}`)
-  .sort()
-  .join('|');
 
 //Runs on navigation, outside render, so the session is created once per entry to
 ///checkout. Nothing here needs memoizing because nothing here reruns on a render
-const cartItems = userCartStore.getState().cartItems;
 export const checkoutLoader = async () => {
+  const cartItems = userCartStore.getState().cartItems;
+  const cartId = userCartStore.getState().cartId;
   //An empty cart has no line items, so there is no session to create
   if(cartItems.length === 0) return redirect('/');
 
   const {clientSecret} = await callAPI('/checkout/create-checkout-session','POST',null,'json',{
     //Only the identity and the count travel, the server prices the order
-    items:cartItems.map((item)=>({item_id:item._id, quantity:Math.min(item.qty, MAX_QTY)})),
-    checkout_session_key:cartKey(cartItems),
+    cartId,
   });
   return {clientSecret};
 };
 
 const CheckoutForm = () => {
+  const cartItems = userCartStore.getState().cartItems;
   const [message, setMessage] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 

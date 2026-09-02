@@ -1,10 +1,16 @@
 const mongoose = require('mongoose');
-const Item = require('./Item');
+
+
+const itemSchema = new mongoose.Schema({
+    item_id: { type: mongoose.Schema.Types.ObjectId, required: true, ref: 'item' },
+    quantity: { type: Number, default: 1 }
+})
 
 const OrderSchema = new mongoose.Schema({
     user_id:{
         type:mongoose.Schema.Types.ObjectId,
         ref:'user',
+        required:false
     },
     email:{type:String},
     address_street:{type:String},
@@ -12,7 +18,7 @@ const OrderSchema = new mongoose.Schema({
     address_state:{type:String},
     address_city:{type:String},
     country:{type:String},
-    items:[Item.schema],
+    items:[itemSchema],
     order_date:{
         type: Date,
         default: Date.now()
@@ -22,7 +28,8 @@ const OrderSchema = new mongoose.Schema({
     payment_type:{type:String},
     total:{type:Number},
     stripe_session_id:{
-        type:String
+        type:String,
+        unique:true
     },
     status:{
         type:String,

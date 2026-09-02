@@ -40,7 +40,7 @@ router.post("/google",[rateLimiter], async (req, res) => {
       payload,
       process.env.jwtSecret,
       {
-        expiresIn: 3600,
+        expiresIn: '7d',
       },
       (err, token) => {
         if (err) throw err;
@@ -116,7 +116,7 @@ router.post(
         payload,
         process.env.jwtSecret,
         {
-          expiresIn: 3600,
+          expiresIn: '7d',
         },
         (err, token) => {
           if (err) throw err;

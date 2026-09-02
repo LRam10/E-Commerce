@@ -17,6 +17,8 @@ const cookieParse = require('cookie-parser')
 //Database
 const connectDB = require('./config/db');
 
+const checkoutController = require('./controllers/checkout')
+
 connectDB();
 const PORT = process.env.PORT || 5000;
 //Local and prod (prod client is served from the same Railway domain)
@@ -34,6 +36,9 @@ const corsOptions = {
 };
 app.set('trust proxy', 1) 
 app.disable('x-powered-by');
+
+ //Webook to recieve stripe events, currently only configure to get checkout events
+app.post('/checkout/webhook',express.raw({type: 'application/json'}), checkoutController.webhook);
 //body-parser middleware
 app.use(express.json({extended:false}));
 
