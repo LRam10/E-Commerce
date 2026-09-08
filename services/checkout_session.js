@@ -126,3 +126,17 @@ exports.handleCheckoutExpired = async (stripeSessionId) => {
     { new: true }
   );
 }
+/*
+@Desc  Release a completed claim after its delayed payment failed, so the cart can be
+       checked out again. This is the one place a completed claim may be reopened, and it
+       is only safe because the caller has already won the order's pending -> cancelled
+       transition, which proves no payment was ever taken.
+@returns {object|null} the claim, or null if it was not completed
+*/
+exports.releaseCheckoutSession = async (stripeSessionId) => {
+  return CheckoutSession.findOneAndUpdate(
+    { stripe_session_id: stripeSessionId, status: 'completed' },
+    { $set: { status: 'expired' } },
+    { new: true }
+  );
+}

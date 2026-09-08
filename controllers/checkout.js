@@ -2,7 +2,11 @@ const { validationResult} = require('express-validator');
 
 const { createStripeSession , getStripeSession, verifySignature } = require('../services/stripe');
 
-const { handleCheckoutComplete } = require('../services/payments');
+const {
+  handleCheckoutComplete,
+  handleAsyncPaymentSucceeded,
+  handleAsyncPaymentFailed
+} = require('../services/payments');
 const { handleCheckoutExpired } = require('../services/checkout_session');
 
 const { getCart } = require('../services/cart');
@@ -89,18 +93,14 @@ exports.webhook = async(req,res)=>{
       //The only genuinely malformed case, and the only one Stripe should not resend
       return res.sendStatus(400);
     }
-    //The event object carries customer name, email and billing address - log the id only
-    console.log(`Stripe event ${event.id} ${event.type}`);
   switch (event.type) {
     case 'checkout.session.async_payment_succeeded':
-      const paymentIntent = event.data.object;
-      // Then define and call a method to handle the successful payment intent.
-      // handlePaymentIntentSucceeded(paymentIntent);
+      const asyncPaid = event.data.object;
+      await handleAsyncPaymentSucceeded(asyncPaid);
       break;
     case 'checkout.session.async_payment_failed':
-      const paymentMethod = event.data.object;
-      // Then define and call a method to handle the successful attachment of a PaymentMethod.
-      // handlePaymentMethodAttached(paymentMethod);
+      const asyncFailed = event.data.object;
+      await handleAsyncPaymentFailed(asyncFailed);
       break ;
     case 'checkout.session.completed':
       const checkoutCompleted = event.data.object;

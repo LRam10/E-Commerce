@@ -67,3 +67,21 @@ exports.upsertOrderForSession = async ({
     return Order.findOne({ stripe_session_id: stripeSessionId });
   }
 }
+
+/*
+@Desc  Move an order between statuses, naming the states it may move from. Webhooks are
+       at-least-once and can arrive out of order, so a blind $set would let a late
+       delivery walk a shipped order backwards. Returning null means the order was not in
+       an allowed state, which callers use as a gate rather than an error.
+@param {string} stripeSessionId
+@param {array} from - allowed current statuses
+@param {string} to - the status to move to
+@returns {object|null} the updated order, or null if the transition was not allowed
+*/
+exports.transitionOrderStatus = async (stripeSessionId, from, to) => {
+  return Order.findOneAndUpdate(
+    { stripe_session_id: stripeSessionId, status: { $in: from } },
+    { $set: { status: to } },
+    { new: true }
+  );
+}
