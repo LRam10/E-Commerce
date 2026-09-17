@@ -85,3 +85,13 @@ exports.transitionOrderStatus = async (stripeSessionId, from, to) => {
     { new: true }
   );
 }
+
+exports.getOrderByStripeSession = async(sessionId)=>{
+  try{
+    return await Order.findOne(
+      {stripe_session_id: sessionId}
+    )
+  }catch(error){
+    throw Object.assign(new Error('Failed to get order by session id',{status:500}))
+  }
+}

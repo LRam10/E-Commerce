@@ -140,3 +140,16 @@ exports.releaseCheckoutSession = async (stripeSessionId) => {
     { new: true }
   );
 }
+
+exports.recordReservedItems = async (claimId, idempotencyKey, items)=>{
+  return CheckoutSession.findOneAndUpdate(
+    {_id:claimId, idempotency_key:idempotencyKey},
+    {$set:{reserved_items:items}}
+  )
+}
+exports.expireClaim = async (claimId, idempotencyKey)=>{
+  return CheckoutSession.findOneAndUpdate(
+    {_id:claimId, idempotency_key:idempotencyKey},
+    {$set:{status: 'expired'}}
+  )
+}

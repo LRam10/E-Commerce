@@ -1,8 +1,9 @@
 const crypto = require('node:crypto');
+const mongoose = require('mongoose');
+
 const Item = require('../models/Item');
 const MAX_QTY = 10;
 exports.MAX_QTY = MAX_QTY;
-
 const clampQty = (qty) => Math.min(Math.max(Math.round(Number(qty)) || 1, 1), MAX_QTY);
 exports.clampQty = clampQty;
 
@@ -33,6 +34,80 @@ exports.buildLineItems = async (items) => {
     };
   });
 }
+const toObjectId = (id) => id instanceof mongoose.Types.ObjectId ? id : new mongoose.Types.ObjectId(String(id));
+
+const findUnheldItems = async (claim, items) => {
+  const catalogue = await Item.find({_id: {$in: items.map((item) => item.item_id)}})
+    .select('+reservations')
+    .lean();
+  const byId = new Map(catalogue.map((item) => [String(item._id), item]));
+
+  const unheld = [];
+  for (const {item_id, qty} of items) {
+    const item = byId.get(String(item_id));
+    const held = item?.reservations?.some((r) => String(r.claim_id) === String(claim));
+    if (held) continue;
+    unheld.push({
+      _id: String(item_id),
+      name: item?.name ?? null,
+      requested: qty,
+      available: item?.qty ?? 0
+    });
+  }
+  return unheld;
+}
+
+exports.reserveStock = async (claimId, items) => {
+  if (!items?.length) return {ok:true};
+  const claim = toObjectId(claimId);
+
+  const updateOperation = items.map(({item_id, qty}) => ({
+    updateOne: {
+      filter: {_id: item_id, qty: {$gte: qty}, 'reservations.claim_id': {$ne: claim}},
+      update: {$inc: {qty: -qty}, $push: {reservations: {claim_id: claim, qty}}}
+    }
+  }));
+  //Unordered so every line is attempted and the buyer is told about all short items at
+  //once, matching resolveCartItems, rather than one per retry
+  const result = await Item.bulkWrite(updateOperation, {ordered: false});
+  if (result.matchedCount === items.length) return {ok:true};
+
+  const unavailable = await findUnheldItems(claim, items);
+  if (!unavailable.length) return {ok:true};
+
+  await exports.releaseStock(claim);
+  return {ok:false, unavailable};
+}
+
+
+exports.releaseStock = async (claimId) => {
+  const claim = toObjectId(claimId);
+  const heldByClaim = {
+    $filter: {input: '$reservations', as: 'r', cond: {$eq: ['$$r.claim_id', claim]}}
+  };
+  const result = await Item.updateMany(
+    {'reservations.claim_id': claim},
+    [{
+      $set: {
+        qty: {$add: ['$qty', {$sum: {$map: {input: heldByClaim, as: 'r', in: '$$r.qty'}}}]},
+        reservations: {
+          $filter: {input: '$reservations', as: 'r', cond: {$ne: ['$$r.claim_id', claim]}}
+        }
+      }
+    }]
+  );
+  return result.matchedCount;
+}
+
+exports.convertReservation = async (claimId) => {
+  const claim = toObjectId(claimId);
+  const result = await Item.updateMany(
+    {'reservations.claim_id': claim},
+    {$pull: {reservations: {claim_id: claim}}}
+  );
+  return result.matchedCount;
+}
+
 exports.createHashItems = (lineItems)=>{
   const lines = lineItems
     .map(({quantity, price_data})=>[

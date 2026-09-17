@@ -6,16 +6,38 @@ const uuid = require('uuid');
 
 const redisClient = require('../config/redis');
 //Services
-const { buildLineItems, createHashItems } = require('./items');
-const { claimCheckoutSession,
+const {
+   buildLineItems,
+   createHashItems,
+   reserveStock, 
+   releaseStock 
+   } = require('./items');
+const { 
+  claimCheckoutSession,
   updateCheckoutSession,
   updateCheckoutFingerprint,
+  recordReservedItems,
+  expireClaim
 } = require('./checkout_session');
 
 const CHECKOUT_SESSION_TTLS = 60 * 30;
 //Webokk secrete
 const APP_URL = process.env.APP_URL;
 const SHARED_STRIPE_SECRET = process.env.STRIPE_SHARED_SECRET;
+
+const holdStock = async(claim, cart)=>{
+
+  const attemptReserveResult = await reserveStock(claim._id, cart.items);
+  if (!attemptReserveResult.ok) {
+    await expireClaim(claim._id, claim.idempotency_key);
+    throw Object.assign(
+      new Error('Some items are no longer available in the quantity requested'),
+      { status: 409, unavailable: attemptReserveResult.unavailable }
+    );
+  }
+
+  await recordReservedItems(claim._id, claim.idempotency_key, cart.items);
+}
 /*
 @Desc   Turn a won claim into a Stripe Checkout Session. Called with the key already
         persisted on the claim, so if this request died last time and is being retried,
@@ -116,11 +138,18 @@ exports.createStripeSession = async (cart) => {
   //Either we won, or we lost to a request that died before Stripe answered. Both replay
   //the claim's key, so both end up pointing at the same Stripe session.
   if (won || !claim.stripe_session_id) {
+     if(won){
+      await releaseStock(claim._id);
+    }
+    await holdStock(claim, cart);
     return materializeStripeSession(cart, claim, lineItems);
   }
 
   //Cart items have changed
   if (claim.fingerprint !== fingerprint) {
+    //Removed items from the old cart
+    await releaseStock(claim._id);
+    await holdStock(claim._id, cart)
     //Win the right to reprice before touching Stripe
     const repriced = await updateCheckoutFingerprint(claim._id, claim.fingerprint, fingerprint);
     if (!repriced) {
@@ -193,4 +222,11 @@ exports.verifySignature = (eventBody, signature)=>{
       console.log(`⚠️ Webhook signature verification failed.`, err.message);
       return null
     }
+}
+exports.abandonStripeSession = async (stripeSessionId) => {
+  try {
+    await stripe.checkout.sessions.expire(stripeSessionId)
+  } catch {
+    throw new Object.assign(new Error(`Failed to abandon stripe checkout session${stripeSessionID}`), { status: 409 })
+  }
 }

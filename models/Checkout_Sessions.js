@@ -1,5 +1,19 @@
 const mongoose = require('mongoose');
 
+
+const ReservedLineSchema = new mongoose.Schema({
+  item_id:{
+    type:mongoose.Schema.Types.ObjectId,
+    ref:'item',
+    required:true
+  },
+  qty:{
+    type:Number,
+    required:true,
+    min:1
+  }
+},{_id:false});
+
 const CheckoutSessionSchema = new mongoose.Schema({
   cart_id:{
     type:mongoose.Schema.Types.ObjectId,
@@ -29,6 +43,10 @@ const CheckoutSessionSchema = new mongoose.Schema({
   },
   client_secret:{
     type:String,
+  },
+  reserved_items:{
+    type:[ReservedLineSchema],
+    default:[]
   },
   created_at:{
     type: Number,

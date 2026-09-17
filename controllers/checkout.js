@@ -10,6 +10,8 @@ const {
 const { handleCheckoutExpired } = require('../services/checkout_session');
 
 const { getCart } = require('../services/cart');
+const { checkStockAvailability,replenishItems } = require('../services/items')
+const { getOrderByStripeSession } = require('../services/orders')
 exports.createSession = async (req, res) => {
   try {
     const errors = validationResult(req);
@@ -19,7 +21,23 @@ exports.createSession = async (req, res) => {
     const { cartId } = req.body;
     //Ownership is part of the lookup, so a cart that is not the caller's reads as missing
     const owner = req?.user?.id ? {userId: req.user.id} : {guestId: req?.guestId};
+    //Get user cart
     const cart = await getCart(cartId, owner);
+    //Check inventory
+    if(!cart || !cart.items || cart.items.length === 0){
+      res.status(400).json({
+        msg:'Cart is empty or does not exist'
+      });
+      return;
+    }
+    //Check stock availability
+    const isStockAvailable = await checkStockAvailability(cart.items);
+    if(!isStockAvailable){
+      res.status(409).json({
+        msg:'Some items are no longer available in the quantity requested'
+      });
+      return;
+    }
     const session = await createStripeSession(cart);
     if(!session){
       res.json({
@@ -27,17 +45,6 @@ exports.createSession = async (req, res) => {
       });
       return;
     }
-    //Note might create order somewhere else
-    // const totalAmount = session?.amount_total;
-    // //TODO: handle guest order
-    // const getOrder = await createOrderDb(session.id, finalItems, 'pending', totalAmount);
-    // if(!getOrder){
-    //   res.json({
-    //     msg:"Failed to create order, please try again",
-    //     currentSession:session.id
-    //   });
-    //   return;
-    // }
     
     
     res.json({
@@ -108,7 +115,15 @@ exports.webhook = async(req,res)=>{
       break;
     case 'checkout.session.expired':
     const checkoutExpired = event.data.object;
-       await handleCheckoutExpired(checkoutExpired.id);
+      const expiredResult =  await handleCheckoutExpired(checkoutExpired.id);
+      //Check this is the first time expireResult is set
+      if(expiredResult.modifiedCount === 1){
+        //Get order by session
+        const getOrderResult = await getOrderByStripeSession(checkoutExpired.id);
+        //Put order qty back to stock
+        const items = getOrderResult.items;
+        await replenishItems(items);
+      }
       break;
     // ... handle other event types
     default:
