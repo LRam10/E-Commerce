@@ -17,7 +17,8 @@ const toOrderItems = (lineItems) => lineItems.map((line) => {
   return {
     item_id: itemId,
     quantity: line.quantity,
-    price: line.price.unit_amount
+    price: line.price.unit_amount,
+    images:line?.price?.product?.images ? line?.price?.product?.images : []
   };
 });
 
@@ -84,14 +85,4 @@ exports.transitionOrderStatus = async (stripeSessionId, from, to) => {
     { $set: { status: to } },
     { new: true }
   );
-}
-
-exports.getOrderByStripeSession = async(sessionId)=>{
-  try{
-    return await Order.findOne(
-      {stripe_session_id: sessionId}
-    )
-  }catch(error){
-    throw Object.assign(new Error('Failed to get order by session id',{status:500}))
-  }
 }

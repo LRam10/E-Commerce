@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { userCartStore } from "../../store/userCartStore";
+import AddToCartButton from "../common/AddToCartButton";
 
 const Stars = ({ count = 5 }) => (
   <div className="flex items-center gap-[2px]" aria-label={`${count} out of 5 stars`}>
@@ -18,8 +18,6 @@ const Stars = ({ count = 5 }) => (
 );
 
 const ProductCard = ({ item }) => {
-  const { addToCart } = userCartStore();
-
   return (
     <div className="group flex h-full w-full flex-col overflow-hidden rounded-card border border-sol-stroke bg-white">
       <div className="relative h-[260px] rounded-t-card transition-colors group-hover:bg-sol-cream sm:h-[300px] lg:h-[339px]">
@@ -38,13 +36,15 @@ const ProductCard = ({ item }) => {
         </Link>
 
         {/* Touch devices never fire hover, so the button stays visible below lg
-            and only becomes a hover/focus reveal on pointer-sized screens. */}
-        <button
-          onClick={() => addToCart(item)}
-          className="absolute inset-x-[17px] bottom-[17px] flex h-[50px] items-center justify-center rounded-[80px] border border-sol-stroke bg-white text-[15px] font-medium text-black transition-[opacity,background-color] duration-200 hover:bg-sol-cream lg:pointer-events-none lg:opacity-0 lg:group-hover:pointer-events-auto lg:group-hover:opacity-100 lg:group-focus-within:pointer-events-auto lg:group-focus-within:opacity-100"
-        >
-          Add to cart
-        </button>
+            and only becomes a hover/focus reveal on pointer-sized screens. The added
+            state pins it visible so the feedback is not cut off if the pointer leaves
+            the card mid-animation. */}
+        <AddToCartButton
+          item={item}
+          className="absolute inset-x-[17px] bottom-[17px] flex h-[50px] items-center justify-center rounded-[80px] border text-[15px] font-medium transition-[opacity,background-color,color,border-color] duration-200"
+          idleClassName="border-sol-stroke bg-white text-black hover:bg-sol-cream lg:pointer-events-none lg:opacity-0 lg:group-hover:pointer-events-auto lg:group-hover:opacity-100 lg:group-focus-within:pointer-events-auto lg:group-focus-within:opacity-100"
+          addedClassName="border-black bg-black text-white lg:pointer-events-auto lg:opacity-100"
+        />
       </div>
 
       <div className="flex flex-1 flex-col gap-[16px] border-t border-sol-stroke p-[17px]">

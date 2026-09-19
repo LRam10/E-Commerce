@@ -1,4 +1,10 @@
-const { completeCheckoutSession, releaseCheckoutSession } = require('./checkout_session');
+const {
+  completeCheckoutSession,
+  releaseCheckoutSession,
+  expireCheckoutSession,
+  getClaimByStripeSession
+} = require('./checkout_session');
+const { convertReservation, releaseStock } = require('./items');
 const { markCartConverted, reopenCart } = require('./cart');
 const { getStripeSession } = require('./stripe');
 const { upsertOrderForSession, transitionOrderStatus } = require('./orders');
@@ -59,9 +65,9 @@ exports.handleCheckoutComplete = async (paymentOrder) => {
   });
 
   await markCartConverted(cartId);
-  await completeCheckoutSession(stripeSessionId);
+  const claim = await completeCheckoutSession(stripeSessionId);
 
-  //TODO: decrement item stock
+  if (paid && claim) await convertReservation(claim._id);
   return order;
 }
 
@@ -97,7 +103,33 @@ exports.handleAsyncPaymentFailed = async (paymentOrder) => {
 
   const claim = await releaseCheckoutSession(stripeSessionId);
   if (claim) {
+    //Still held, because handleCheckoutComplete does not convert an unpaid session.
+    //Stock goes back before the cart does, so a buyer who retries immediately reserves
+    //against a count that already includes their own returned units.
+    await releaseStock(claim._id);
     await reopenCart(claim.cart_id);
   }
   return cancelled;
+}
+
+/*
+@Desc  The buyer walked away. Retire the claim and put its stock back. The claim comes
+       back only from the call that moved it pending -> expired, which is the at-most-once
+       latch for the release; releaseStock is idempotent anyway, so a redelivery that
+       somehow gets the claim again still cannot credit twice.
+@param {object} paymentOrder - the checkout.session object from the webhook
+@returns {object|null} the expired claim, or null if there was nothing pending
+*/
+exports.handleCheckoutExpired = async (paymentOrder) => {
+  const claim = await expireCheckoutSession(paymentOrder.id);
+  if (claim) await releaseStock(claim._id);
+  return claim;
+}
+
+
+exports.reconcileCheckoutSession = async (session) => {
+  if (session?.status !== 'complete') return null;
+  const claim = await getClaimByStripeSession(session.id);
+  if (claim?.status === 'completed') return null;
+  return exports.handleCheckoutComplete(session);
 }

@@ -5,13 +5,13 @@ const { createStripeSession , getStripeSession, verifySignature } = require('../
 const {
   handleCheckoutComplete,
   handleAsyncPaymentSucceeded,
-  handleAsyncPaymentFailed
+  handleAsyncPaymentFailed,
+  handleCheckoutExpired,
+  reconcileCheckoutSession
 } = require('../services/payments');
-const { handleCheckoutExpired } = require('../services/checkout_session');
 
 const { getCart } = require('../services/cart');
-const { checkStockAvailability,replenishItems } = require('../services/items')
-const { getOrderByStripeSession } = require('../services/orders')
+
 exports.createSession = async (req, res) => {
   try {
     const errors = validationResult(req);
@@ -21,23 +21,18 @@ exports.createSession = async (req, res) => {
     const { cartId } = req.body;
     //Ownership is part of the lookup, so a cart that is not the caller's reads as missing
     const owner = req?.user?.id ? {userId: req.user.id} : {guestId: req?.guestId};
-    //Get user cart
     const cart = await getCart(cartId, owner);
-    //Check inventory
-    if(!cart || !cart.items || cart.items.length === 0){
+    if(!cart.items?.length){
       res.status(400).json({
-        msg:'Cart is empty or does not exist'
+        msg:'Cart is empty'
       });
       return;
     }
-    //Check stock availability
-    const isStockAvailable = await checkStockAvailability(cart.items);
-    if(!isStockAvailable){
-      res.status(409).json({
-        msg:'Some items are no longer available in the quantity requested'
-      });
-      return;
+    
+    if (cart?.status !== 'active') {
+      throw Object.assign(new Error('This cart is no longer available for checkout'), { status: 409 });
     }
+    
     const session = await createStripeSession(cart);
     if(!session){
       res.json({
@@ -53,7 +48,8 @@ exports.createSession = async (req, res) => {
     });
 
   }catch (err) {
-    res.status(err.status || 500).json({msg: err.message});
+    //Same shape as Routes/Cart.js: a short line comes back as a list the page can show
+    res.status(err.status || 500).json({msg: err.message, unavailable: err.unavailable});
   }
 }
 
@@ -68,6 +64,16 @@ exports.getSessionStatus = async (req, res) => {
         msg:`Failed to get session for ${session_id}`
       });
       return;
+    }
+
+    //Fulfil from here as well as from the webhook, so the buyer's cart is retired by the
+    //time the receipt renders rather than whenever Stripe's delivery lands. Best effort:
+    //the buyer has paid and must be told so regardless, and the webhook is the path
+    //that retries. Logged so a 3am reader can tell this ran and what stopped it.
+    try {
+      await reconcileCheckoutSession(session);
+    } catch (error) {
+      console.error(`[checkout] return-page completion failed for ${session_id}`, error);
     }
 
     res.send({
@@ -114,17 +120,10 @@ exports.webhook = async(req,res)=>{
       await handleCheckoutComplete(checkoutCompleted);
       break;
     case 'checkout.session.expired':
-    const checkoutExpired = event.data.object;
-      const expiredResult =  await handleCheckoutExpired(checkoutExpired.id);
-      //Check this is the first time expireResult is set
-      if(expiredResult.modifiedCount === 1){
-        //Get order by session
-        const getOrderResult = await getOrderByStripeSession(checkoutExpired.id);
-        //Put order qty back to stock
-        const items = getOrderResult.items;
-        await replenishItems(items);
-      }
+      const checkoutExpired = event.data.object;
+      await handleCheckoutExpired(checkoutExpired);
       break;
+
     // ... handle other event types
     default:
       console.log(`Unhandled event type ${event.type}`);

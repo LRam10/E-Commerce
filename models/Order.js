@@ -5,6 +5,7 @@ const itemSchema = new mongoose.Schema({
     item_id: { type: mongoose.Schema.Types.ObjectId, required: true, ref: 'item' },
     quantity: { type: Number, default: 1 },
     price: { type: Number, required: true },
+    images:[]
 })
 
 const OrderSchema = new mongoose.Schema({

@@ -17,6 +17,7 @@ router.post('/create-checkout-session', [
     check('cartId').not().isEmpty().withMessage('cartId is required')],
     checkout.createSession);
 //Get checkout session status
-router.get('/get-session-status', [query('session_id').not().isEmpty()], checkout.getSessionStatus);
+//Public and now able to trigger completion, so it gets the same limiter as create
+router.get('/get-session-status', [rateLimited, query('session_id').not().isEmpty()], checkout.getSessionStatus);
 
 module.exports = router;

@@ -1,5 +1,4 @@
 const CheckoutSession = require('../models/Checkout_Sessions');
-
 const DUPLICATE_KEY = 11000;
 
 /*
@@ -27,22 +26,21 @@ exports.claimCheckoutSession = async (cartId, fingerprint, idempotencyKey, expir
   let claim;
   let won;
   try {
-    //$setOnInsert means a losing racer never overwrites the winner's key. updatedExisting
-    //tells us which one we were without a second read.
-    const result = await CheckoutSession.findOneAndUpdate(
+    
+    const createCheckoutSession = await CheckoutSession.findOneAndUpdate(
       { cart_id: cartId },
       { $setOnInsert: { cart_id: cartId, ...claimFields } },
       { upsert: true, new: true, includeResultMetadata: true }
     );
-    claim = result.value;
-    won = !result.lastErrorObject?.updatedExisting;
+    claim = createCheckoutSession.value;
+    won = !createCheckoutSession.lastErrorObject?.updatedExisting;
   } catch (error) {
     //Two upserts can both miss and race to insert; the index rejects one of them.
     if (error?.code !== DUPLICATE_KEY) throw error;
     claim = await CheckoutSession.findOne({ cart_id: cartId });
     won = false;
   }
-
+  console.log({won, claim})
   if (won || !claim) return { won, claim };
 
   //A live claim belongs to someone else - the caller reuses its session.
@@ -112,14 +110,7 @@ exports.completeCheckoutSession = async (stripeSessionId) => {
   );
 }
 
-/*
-@Desc  Mark an abandoned claim expired so its cart can be checked out again.
-@returns {object|null} the claim, or null if it was not pending
-*/
-exports.handleCheckoutExpired = async (stripeSessionId) => {
-  //Only a pending claim may expire. Without this guard an 'expired' event arriving for a
-  //paid session would let claimCheckoutSession treat the claim as dead, take it over, and
-  //mint a second payable session for a basket that has already been bought.
+exports.expireCheckoutSession = async (stripeSessionId) => {
   return CheckoutSession.findOneAndUpdate(
     { stripe_session_id: stripeSessionId, status: 'pending' },
     { $set: { status: 'expired' } },
@@ -141,15 +132,28 @@ exports.releaseCheckoutSession = async (stripeSessionId) => {
   );
 }
 
-exports.recordReservedItems = async (claimId, idempotencyKey, items)=>{
+exports.recordReservedItems = async (claimId, idempotencyKey, items) => {
   return CheckoutSession.findOneAndUpdate(
-    {_id:claimId, idempotency_key:idempotencyKey},
-    {$set:{reserved_items:items}}
-  )
+    { _id: claimId, idempotency_key: idempotencyKey },
+    { $set: { reserved_items: items } },
+    { new: true }
+  );
 }
-exports.expireClaim = async (claimId, idempotencyKey)=>{
+
+
+exports.expireClaim = async (claimId, idempotencyKey) => {
   return CheckoutSession.findOneAndUpdate(
-    {_id:claimId, idempotency_key:idempotencyKey},
-    {$set:{status: 'expired'}}
-  )
+    { _id: claimId, idempotency_key: idempotencyKey },
+    { $set: { status: 'expired' } },
+    { new: true }
+  );
+}
+
+/*
+@Desc  Read the claim behind a Stripe session. Used by the return page to decide whether
+       completion still needs to run for it.
+@returns {object|null}
+*/
+exports.getClaimByStripeSession = async (stripeSessionId) => {
+  return CheckoutSession.findOne({ stripe_session_id: stripeSessionId }).lean();
 }
