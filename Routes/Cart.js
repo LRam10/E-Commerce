@@ -36,10 +36,10 @@ const sendCartError = (res, error) => {
 const combineCartItems = (items) => {
     return items.reduce((acc, item) => {
         if (acc.find(i=> i._id === item._id)) {
-            acc.find((i) => i._id === item._id).qty += item.qty
+            acc.find((i) => i._id === item._id).qty += Number(item.qty)
         }
         else {
-            acc.push(item)
+            acc.push({ _id: item._id, qty: Number(item.qty) })
         }
         return acc
     },
@@ -116,21 +116,22 @@ router.put("/", [
         return res.status(400).json({ errors: errors.array() });
     }
     const { cartId } = req.body;
-    try {
-        const { lines, items } = await resolveCartItems(pickLines(req.body.items));
-        //Without the owner in the filter anyone holding a cartId could rewrite its items,
-        //including while its owner is part way through paying for it
-        const cart = await Cart.findOneAndUpdate(
-            { _id: cartId, status: 'active', ...retreiveOwnerFromRequest(req) },
-            { $set: { items: lines } },
-            { new: true });
-        if (!cart) {
-            return res.status(404).json({ msg: 'Cart not found' });
-        }
-        res.json(items);
-    } catch (error) {
-        return sendCartError(res, error);
+  try {
+    const groupedItems = combineCartItems(req.body.items);
+    const { lines, items } = await resolveCartItems(pickLines(groupedItems));
+    //Without the owner in the filter anyone holding a cartId could rewrite its items,
+    //including while its owner is part way through paying for it
+    const cart = await Cart.findOneAndUpdate(
+      { _id: cartId, status: 'active', ...retreiveOwnerFromRequest(req) },
+      { $set: { items: lines } },
+      { new: true });
+    if (!cart) {
+      return res.status(404).json({ msg: 'Cart not found' });
     }
+    res.json(items);
+  } catch (error) {
+    return sendCartError(res, error);
+  }
 });
 
 
