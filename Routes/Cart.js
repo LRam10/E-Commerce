@@ -39,7 +39,7 @@ const combineCartItems = (items) => {
             acc.find((i) => i._id === item._id).qty += Number(item.qty)
         }
         else {
-            acc.push({ _id: item._id, qty: Number(item.qty) })
+            acc.push({ _id: item._id, qty: item?.qty ? Number(item.qty) : 1 })
         }
         return acc
     },
