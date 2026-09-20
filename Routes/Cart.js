@@ -34,16 +34,24 @@ const sendCartError = (res, error) => {
 
 
 const combineCartItems = (items) => {
-    return items.reduce((acc, item) => {
-        if (acc.find(i=> i._id === item._id)) {
-            acc.find((i) => i._id === item._id).qty += Number(item.qty ?? 1)
+    const quantitiesById = new Map();
+
+    for (const item of items) {
+        const id = String(item._id);
+        const qty = Number(item.qty ?? 1);
+        const nextQty = (quantitiesById.get(id) ?? 0) + qty;
+
+        if (nextQty > MAX_QTY) {
+            throw Object.assign(
+                new Error(`Quantity must not exceed ${MAX_QTY}`),
+                { status: 400 }
+            );
         }
-        else {
-            acc.push({ _id: item._id, qty: Number(item?.qty ?? 1) })
-        }
-        return acc
-    },
-        [{ _id: items[0]._id, qty: 0 }])
+
+        quantitiesById.set(id, nextQty);
+    }
+
+    return [...quantitiesById.entries()].map(([_id, qty]) => ({ _id, qty }));
 }
 
 //@Type   POST
