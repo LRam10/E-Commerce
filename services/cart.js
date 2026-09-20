@@ -12,8 +12,8 @@ const DUPLICATE_KEY = 11000;
 @returns {object} the cart
 @throws {Error} .status 401 with no owner, 404 when the cart is missing or not theirs
 */
-exports.getCart = async (cartId, {userId, guestId} = {}) => {
-  if (!userId && !guestId) {
+exports.getCart = async (cartId, ownerFilter = null) => {
+  if (!ownerFilter) {
     throw Object.assign(new Error('Cart owner is required'), {status:401});
   }
   //A malformed id is a miss, not a server fault
@@ -21,11 +21,7 @@ exports.getCart = async (cartId, {userId, guestId} = {}) => {
     throw Object.assign(new Error(`Cart ${cartId} not found`), {status:404});
   }
 
-  const owner = userId ? {user_id: userId} : {guest_id: guestId};
-  const cart = await Cart.findOne({_id: cartId, ...owner}).lean();
-  //Same answer for "no such cart" and "not yours", so ids cannot be probed
-  if (!cart) throw Object.assign(new Error(`Cart ${cartId} not found`), {status:404});
-  return cart;
+  return await Cart.findOne({_id: cartId, ...ownerFilter}).lean();
 }
 
 /*

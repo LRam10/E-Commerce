@@ -1,7 +1,8 @@
 const { validationResult} = require('express-validator');
 
+const { retreiveOwnerFromRequest } = require('./utils');
+const { getClaimByStripeSession } = require('../services/checkout_session')
 const { createStripeSession , getStripeSession, verifySignature } = require('../services/stripe');
-
 const {
   handleCheckoutComplete,
   handleAsyncPaymentSucceeded,
@@ -20,8 +21,14 @@ exports.createSession = async (req, res) => {
     }
     const { cartId } = req.body;
     //Ownership is part of the lookup, so a cart that is not the caller's reads as missing
-    const owner = req?.user?.id ? {userId: req.user.id} : {guestId: req?.guestId};
+    const owner = retreiveOwnerFromRequest(req);
     const cart = await getCart(cartId, owner);
+    if(!cart){
+      res.status(404).json({  
+        msg:'Could not find cart for this session'
+      });
+      return;
+    }
     if(!cart.items?.length){
       res.status(400).json({
         msg:'Cart is empty'
@@ -57,6 +64,22 @@ exports.getSessionStatus = async (req, res) => {
   try {
 
     const session_id = req.query.session_id;
+    const checkoutSession = await getClaimByStripeSession(session_id);
+    if(!checkoutSession){
+      res.status(400).json({
+        msg:'Session not found'
+      });
+      return;
+    }
+
+    const owner = retreiveOwnerFromRequest(req);
+    const cart = await getCart(checkoutSession.cart_id, owner);
+    if(!cart){
+      res.status(404).json({
+        msg:'Could not find cart for this session'
+      });
+      return;
+    }
     const session = await getStripeSession(session_id, true)
     //Error getting session
     if(!session){

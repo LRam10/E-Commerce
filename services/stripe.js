@@ -117,7 +117,6 @@ const materializeStripeSession = async (cart, claim, lineItems) => {
 exports.createStripeSession = async (cart) => {
 
   const lineItems = await buildLineItems(cart?.items);
-  console.info(lineItems[0]?.price_data?.product_data)
   const currentFingerPrint = createHashItems(lineItems);
 
   const expiresAt = Math.floor(Date.now() / 1000) + CHECKOUT_SESSION_TTLS;

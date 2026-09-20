@@ -64,7 +64,6 @@ router.post("/google",[rateLimiter], async (req, res) => {
 //@Access  Private
 router.get("/", [auth,rateLimiter], async (req, res) => {
   try {
-    console.log('Get user',req.body);
     const user = await userModel
       .findById(req.user.id)
       .select("-passwordObject");

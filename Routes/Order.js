@@ -10,12 +10,17 @@ route.get('/',auth,async (req,res)=>{
         const offset = req.query?.page ?? 0;
         const limit = req.query?.limit ?? 10
         const userId = req.user.id;
-        const orders = await Order.find({user_id:userId},{'__v':0,'user_id':0});
-        res.json(orders);
+        const orders = await Order.find({user_id:userId},{'__v':0,'user_id':0}).
+        limit(limit).skip(offset * limit);
+        res.json({
+            orders,
+            total: orders.length,
+            page: offset,
+            limit: limit
+        });
     } catch (error) {
         console.log(error);
-        res.status(500).json({msg:"Server Error"});
+        res.status(500).json({msg:"Server Error", error: error.message});
     }
 });
-
 module.exports = route;

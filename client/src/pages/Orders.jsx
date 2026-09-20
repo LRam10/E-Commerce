@@ -37,7 +37,7 @@ export default function Orders() {
                 You haven&apos;t placed any orders yet.
               </p>
             )
-            : <OrdersHistory orders={data} />
+            : <OrdersHistory orders={data.orders} />
         )}
       </section>
     </main>

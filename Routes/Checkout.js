@@ -18,6 +18,6 @@ router.post('/create-checkout-session', [
     checkout.createSession);
 //Get checkout session status
 //Public and now able to trigger completion, so it gets the same limiter as create
-router.get('/get-session-status', [rateLimited, query('session_id').not().isEmpty()], checkout.getSessionStatus);
+router.get('/get-session-status', [optionalAuth,rateLimited, query('session_id').not().isEmpty()], checkout.getSessionStatus);
 
 module.exports = router;

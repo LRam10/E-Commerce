@@ -17,11 +17,16 @@ const subtotal = userCartStore(selectCartSubtotal);
 const navigate = useNavigate();
 const handleCheckout = async () => {
     //First Save the cart to the database for logged in users
-    setCheckout(true);
-    await userCartStore.getState().saveCart();
-    setSideBar(false);
-    //Redirect to checkout page
-    navigate('/checkout');
+    try {
+      setCheckout(true);
+      await userCartStore.getState().saveCart();
+      setSideBar(false);
+      //Redirect to checkout page
+      navigate('/checkout');
+    } catch (error) {
+      setCheckout(false);
+      console.error('Error checking out:', error);
+    }
 }
 
 if(!cartItems.length > 0) return(
