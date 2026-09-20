@@ -36,10 +36,10 @@ const sendCartError = (res, error) => {
 const combineCartItems = (items) => {
     return items.reduce((acc, item) => {
         if (acc.find(i=> i._id === item._id)) {
-            acc.find((i) => i._id === item._id).qty += Number(item.qty)
+            acc.find((i) => i._id === item._id).qty += Number(item.qty ?? 1)
         }
         else {
-            acc.push({ _id: item._id, qty: item?.qty ? Number(item.qty) : 1 })
+            acc.push({ _id: item._id, qty: Number(item?.qty ?? 1) })
         }
         return acc
     },
