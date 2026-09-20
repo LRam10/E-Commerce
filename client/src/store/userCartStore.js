@@ -14,6 +14,7 @@ const clampQty = (qty) => {
 const normalizeItems = (items) => (items ?? []).map((item) => ({ ...item, qty: clampQty(item.qty) }));
 
 export const userCartStore = create(persist((set,get)=>({
+  cartId:null,
   cartItems:[],
   //Adding an item already in the cart tops up its quantity instead of duplicating the line
   addToCart:(item, qty = 1)=>{
@@ -52,13 +53,16 @@ export const userCartStore = create(persist((set,get)=>({
   },
   //Push the current cart to the server, must run while the auth cookie is still valid
   saveCart:async()=>{
-    await callAPI('/cart','POST',null,'json',get().cartItems);
+    const response = await callAPI('/cart','POST',null,'json',get().cartItems);
+    const {items, cartId} = response;
+    set(()=>({cartItems:normalizeItems(items), cartId}));
   },
   //Callers gate on isAuthenticated, the cookie carries the auth
   fetchCartItems:async()=>{
     const response = await callAPI('/cart','GET');
+    const {items, cartId} = response;
     if(response.items?.length > 0){
-      set(()=>({cartItems:normalizeItems(response.items)}));
+      set(()=>({cartItems:normalizeItems(items), cartId}));
     }
   },
 }),{

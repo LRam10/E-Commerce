@@ -37,7 +37,9 @@ export default function NavBar({ categories }) {
   const { mutate: logOutMutation } = useMutation({
     mutationFn: async () => {
       //Order matters, the cart POST is cookie-authenticated so it has to land before logout
-      await saveCart();
+      if(cartCount !== 0){
+        await saveCart();
+      }
       clearCart();
       userCartStore.persist.clearStorage();
       await logOut();
@@ -84,11 +86,6 @@ export default function NavBar({ categories }) {
 
   return (
     <header className="sticky top-0 z-40">
-      <div className="flex h-[40px] items-center justify-center bg-[#f6be00] sm:h-[48px]">
-        <span className="text-[12px] font-bold uppercase leading-[28px] text-white sm:text-[14px]">
-          Under maintenance!
-        </span>
-      </div>
 
       <nav className="border border-sol-stroke-light bg-white px-[15px] pt-[5px]">
         <div className="flex h-[56px] items-center justify-between gap-[10px] sm:h-[60px]">

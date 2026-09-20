@@ -40,7 +40,7 @@ router.post("/google",[rateLimiter], async (req, res) => {
       payload,
       process.env.jwtSecret,
       {
-        expiresIn: 3600,
+        expiresIn: '7d',
       },
       (err, token) => {
         if (err) throw err;
@@ -64,7 +64,6 @@ router.post("/google",[rateLimiter], async (req, res) => {
 //@Access  Private
 router.get("/", [auth,rateLimiter], async (req, res) => {
   try {
-    console.log('Get user',req.body);
     const user = await userModel
       .findById(req.user.id)
       .select("-passwordObject");
@@ -116,7 +115,7 @@ router.post(
         payload,
         process.env.jwtSecret,
         {
-          expiresIn: 3600,
+          expiresIn: '7d',
         },
         (err, token) => {
           if (err) throw err;

@@ -1,7 +1,7 @@
 import React, { Fragment } from 'react'
 import { MAX_QTY } from '../../store/userCartStore'
 
-const Product = ({product,deleteItem,increaseQty,decreaseQty}) => {
+const Product = ({product,deleteItem,increaseQty,decreaseQty,allowEdit}) => {
     const {img_url,price,qty,_id,name} = product;
     const quantity = Number(qty) || 1;
     const onDelete = ()=> deleteItem(_id);
@@ -21,10 +21,11 @@ const Product = ({product,deleteItem,increaseQty,decreaseQty}) => {
                     </div>
 
                     <span className='text-[14px] leading-[21px] text-sol-gray'>
-                        &#36;{Number(price).toFixed(2)} each
+                        &#36;{Number(price).toFixed(2)} each X {quantity}
                     </span>
 
-                    <div className='flex items-center justify-between gap-3'>
+                    {allowEdit && (
+                        <div className='flex items-center justify-between gap-3'>
                         <div className='flex h-[40px] items-center gap-[4px] rounded-pill border border-sol-stroke-light px-[6px]'>
                             <button
                                 type='button'
@@ -52,6 +53,7 @@ const Product = ({product,deleteItem,increaseQty,decreaseQty}) => {
                             Remove
                         </button>
                     </div>
+                    )}
                 </div>
             </div>
         </Fragment>

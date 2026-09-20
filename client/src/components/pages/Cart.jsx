@@ -1,15 +1,33 @@
 import React from 'react';
-import Product from '../Cart/Product';
+import { useNavigate } from 'react-router-dom';
+import ItemList from '../Cart/ItemList';
 import { useState } from 'react';
 import { userCartStore, selectCartCount, selectCartSubtotal } from '../../store/userCartStore';
+import { useAppStore } from '../../store/useAppStore'
 
 const Cart = () => {
-//Checks current time with expiration time and updates the cart to database for Logged in user
-const {cartItems,removeFromCart,increaseQty,decreaseQty} = userCartStore();
-const [checkoutDisabled, setCheckout] = useState(true)
+//State and store hooks
+const {cartItems} = userCartStore();
+const { setSideBar } = useAppStore();
+
+const [checkoutDisabled, setCheckout] = useState(false)
 //Units and money both follow the per-line quantities, not the line count
 const itemCount = userCartStore(selectCartCount);
 const subtotal = userCartStore(selectCartSubtotal);
+const navigate = useNavigate();
+const handleCheckout = async () => {
+    //First Save the cart to the database for logged in users
+    try {
+      setCheckout(true);
+      await userCartStore.getState().saveCart();
+      setSideBar(false);
+      //Redirect to checkout page
+      navigate('/checkout');
+    } catch (error) {
+      setCheckout(false);
+      console.error('Error checking out:', error);
+    }
+}
 
 if(!cartItems.length > 0) return(
     <div className='flex h-full flex-col items-center justify-center gap-[10px] px-[17px] text-center'>
@@ -24,7 +42,7 @@ else {
                 Total items ({itemCount})
             </h2>
 
-            <div className='min-h-0 flex-1 divide-y divide-sol-stroke-light overflow-y-auto'>
+            {/* <div className='min-h-0 flex-1 divide-y divide-sol-stroke-light overflow-y-auto'>
                 {cartItems.map(product=>(
                     <div className='py-[15px] sm:py-[17px]' key={product._id}>
                         <Product
@@ -34,18 +52,20 @@ else {
                             decreaseQty={decreaseQty}/>
                     </div>
                 ))}
-            </div>
+            </div> */}
+            <ItemList allowEdit={true} cartItems={cartItems}/>
 
             <div className='mt-auto flex shrink-0 flex-col gap-[15px] border-t border-sol-stroke-light px-[17px] py-[17px]'>
                 <div className='flex items-center justify-between'>
                     <span className='text-[15px] leading-[21px] text-sol-gray'>Subtotal</span>
                     <span className='font-display text-[16px] font-medium tracking-[0.18px] text-black'>
-                        &#36;{subtotal.toFixed(2)}
+                        &#36;{Math.round(subtotal * 100) / 100}
                     </span>
                 </div>
                 <button className={`h-[56px] w-full rounded-pill border border-sol-stroke ${checkoutDisabled ? 
                 'text-gray-500 bg-gray-200 opacity-1 cursor-not-allowed ' : 'bg-sol-red text-white transition-colors hover:bg-sol-red-dark focus-visible:outline-sol-ink'}  text-[15px] font-medium  sm:h-[60px]`}
-                disabled={checkoutDisabled}>
+                disabled={checkoutDisabled}
+                onClick={handleCheckout}>
                     Checkout
                 </button>
             </div>

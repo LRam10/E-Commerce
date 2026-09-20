@@ -1,0 +1,164 @@
+const { validationResult} = require('express-validator');
+
+const { retreiveOwnerFromRequest } = require('./utils');
+const { getClaimByStripeSession } = require('../services/checkout_session')
+const { createStripeSession , getStripeSession, verifySignature } = require('../services/stripe');
+const {
+  handleCheckoutComplete,
+  handleAsyncPaymentSucceeded,
+  handleAsyncPaymentFailed,
+  handleCheckoutExpired,
+  reconcileCheckoutSession
+} = require('../services/payments');
+
+const { getCart } = require('../services/cart');
+
+exports.createSession = async (req, res) => {
+  try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+    const { cartId } = req.body;
+    //Ownership is part of the lookup, so a cart that is not the caller's reads as missing
+    const owner = retreiveOwnerFromRequest(req);
+    const cart = await getCart(cartId, owner);
+    if(!cart){
+      res.status(404).json({  
+        msg:'Could not find cart for this session'
+      });
+      return;
+    }
+    if(!cart.items?.length){
+      res.status(400).json({
+        msg:'Cart is empty'
+      });
+      return;
+    }
+    
+    if (cart?.status !== 'active') {
+      throw Object.assign(new Error('This cart is no longer available for checkout'), { status: 409 });
+    }
+    
+    const session = await createStripeSession(cart);
+    if(!session){
+      res.json({
+        msg:'Failed to create session, please try again'
+      });
+      return;
+    }
+    
+    
+    res.json({
+      clientSecret:session.client_secret,
+      checkoutSessionId:session.id
+    });
+
+  }catch (err) {
+    //Same shape as Routes/Cart.js: a short line comes back as a list the page can show
+    res.status(err.status || 500).json({msg: err.message, unavailable: err.unavailable});
+  }
+}
+
+exports.getSessionStatus = async (req, res) => {
+  try {
+
+    const session_id = req.query.session_id;
+    const checkoutSession = await getClaimByStripeSession(session_id);
+    if(!checkoutSession){
+      res.status(400).json({
+        msg:'Session not found'
+      });
+      return;
+    }
+
+    const owner = retreiveOwnerFromRequest(req);
+    const cart = await getCart(checkoutSession.cart_id, owner);
+    if(!cart){
+      res.status(404).json({
+        msg:'Could not find cart for this session'
+      });
+      return;
+    }
+    const session = await getStripeSession(session_id, true)
+    //Error getting session
+    if(!session){
+      res.status(400).json({
+        msg:`Failed to get session for ${session_id}`
+      });
+      return;
+    }
+
+    //Fulfil from here as well as from the webhook, so the buyer's cart is retired by the
+    //time the receipt renders rather than whenever Stripe's delivery lands. Best effort:
+    //the buyer has paid and must be told so regardless, and the webhook is the path
+    //that retries. Logged so a 3am reader can tell this ran and what stopped it.
+    try {
+      await reconcileCheckoutSession(session);
+    } catch (error) {
+      console.error(`[checkout] return-page completion failed for ${session_id}`, error);
+    }
+
+    res.send({
+      status: session.status,
+      payment_status: session.payment_status,
+      //The return page is the receipt the buyer sees, so it needs the figures and
+      //not just the state machine
+      amount_total: session.amount_total,
+      currency: session.currency,
+      customer_email: session.customer_details?.email ?? null,
+      payment_intent_id: session.payment_intent?.id,
+      payment_intent_status: session.payment_intent?.status,
+      subscription_id: session.payment_intent ? null : session.subscription?.id,
+      subscription_status: session.payment_intent ? null : session.subscription?.status
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({
+      msg: "Failed to get session status"
+    })
+  }
+}
+exports.webhook = async(req,res)=>{
+  let event;
+  try {
+    // Get the signature sent by Stripe
+    const signature = req.headers['stripe-signature'];
+    event = verifySignature(req.body, signature)
+    if(!event){
+      //The only genuinely malformed case, and the only one Stripe should not resend
+      return res.sendStatus(400);
+    }
+  switch (event.type) {
+    case 'checkout.session.async_payment_succeeded':
+      const asyncPaid = event.data.object;
+      await handleAsyncPaymentSucceeded(asyncPaid);
+      break;
+    case 'checkout.session.async_payment_failed':
+      const asyncFailed = event.data.object;
+      await handleAsyncPaymentFailed(asyncFailed);
+      break ;
+    case 'checkout.session.completed':
+      const checkoutCompleted = event.data.object;
+      await handleCheckoutComplete(checkoutCompleted);
+      break;
+    case 'checkout.session.expired':
+      const checkoutExpired = event.data.object;
+      await handleCheckoutExpired(checkoutExpired);
+      break;
+
+    // ... handle other event types
+    default:
+      console.log(`Unhandled event type ${event.type}`);
+  }
+
+  // Return a res to acknowledge receipt of the event
+  res.json({received: true})
+
+  } catch (error) {
+    //Stripe retries any non-2xx, but a 400 tells whoever reads the dashboard the payload
+    //was malformed and sends them hunting for a signature problem instead of this one
+    console.error(`Webhook handler failed for event ${event?.id} (${event?.type})`, error);
+    return res.sendStatus(500);
+  }
+}

@@ -26,8 +26,17 @@ export default defineConfig(() => {
       // needs a live window.opener; a same-origin* COOP severs it. Only the Sign In
       // With Google button / One Tap need COOP, and we use neither.
       // headers: { 'Cross-Origin-Opener-Policy': 'same-origin-allow-popups' },
+      // `/checkout` is both an API mount and an SPA route, and the proxy matches on
+      // prefix. In production Express falls through to the index.html catch-all when
+      // its router has no match, but the dev proxy has no fallthrough, so a hard load
+      // of /checkout/success would be answered by the API instead of the app.
+      // Document navigations send `Accept: text/html`; callAPI asks for JSON. Only the
+      // latter should ever be proxied.
       proxy: Object.fromEntries(
-        API_ROUTES.map(route => [route, 'http://localhost:3000'])
+        API_ROUTES.map(route => [route, {
+          target: 'http://localhost:3000',
+          bypass: (req) => (req.headers.accept?.includes('text/html') ? '/index.html' : undefined),
+        }])
       ),
     },
     

@@ -5,7 +5,7 @@ const Item = ({ item }) => {
         <div className="flex items-start gap-[12px] sm:gap-[17px]">
             <div className="flex h-[88px] w-[88px] shrink-0 items-center justify-center rounded-card bg-sol-cream p-2 sm:h-[120px] sm:w-[120px]">
                 <img
-                    src={item.img_url}
+                    src={item.images[0]}
                     alt={`item-${item.name}`}
                     className="max-h-full max-w-full object-contain"
                 />
@@ -16,7 +16,7 @@ const Item = ({ item }) => {
                 </h4>
                 <p className="text-[14px] leading-[21px] text-sol-gray">{item.description}</p>
                 <p className="font-display text-[16px] font-medium leading-[18px] tracking-[0.18px] text-black">
-                    &#36;{item.price}
+                    &#36;{item.price / 100}
                 </p>
             </div>
         </div>

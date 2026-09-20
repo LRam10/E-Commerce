@@ -1,0 +1,1 @@
+exports.retreiveOwnerFromRequest = (req) => req?.user?.id ? { user_id: req?.user?.id } : { guest_id: req?.guestId };

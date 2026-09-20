@@ -1,11 +1,11 @@
 import React, { Fragment } from 'react'
 import Order from './Order';
 
-const Orders = ({ orders }) => {
+const Orders = ({ orders,total }) => {
     return (
         <Fragment>
             <p className="pt-[14px] text-[15px] leading-[21px] text-sol-gray">
-                Total orders: {orders.length}
+                Total orders: {total}
             </p>
             <div className="flex flex-col gap-[15px] pt-[14px] sm:gap-[17px]">
                 {orders.map(order => (

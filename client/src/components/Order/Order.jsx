@@ -19,7 +19,7 @@ const Order = ({ order }) => {
                 {/* A wrapping flex row let the long address shove the other fields around */}
                 <ul className="grid grid-cols-1 gap-x-[48px] gap-y-[14px] sm:grid-cols-2 xl:grid-cols-4">
                     <Field label="Order placed">{order.order_date}</Field>
-                    <Field label="Total">&#36;{order.total}</Field>
+                    <Field label="Total">&#36;{(order.total_cents / 100).toFixed(2)}</Field>
                     <Field label="Payment type">{order.payment_type}</Field>
                     <Field label="Shipped to">
                         {`${order.address_street}, ${order.address_city}, ${order.address_state}, ${order.address_postal}`}

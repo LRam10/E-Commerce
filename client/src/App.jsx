@@ -33,6 +33,7 @@ import setAuthToken from './utils/setAuthToken';
 if(localStorage.token){
   setAuthToken(localStorage.token);
 }
+
 //Math.floor(new Date().getTime()/1000.0) -----> Set time to epoch time
 //259200 equals to 3 days in epoch time
 //86400 -----> one day
@@ -49,10 +50,10 @@ const App = ()=> {
     fetchCartItems();
   },[isAuthenticated, fetchCartItems]);
 
-  return (
-    <RouterProvider router={Router} >
-    </RouterProvider>
-  );
+  //The Stripe provider lives on the /checkout route, not here. It needs a client
+  //secret, and a client secret needs line items, which only exist once the user
+  //has a cart and is actually checking out
+  return <RouterProvider router={Router} />;
 }
 
 export default App;

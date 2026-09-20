@@ -31,13 +31,13 @@ export default function Orders() {
           </p>
         )}
         {isAuthenticated && !isPending && !error && (
-          data.length === 0
+          data.orders.length === 0
             ? (
               <p className="py-16 text-center text-[15px] leading-[21px] text-sol-gray">
                 You haven&apos;t placed any orders yet.
               </p>
             )
-            : <OrdersHistory orders={data} />
+            : <OrdersHistory orders={data.orders} total={data.total} page={data.page} limit={data.limit} />
         )}
       </section>
     </main>

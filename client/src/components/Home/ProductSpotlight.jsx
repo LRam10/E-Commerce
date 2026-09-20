@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { userCartStore } from "../../store/userCartStore";
+import AddToCartButton from "../common/AddToCartButton";
 
 const Arrow = ({ label, dark, flip, onClick }) => (
   <button
@@ -17,7 +17,6 @@ const Arrow = ({ label, dark, flip, onClick }) => (
 );
 
 const ProductSpotlight = ({ item, onPrev, onNext }) => {
-  const { addToCart } = userCartStore();
   const [dollars, cents] = Number(item?.price ?? 0).toFixed(2).split(".");
 
   return (
@@ -64,12 +63,12 @@ const ProductSpotlight = ({ item, onPrev, onNext }) => {
         </div>
 
         <div className="flex w-full flex-col gap-[15px] sm:flex-row">
-          <button
-            onClick={() => item && addToCart(item)}
-            className="h-[56px] flex-1 rounded-pill border border-sol-stroke bg-white text-[15px] font-medium text-black transition-colors hover:bg-sol-cream focus-visible:outline-white sm:h-[60px]"
-          >
-            Add to cart
-          </button>
+          <AddToCartButton
+            item={item}
+            className="flex h-[56px] flex-1 items-center justify-center rounded-pill border text-[15px] font-medium transition-colors focus-visible:outline-white sm:h-[60px]"
+            idleClassName="border-sol-stroke bg-white text-black hover:bg-sol-cream"
+            addedClassName="border-sol-stroke bg-sol-cream text-black"
+          />
           <Link
             to="/orders"
             className="flex h-[56px] flex-1 items-center justify-center rounded-pill border border-white bg-black text-[15px] font-medium text-white transition-colors hover:bg-neutral-800 focus-visible:outline-white sm:h-[60px]"
